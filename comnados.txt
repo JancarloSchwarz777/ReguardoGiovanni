@@ -1,0 +1,10 @@
+-para correr el host de php:
+php -S localhost:8080 -t .
+php -S localhost:8080 -t public/
+
+-comando ejecutable en la raiz del proyecto:
+composer require antlr/antlr4-php-runtime
+
+-comando para el compilado:
+antlr4 -Dlanguage=PHP "nombre del archivo con la gramatica" -visitor (-O "para especificar la ruta de guardado")
+antlr4 -Dlanguage=PHP gramatica/Golampi.g4 -visitor -o src/gramatica/
