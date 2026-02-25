@@ -78,6 +78,64 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['codigo'])) {
             color: #333;
             border-bottom: 3px solid #4CAF50;
             padding-bottom: 10px;
+            margin-top: 0;
+        }
+        .toolbar {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .btn-primary {
+            background: #4CAF50;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #45a049;
+        }
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+        .btn-warning:hover {
+            background: #e0a800;
+        }
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+        .btn-info:hover {
+            background: #138496;
+        }
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        .btn-danger:hover {
+            background: #c82333;
         }
         textarea { 
             width: 100%; 
@@ -89,26 +147,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['codigo'])) {
             border-radius: 8px;
             resize: vertical;
             background: #fafafa;
+            box-sizing: border-box;
         }
         textarea:focus {
             outline: none;
             border-color: #4CAF50;
             box-shadow: 0 0 5px rgba(76,175,80,0.3);
-        }
-        button { 
-            background: #4CAF50;
-            color: white;
-            padding: 12px 30px;
-            margin: 15px 0;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            transition: background 0.3s;
-        }
-        button:hover {
-            background: #45a049;
         }
         .consola { 
             background: #1e1e1e; 
@@ -116,8 +160,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['codigo'])) {
             padding: 15px; 
             border-radius: 5px; 
             min-height: 150px;
+            max-height: 300px;
+            overflow-y: auto;
             font-family: 'Courier New', monospace;
             border: 1px solid #333;
+            margin-top: 15px;
+        }
+        .consola-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
         }
         .error { 
             background: #ffebee; 
@@ -176,17 +229,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['codigo'])) {
         .badge-float32 { background: #FF9800; color: white; }
         .badge-string { background: #4CAF50; color: white; }
         .badge-bool { background: #9C27B0; color: white; }
+        .hidden {
+            display: none;
+        }
+        #fileInput {
+            display: none;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>🧪 Golampi Interpreter - Fase 1 (MVP)</h1>
         
-        <form method="POST">
-            <textarea name="codigo" placeholder="Escribe tu código Golampi aquí..."><?php echo htmlspecialchars($codigo); ?></textarea>
-            <br>
-            <button type="submit">▶ Ejecutar</button>
+        <!-- Barra de acciones con todos los botones solicitados -->
+        <div class="toolbar">
+            <button type="button" class="btn btn-warning" onclick="nuevoArchivo()" title="Limpiar editor y consola">
+                🆕 Nuevo / Limpiar
+            </button>
+            
+            <button type="button" class="btn btn-info" onclick="cargarArchivo()" title="Cargar código desde archivo">
+                📂 Cargar archivo
+            </button>
+            
+            <button type="button" class="btn btn-secondary" onclick="guardarCodigo()" title="Guardar código como archivo">
+                💾 Guardar código
+            </button>
+            
+            <!-- Botón Ejecutar (ya existente, pero lo incluimos en la barra) -->
+            <button type="submit" form="codeForm" class="btn btn-primary" title="Ejecutar / Analizar código">
+                ▶ Ejecutar / Analizar
+            </button>
+            
+            <button type="button" class="btn btn-danger" onclick="limpiarConsola()" title="Limpiar consola de salida">
+                🧹 Limpiar consola
+            </button>
+        </div>
+        
+        <form id="codeForm" method="POST">
+            <textarea id="codigoEditor" name="codigo" placeholder="Escribe tu código Golampi aquí..."><?php echo htmlspecialchars($codigo); ?></textarea>
         </form>
+        
+        <!-- Input oculto para cargar archivos -->
+        <input type="file" id="fileInput" accept=".txt,.go,.golampi" onchange="procesarArchivo(this)">
         
         <?php if (!empty($errores)): ?>
             <div class="error">
@@ -205,14 +289,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['codigo'])) {
             </div>
         <?php endif; ?>
         
-        <?php if (!empty($consola)): ?>
+        <div class="consola-header">
             <h3>📟 Consola:</h3>
-            <div class="consola">
+        </div>
+        <div id="consolaOutput" class="consola">
+            <?php if (!empty($consola)): ?>
                 <?php foreach ($consola as $linea): ?>
                     <div><?php echo htmlspecialchars($linea); ?></div>
                 <?php endforeach; ?>
-            </div>
-        <?php endif; ?>
+            <?php else: ?>
+                <div style="color: #666;">--- No hay salida para mostrar ---</div>
+            <?php endif; ?>
+        </div>
         
         <?php if (isset($resultado['tabla_simbolos']) && !empty($resultado['tabla_simbolos'])): ?>
             <h3>📊 Tabla de Símbolos:</h3>
@@ -271,5 +359,68 @@ func main() {
             </pre>
         </div>
     </div>
+
+    <script>
+        // Función para Nuevo / Limpiar
+        function nuevoArchivo() {
+            document.getElementById('codigoEditor').value = '';
+            document.getElementById('consolaOutput').innerHTML = '<div style="color: #666;">--- No hay salida para mostrar ---</div>';
+            
+            // Opcional: También limpiar resultados anteriores si es necesario
+            // Recargar la página para limpiar completamente los resultados PHP
+            // O simplemente dejamos que el usuario ejecute nuevo código
+        }
+
+        // Función para Cargar archivo
+        function cargarArchivo() {
+            document.getElementById('fileInput').click();
+        }
+
+        // Procesar el archivo seleccionado
+        function procesarArchivo(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    document.getElementById('codigoEditor').value = e.target.result;
+                };
+                
+                reader.readAsText(file);
+            }
+            // Resetear el input para permitir cargar el mismo archivo nuevamente
+            input.value = '';
+        }
+
+        // Función para Guardar código
+        function guardarCodigo() {
+            const codigo = document.getElementById('codigoEditor').value;
+            if (!codigo.trim()) {
+                alert('No hay código para guardar');
+                return;
+            }
+            
+            const blob = new Blob([codigo], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'codigo.golampi';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Función para Limpiar consola
+        function limpiarConsola() {
+            document.getElementById('consolaOutput').innerHTML = '<div style="color: #666;">--- No hay salida para mostrar ---</div>';
+            
+            // Si queremos limpiar también en el backend, podríamos recargar la página
+            // Pero por ahora solo limpiamos visualmente
+        }
+
+        // Evento para mantener sincronizado el formulario si se necesita
+        // No es necesario, ya que el botón Ejecutar está dentro del formulario
+    </script>
 </body>
 </html>

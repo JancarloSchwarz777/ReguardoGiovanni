@@ -92,17 +92,17 @@ tipo: INT32 | FLOAT32 | STRING | BOOL | RUNE | '[' expresion ']' tipo;  // Arreg
 bloque: LLAVE_IZQ sentencia* LLAVE_DER;
 
 sentencia: declaracionVar PUNTO_COMA?
-         | declaracionConstante PUNTO_COMA?
-         | declaracionCorta PUNTO_COMA?
-         | asignacion PUNTO_COMA?
-         | llamadaFuncion PUNTO_COMA?      // ← Aquí incluimos llamadas a funciones
-         | ifStmt
-         | forStmt
-         | returnStmt PUNTO_COMA?
-         | breakStmt PUNTO_COMA?
-         | continueStmt PUNTO_COMA?
-         | bloque
-         ;
+        | declaracionConstante PUNTO_COMA?
+        | declaracionCorta PUNTO_COMA?
+        | asignacion PUNTO_COMA?
+        | llamadaFuncion PUNTO_COMA?      // ← Aquí incluimos llamadas a funciones
+        | ifStmt
+        | forStmt
+        | returnStmt PUNTO_COMA?
+        | breakStmt PUNTO_COMA?
+        | continueStmt PUNTO_COMA?
+        | bloque
+        ;
 
 // === DECLARACIONES ===
 declaracionVar: VAR listaIdentificadores tipo (ASIGNACION listaExpresiones)?;
@@ -156,3 +156,4 @@ continueStmt: CONTINUE;
 // === OPERADORES ADICIONALES ===
 MAS_ASIGNACION: '+=';
 MENOS_ASIGNACION: '-=';
+
