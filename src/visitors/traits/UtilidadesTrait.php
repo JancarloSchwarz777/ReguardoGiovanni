@@ -190,19 +190,44 @@ trait UtilidadesTrait
 
     // Modificar el manejo de ámbitos en visitFuncion y visitBloque
     // Cuando entramos a un nuevo ámbito
-    private function entrarAmbito($nombreAmbito)
+    private function entrarAmbito($tipoAmbito)
     {
+        // Generar un nombre único para el ámbito
+        $contador = 1;
+        $nombreBase = $tipoAmbito;
+        $nombreAmbito = $nombreBase;
+        
+        while (in_array($nombreAmbito, $this->pilaAmbitos)) {
+            $nombreAmbito = $nombreBase . '_' . $contador;
+            $contador++;
+        }
+        
         array_push($this->pilaAmbitos, $nombreAmbito);
         $this->ambitoActual = $nombreAmbito;
+        
+        error_log(">>> ENTRANDO a ámbito: " . $nombreAmbito);
+        error_log(">>> Pila actual: " . implode(' -> ', $this->pilaAmbitos));
+        
+        return $nombreAmbito;
     }
 
-    // Cuando salimos de un ámbito
     private function salirAmbito()
     {
-        // Eliminar las constantes de este ámbito de nuestro registro
+        // Eliminar las variables y constantes de este ámbito de la tabla en tiempo de ejecución
         $ambitoSalida = array_pop($this->pilaAmbitos);
         
-        // Limpiar constantes de este ámbito
+        // IMPORTANTE: No eliminar del historial, solo de la tabla de ejecución
+        foreach (array_keys($this->tablaSimbolos) as $key) {
+            if (isset($this->tablaSimbolos[$key]) && 
+                $this->tablaSimbolos[$key]['ambito'] === $ambitoSalida) {
+                unset($this->tablaSimbolos[$key]);
+            }
+        }
+        
+        error_log(">>> SALIENDO del ámbito: " . $ambitoSalida);
+        error_log(">>> Pila actual: " . implode(' -> ', $this->pilaAmbitos));
+        
+        // Limpiar constantes de este ámbito (solo para validación)
         foreach (array_keys($this->constantes) as $clave) {
             if (strpos($clave, $ambitoSalida . '.') === 0) {
                 unset($this->constantes[$clave]);

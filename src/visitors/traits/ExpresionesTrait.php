@@ -6,6 +6,7 @@ trait ExpresionesTrait
 // ============================================================ EXPRESIONES ============================================================
     public function visitExpresionPrimaria($ctx)
     {
+
         if ($ctx->NUMERO_ENTERO()) {
             return (int)$ctx->NUMERO_ENTERO()->getText();
         }

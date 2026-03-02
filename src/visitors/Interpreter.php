@@ -3,6 +3,7 @@
 use Antlr\Antlr4\Runtime\Tree\AbstractParseTreeVisitor;
 
 require_once __DIR__ . '/traits/AsignacionTrait.php';
+require_once __DIR__ . '/traits/ControlFlujoTrait.php';
 require_once __DIR__ . '/traits/DeclaracionesTrait.php';
 require_once __DIR__ . '/traits/ExpresionesTrait.php';
 require_once __DIR__ . '/traits/FuncionEmbTrait.php';
@@ -14,6 +15,7 @@ class Interpreter extends GolampiBaseVisitor
 {
 
     use AsignacionTrait;
+    use ControlFlujoTrait;
     use DeclaracionesTrait;
     use ExpresionesTrait;
     use FuncionEmbTrait;
@@ -23,6 +25,9 @@ class Interpreter extends GolampiBaseVisitor
 
     // Tabla de símbolos global
     private $tablaSimbolos = [];
+
+    // Tabla de símbolos histórica (para el reporte final)
+    private $tablaSimbolosHistorial = [];
     
     // Salida de la consola
     private $consola = [];
@@ -48,6 +53,14 @@ class Interpreter extends GolampiBaseVisitor
             'linea' => 0,
             'columna' => 0
         ];
+
+        // También guardar en historial
+        $this->tablaSimbolosHistorial['fmt.Println'] = [
+            'tipo' => 'funcion',
+            'ambito' => 'global',
+            'linea' => 0,
+            'columna' => 0
+        ];
     }
     
     // ============ PROGRAMA ============
@@ -55,9 +68,18 @@ class Interpreter extends GolampiBaseVisitor
     {
         $this->consola = [];
         $this->errores = [];
-        $this->constantes = []; // Inicializar array de constantes
+        $this->constantes = [];
         $this->pilaAmbitos = ['global'];
         $this->ambitoActual = 'global';
+        $this->tablaSimbolosHistorial = []; // Reiniciar historial
+        
+        // Registrar funciones embebidas en historial
+        $this->tablaSimbolosHistorial['fmt.Println'] = [
+            'tipo' => 'funcion',
+            'ambito' => 'global',
+            'linea' => 0,
+            'columna' => 0
+        ];
         
         // Visitar todas las funciones (esto registrará las funciones en la tabla)
         foreach ($ctx->funcion() as $funcion) {
@@ -67,7 +89,7 @@ class Interpreter extends GolampiBaseVisitor
         return [
             'consola' => $this->consola,
             'errores' => $this->errores,
-            'tabla_simbolos' => $this->tablaSimbolos,
+            'tabla_simbolos' => $this->tablaSimbolosHistorial, // <-- Usar historial
             'constantes' => $this->constantes
         ];
     }
@@ -79,13 +101,16 @@ class Interpreter extends GolampiBaseVisitor
         
         // Registrar función en tabla de símbolos
         if (!isset($this->tablaSimbolos[$nombre])) {
-            $this->tablaSimbolos[$nombre] = [
+            $datosFuncion = [
                 'tipo' => 'funcion',
                 'ambito' => 'global',
                 'linea' => $ctx->getStart()->getLine(),
                 'columna' => $ctx->getStart()->getCharPositionInLine(),
                 'esConstante' => false
             ];
+            
+            $this->tablaSimbolos[$nombre] = $datosFuncion;
+            $this->tablaSimbolosHistorial[$nombre] = $datosFuncion; // <-- Guardar en historial
         }
         
         // Si es main, ejecutarla
@@ -106,5 +131,16 @@ class Interpreter extends GolampiBaseVisitor
         }
         return null;
     }    
+
+    private function debugTablaSimbolos($mensaje = "")
+{
+    error_log("=== TABLA DE SÍMBOLOS " . $mensaje . " ===");
+    foreach ($this->tablaSimbolos as $id => $info) {
+        error_log("  $id: {tipo: " . ($info['tipo'] ?? '?') . 
+                 ", ámbito: " . ($info['ambito'] ?? '?') . 
+                 ", valor: " . ($this->formatearValor($info['valor'] ?? null)) . "}");
+    }
+    error_log("================================");
+}
 }
 

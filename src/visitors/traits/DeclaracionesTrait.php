@@ -74,6 +74,7 @@ trait DeclaracionesTrait
             'columna' => $columna,
             'esConstante' => true
         ];
+        $this->tablaSimbolosHistorial[$id] = $this->tablaSimbolos[$id];
         
         // Guardar en array de constantes
         $this->constantes[$this->ambitoActual . '.' . $id] = true;
@@ -149,7 +150,9 @@ trait DeclaracionesTrait
         $ids = $ctx->listaIdentificadores()->IDENTIFICADOR();
         $expresiones = $ctx->listaExpresiones() ? $ctx->listaExpresiones()->expresion() : [];
         
-        // Validar que la cantidad de IDs coincida con la de expresiones
+        error_log("Declaración var en ámbito: " . $this->ambitoActual);
+        
+        // Validar cantidad de IDs vs expresiones
         if (count($expresiones) > 0 && count($ids) != count($expresiones)) {
             $this->agregarErrorSemantico(
                 "La cantidad de identificadores no coincide con la cantidad de expresiones",
@@ -163,6 +166,8 @@ trait DeclaracionesTrait
             $id = $idNode->getText();
             $linea = $idNode->getSymbol()->getLine();
             $columna = $idNode->getSymbol()->getCharPositionInLine();
+            
+            error_log("  Declarando variable: $id en ámbito: " . $this->ambitoActual);
             
             // Verificar si ya existe en el ámbito actual
             if ($this->existeEnAmbitoActual($id)) {
@@ -184,20 +189,19 @@ trait DeclaracionesTrait
                 continue;
             }
             
-            // Evaluar valor inicial si existe
+            // Evaluar valor inicial
             $valor = null;
             if (isset($expresiones[$i])) {
                 $valor = $this->visit($expresiones[$i]);
                 $tipoValor = $this->obtenerTipo($valor);
                 
-                // Validar compatibilidad de tipos
                 if (!$this->tiposCompatiblesAsignacion($tipo, $tipoValor)) {
                     $this->agregarErrorSemantico(
                         "No se puede asignar valor de tipo '$tipoValor' a variable de tipo '$tipo'",
                         $linea,
                         $columna
                     );
-                    $valor = $this->valorPorDefecto($tipo); // Asignar valor por defecto
+                    $valor = $this->valorPorDefecto($tipo);
                 }
             } else {
                 $valor = $this->valorPorDefecto($tipo);
@@ -206,11 +210,15 @@ trait DeclaracionesTrait
             // Registrar en tabla de símbolos
             $this->tablaSimbolos[$id] = [
                 'tipo' => $tipo,
-                'ambito' => $this->ambitoActual,
+                'ambito' => $this->ambitoActual,  // Asegurar que se guarda el ámbito actual
                 'valor' => $valor,
                 'linea' => $linea,
-                'columna' => $columna
+                'columna' => $columna,
+                'esConstante' => false
             ];
+            $this->tablaSimbolosHistorial[$id] = $this->tablaSimbolos[$id];
+            
+            error_log("    → Registrada en tabla: " . $id . " (ámbito: " . $this->ambitoActual . ")");
         }
         
         return null;
@@ -317,6 +325,7 @@ trait DeclaracionesTrait
                     'columna' => $columna,
                     'esConstante' => false
                 ];
+                $this->tablaSimbolosHistorial[$id] = $this->tablaSimbolos[$id];
             }
         }
         
