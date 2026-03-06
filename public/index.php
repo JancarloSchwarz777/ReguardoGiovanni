@@ -3,6 +3,7 @@ require_once __DIR__ . '/../bootstrap.php';
 
 use Antlr\Antlr4\Runtime\CommonTokenStream;
 use Antlr\Antlr4\Runtime\InputStream;
+use Antlr\Antlr4\Runtime\Token;
 
 // Función auxiliar global para formatear valores
 function formatearValorParaTabla($valor) {
@@ -22,6 +23,11 @@ function formatearValorParaTabla($valor) {
     return (string)$valor;
 }
 
+// Configurar logging
+ini_set('log_errors', 1);
+ini_set('error_log', __DIR__ . '/../php_errors.log');
+error_log("=== NUEVA EJECUCIÓN ===");
+
 $resultado = null;
 $codigo = '';
 $consola = [];
@@ -30,27 +36,44 @@ $errores = [];
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['codigo'])) {
     $codigo = $_POST['codigo'];
     
+    error_log("Código recibido:\n" . $codigo);
+    
     try {
         // Análisis con ANTLR
         $input = InputStream::fromString($codigo);
         $lexer = new GolampiLexer($input);
-        $tokens = new CommonTokenStream($lexer);
+        $tokens = new CommonTokenStream($lexer);        
         $parser = new GolampiParser($tokens);
         
+        // Intentar parsear
         $tree = $parser->programa();
         
-        if ($parser->getNumberOfSyntaxErrors() > 0) {
-            $errores[] = "Error sintáctico en el código";
+        $erroresSintacticos = $parser->getNumberOfSyntaxErrors();
+        error_log("Errores sintácticos: " . $erroresSintacticos);
+        
+        if ($erroresSintacticos > 0) {
+            $errores[] = "Error sintáctico en el código. Revisa la estructura.";
+            
+            // Mostrar los últimos errores del parser si es posible
+            if (method_exists($parser, 'getErrorListeners')) {
+                // No podemos obtener detalles fácilmente
+            }
         } else {
+            error_log("Árbol generado correctamente");
+            error_log("Tipo de árbol: " . get_class($tree));
+            
             // Ejecutar con nuestro visitor
             $visitor = new Interpreter();
             $resultado = $visitor->visit($tree);
             $consola = $resultado['consola'] ?? [];
             $errores = $resultado['errores'] ?? [];
+            
+            error_log("Ejecución completada. " . count($consola) . " líneas de consola, " . count($errores) . " errores.");
         }
         
     } catch (Exception $e) {
-        $errores[] = $e->getMessage();
+        error_log("Excepción: " . $e->getMessage() . "\n" . $e->getTraceAsString());
+        $errores[] = "Error: " . $e->getMessage();
     }
 }
 ?>
@@ -255,7 +278,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['codigo'])) {
                 💾 Guardar código
             </button>
             
-            <!-- Botón Ejecutar (ya existente, pero lo incluimos en la barra) -->
+            <!-- Botón Ejecutar -->
             <button type="submit" form="codeForm" class="btn btn-primary" title="Ejecutar / Analizar código">
                 ▶ Ejecutar / Analizar
             </button>
@@ -357,26 +380,28 @@ func main() {
     fmt.Println("esDivertido =", esDivertido)
 }
             </pre>
+            <p><strong>Para probar el for, usa:</strong></p>
+            <pre>
+func main() {
+    for i := 0; i < 5; i++ {
+        fmt.Println(i)
+    }
+}
+            </pre>
         </div>
     </div>
 
     <script>
-        // Función para Nuevo / Limpiar
         function nuevoArchivo() {
             document.getElementById('codigoEditor').value = '';
             document.getElementById('consolaOutput').innerHTML = '<div style="color: #666;">--- No hay salida para mostrar ---</div>';
-            
-            // Opcional: También limpiar resultados anteriores si es necesario
-            // Recargar la página para limpiar completamente los resultados PHP
-            // O simplemente dejamos que el usuario ejecute nuevo código
+            window.location.href = window.location.pathname;
         }
 
-        // Función para Cargar archivo
         function cargarArchivo() {
             document.getElementById('fileInput').click();
         }
 
-        // Procesar el archivo seleccionado
         function procesarArchivo(input) {
             if (input.files && input.files[0]) {
                 const file = input.files[0];
@@ -388,11 +413,9 @@ func main() {
                 
                 reader.readAsText(file);
             }
-            // Resetear el input para permitir cargar el mismo archivo nuevamente
             input.value = '';
         }
 
-        // Función para Guardar código
         function guardarCodigo() {
             const codigo = document.getElementById('codigoEditor').value;
             if (!codigo.trim()) {
@@ -411,16 +434,9 @@ func main() {
             URL.revokeObjectURL(url);
         }
 
-        // Función para Limpiar consola
         function limpiarConsola() {
             document.getElementById('consolaOutput').innerHTML = '<div style="color: #666;">--- No hay salida para mostrar ---</div>';
-            
-            // Si queremos limpiar también en el backend, podríamos recargar la página
-            // Pero por ahora solo limpiamos visualmente
         }
-
-        // Evento para mantener sincronizado el formulario si se necesita
-        // No es necesario, ya que el botón Ejecutar está dentro del formulario
     </script>
 </body>
 </html>

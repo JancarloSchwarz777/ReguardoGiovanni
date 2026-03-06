@@ -146,7 +146,16 @@ argumentos: expresion (COMA expresion)*;
 
 // === CONTROL DE FLUJO ===
 ifStmt: IF expresion bloque (ELSE (ifStmt | bloque))?;
-forStmt: FOR expresion? PUNTO_COMA? expresion? PUNTO_COMA? expresion? bloque;
+
+forStmt: FOR forHeader bloque;
+forHeader: forClause 
+         | expresion 
+         | /* empty */
+         ;
+
+forClause: initStmt? ';' expresion? ';' postStmt?;
+initStmt: declaracionCorta | asignacion | expresion;
+postStmt: asignacion | expresion | INCREMENTO | DECREMENTO;
 
 // === TRANSFERENCIA ===
 returnStmt: RETURN expresion?;

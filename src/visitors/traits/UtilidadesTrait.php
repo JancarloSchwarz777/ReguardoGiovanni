@@ -250,4 +250,17 @@ trait UtilidadesTrait
         return $tipo === 'int32' || $tipo === 'float32';
     }
 
+    private function debugTablaSimbolos($mensaje = "")
+    {
+        error_log("=== TABLA DE SÍMBOLOS $mensaje ===");
+        foreach ($this->tablaSimbolos as $id => $info) {
+            if (isset($info['ambito']) && $info['ambito'] === $this->ambitoActual) {
+                error_log("  $id: {tipo: " . ($info['tipo'] ?? '?') . 
+                        ", valor: " . $this->formatearValor($info['valor'] ?? null) . 
+                        ", ámbito: " . ($info['ambito'] ?? '?') . "}");
+            }
+        }
+        error_log("================================");
+    }
+
 }

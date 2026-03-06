@@ -246,6 +246,42 @@ interface GolampiVisitor extends ParseTreeVisitor
 	public function visitForStmt(Context\ForStmtContext $context);
 
 	/**
+	 * Visit a parse tree produced by {@see GolampiParser::forHeader()}.
+	 *
+	 * @param Context\ForHeaderContext $context The parse tree.
+	 *
+	 * @return mixed The visitor result.
+	 */
+	public function visitForHeader(Context\ForHeaderContext $context);
+
+	/**
+	 * Visit a parse tree produced by {@see GolampiParser::forClause()}.
+	 *
+	 * @param Context\ForClauseContext $context The parse tree.
+	 *
+	 * @return mixed The visitor result.
+	 */
+	public function visitForClause(Context\ForClauseContext $context);
+
+	/**
+	 * Visit a parse tree produced by {@see GolampiParser::initStmt()}.
+	 *
+	 * @param Context\InitStmtContext $context The parse tree.
+	 *
+	 * @return mixed The visitor result.
+	 */
+	public function visitInitStmt(Context\InitStmtContext $context);
+
+	/**
+	 * Visit a parse tree produced by {@see GolampiParser::postStmt()}.
+	 *
+	 * @param Context\PostStmtContext $context The parse tree.
+	 *
+	 * @return mixed The visitor result.
+	 */
+	public function visitPostStmt(Context\PostStmtContext $context);
+
+	/**
 	 * Visit a parse tree produced by {@see GolampiParser::returnStmt()}.
 	 *
 	 * @param Context\ReturnStmtContext $context The parse tree.

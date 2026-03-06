@@ -4,10 +4,12 @@ use Antlr\Antlr4\Runtime\Tree\AbstractParseTreeVisitor;
 
 require_once __DIR__ . '/traits/AsignacionTrait.php';
 require_once __DIR__ . '/traits/ControlFlujoTrait.php';
+require_once __DIR__ . '/traits/ControlForTrait.php';
 require_once __DIR__ . '/traits/DeclaracionesTrait.php';
 require_once __DIR__ . '/traits/ExpresionesTrait.php';
 require_once __DIR__ . '/traits/FuncionEmbTrait.php';
 require_once __DIR__ . '/traits/FuncUsuarioTrait.php';
+require_once __DIR__ . '/traits/TransferenciaTrait.php';
 require_once __DIR__ . '/traits/UtilidadesTrait.php';
 
 
@@ -16,10 +18,12 @@ class Interpreter extends GolampiBaseVisitor
 
     use AsignacionTrait;
     use ControlFlujoTrait;
+    use ControlForTrait;
     use DeclaracionesTrait;
     use ExpresionesTrait;
     use FuncionEmbTrait;
     use FuncUsuarioTrait;
+    use TransferenciaTrait;
     use UtilidadesTrait;
 
 

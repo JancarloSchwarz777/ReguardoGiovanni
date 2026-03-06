@@ -272,6 +272,46 @@ interface GolampiListener extends ParseTreeListener {
 	 */
 	public function exitForStmt(Context\ForStmtContext $context): void;
 	/**
+	 * Enter a parse tree produced by {@see GolampiParser::forHeader()}.
+	 * @param $context The parse tree.
+	 */
+	public function enterForHeader(Context\ForHeaderContext $context): void;
+	/**
+	 * Exit a parse tree produced by {@see GolampiParser::forHeader()}.
+	 * @param $context The parse tree.
+	 */
+	public function exitForHeader(Context\ForHeaderContext $context): void;
+	/**
+	 * Enter a parse tree produced by {@see GolampiParser::forClause()}.
+	 * @param $context The parse tree.
+	 */
+	public function enterForClause(Context\ForClauseContext $context): void;
+	/**
+	 * Exit a parse tree produced by {@see GolampiParser::forClause()}.
+	 * @param $context The parse tree.
+	 */
+	public function exitForClause(Context\ForClauseContext $context): void;
+	/**
+	 * Enter a parse tree produced by {@see GolampiParser::initStmt()}.
+	 * @param $context The parse tree.
+	 */
+	public function enterInitStmt(Context\InitStmtContext $context): void;
+	/**
+	 * Exit a parse tree produced by {@see GolampiParser::initStmt()}.
+	 * @param $context The parse tree.
+	 */
+	public function exitInitStmt(Context\InitStmtContext $context): void;
+	/**
+	 * Enter a parse tree produced by {@see GolampiParser::postStmt()}.
+	 * @param $context The parse tree.
+	 */
+	public function enterPostStmt(Context\PostStmtContext $context): void;
+	/**
+	 * Exit a parse tree produced by {@see GolampiParser::postStmt()}.
+	 * @param $context The parse tree.
+	 */
+	public function exitPostStmt(Context\PostStmtContext $context): void;
+	/**
 	 * Enter a parse tree produced by {@see GolampiParser::returnStmt()}.
 	 * @param $context The parse tree.
 	 */
