@@ -3,7 +3,6 @@ require_once __DIR__ . '/../bootstrap.php';
 
 use Antlr\Antlr4\Runtime\CommonTokenStream;
 use Antlr\Antlr4\Runtime\InputStream;
-use Antlr\Antlr4\Runtime\Token;
 
 // Función auxiliar global para formatear valores
 function formatearValorParaTabla($valor) {
@@ -18,7 +17,12 @@ function formatearValorParaTabla($valor) {
         return (string)$valor;
     }
     if (is_array($valor)) {
-        return '[' . implode(', ', array_map('formatearValorParaTabla', $valor)) . ']';
+        // Verificar si es un múltiple retorno
+        $elementos = [];
+        foreach ($valor as $v) {
+            $elementos[] = formatearValorParaTabla($v);
+        }
+        return '[' . implode(', ', $elementos) . ']';
     }
     return (string)$valor;
 }
@@ -32,6 +36,7 @@ $resultado = null;
 $codigo = '';
 $consola = [];
 $errores = [];
+$tabla_simbolos = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['codigo'])) {
     $codigo = $_POST['codigo'];
@@ -42,22 +47,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['codigo'])) {
         // Análisis con ANTLR
         $input = InputStream::fromString($codigo);
         $lexer = new GolampiLexer($input);
-        $tokens = new CommonTokenStream($lexer);        
+        
+        // Crear listener de errores
+        $errorListener = new GolampiErrorListener();
+        
+        // Agregar listener al lexer
+        $lexer->removeErrorListeners();
+        $lexer->addErrorListener($errorListener);
+        
+        $tokens = new CommonTokenStream($lexer);
         $parser = new GolampiParser($tokens);
+        
+        // Agregar listener al parser
+        $parser->removeErrorListeners();
+        $parser->addErrorListener($errorListener);
         
         // Intentar parsear
         $tree = $parser->programa();
         
-        $erroresSintacticos = $parser->getNumberOfSyntaxErrors();
-        error_log("Errores sintácticos: " . $erroresSintacticos);
+        // Obtener errores léxicos y sintácticos del listener
+        $erroresLexicoSintactico = $errorListener->getErrores();
         
-        if ($erroresSintacticos > 0) {
-            $errores[] = "Error sintáctico en el código. Revisa la estructura.";
-            
-            // Mostrar los últimos errores del parser si es posible
-            if (method_exists($parser, 'getErrorListeners')) {
-                // No podemos obtener detalles fácilmente
-            }
+        if (!empty($erroresLexicoSintactico)) {
+            // Agregar estos errores a la lista general
+            $errores = array_merge($errores, $erroresLexicoSintactico);
+            error_log("Se encontraron " . count($erroresLexicoSintactico) . " errores léxicos/sintácticos");
         } else {
             error_log("Árbol generado correctamente");
             error_log("Tipo de árbol: " . get_class($tree));
@@ -66,14 +80,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['codigo'])) {
             $visitor = new Interpreter();
             $resultado = $visitor->visit($tree);
             $consola = $resultado['consola'] ?? [];
-            $errores = $resultado['errores'] ?? [];
+            $tabla_simbolos = $resultado['tabla_simbolos'] ?? [];
             
-            error_log("Ejecución completada. " . count($consola) . " líneas de consola, " . count($errores) . " errores.");
+            // Agregar errores semánticos
+            if (!empty($resultado['errores'])) {
+                $errores = array_merge($errores, $resultado['errores']);
+            }
+            
+            error_log("Ejecución completada. " . count($consola) . " líneas de consola, " . count($errores) . " errores totales.");
         }
         
     } catch (Exception $e) {
         error_log("Excepción: " . $e->getMessage() . "\n" . $e->getTraceAsString());
-        $errores[] = "Error: " . $e->getMessage();
+        $errores[] = [
+            'tipo' => 'Sistema',
+            'linea' => 0,
+            'columna' => 0,
+            'descripcion' => "Error interno: " . $e->getMessage()
+        ];
+    }
+}
+
+// Función para obtener clase CSS según tipo de error
+function getErrorClass($tipo) {
+    switch ($tipo) {
+        case 'Léxico': return 'error-lexico';
+        case 'Sintáctico': return 'error-sintactico';
+        case 'Semántico': return 'error-semantico';
+        default: return '';
+    }
+}
+
+// Función para obtener color según tipo de error
+function getErrorColor($tipo) {
+    switch ($tipo) {
+        case 'Léxico': return '#ff9800'; // Naranja
+        case 'Sintáctico': return '#f44336'; // Rojo
+        case 'Semántico': return '#9c27b0'; // Púrpura
+        default: return '#6c757d'; // Gris
     }
 }
 ?>
@@ -82,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['codigo'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Golampi Interpreter - Fase 1 (MVP)</title>
+    <title>Golampi Interpreter - Reporte de Errores</title>
     <style>
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
@@ -195,14 +239,58 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['codigo'])) {
             align-items: center;
             margin-top: 20px;
         }
-        .error { 
-            background: #ffebee; 
-            color: #c62828; 
-            padding: 15px; 
-            border-radius: 5px;
+        .error-container { 
+            background: #fff3f3; 
+            border-radius: 8px;
             border-left: 5px solid #f44336;
-            margin: 15px 0;
+            margin: 20px 0;
+            overflow: hidden;
         }
+        .error-header {
+            background: #f44336;
+            color: white;
+            padding: 15px;
+            margin: 0;
+        }
+        .error-header h3 {
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .error-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+        .error-table th {
+            background: #f8f9fa;
+            color: #333;
+            font-weight: bold;
+            padding: 12px;
+            text-align: left;
+            border-bottom: 2px solid #dee2e6;
+        }
+        .error-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .error-table tr:hover {
+            background: #f5f5f5;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+        }
+        .badge-lexico { background: #ff9800; }
+        .badge-sintactico { background: #f44336; }
+        .badge-semantico { background: #9c27b0; }
+        .badge-sistema { background: #6c757d; }
+        
         table { 
             width: 100%; 
             border-collapse: collapse; 
@@ -258,13 +346,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['codigo'])) {
         #fileInput {
             display: none;
         }
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin: 15px 0;
+        }
+        .stat-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            flex: 1;
+            text-align: center;
+            border: 1px solid #dee2e6;
+        }
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        .stat-label {
+            color: #6c757d;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🧪 Golampi Interpreter - Fase 1 (MVP)</h1>
+        <h1>🧪 Golampi Interpreter - Reporte de Errores</h1>
         
-        <!-- Barra de acciones con todos los botones solicitados -->
+        <!-- Barra de acciones -->
         <div class="toolbar">
             <button type="button" class="btn btn-warning" onclick="nuevoArchivo()" title="Limpiar editor y consola">
                 🆕 Nuevo / Limpiar
@@ -278,7 +388,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['codigo'])) {
                 💾 Guardar código
             </button>
             
-            <!-- Botón Ejecutar -->
             <button type="submit" form="codeForm" class="btn btn-primary" title="Ejecutar / Analizar código">
                 ▶ Ejecutar / Analizar
             </button>
@@ -295,23 +404,85 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['codigo'])) {
         <!-- Input oculto para cargar archivos -->
         <input type="file" id="fileInput" accept=".txt,.go,.golampi" onchange="procesarArchivo(this)">
         
-        <?php if (!empty($errores)): ?>
-            <div class="error">
-                <h3>❌ Errores encontrados:</h3>
-                <?php foreach ($errores as $error): ?>
-                    <div>
-                        <?php 
-                        if (is_array($error)) {
-                            echo "[{$error['tipo']}] Línea {$error['linea']}: {$error['descripcion']}";
-                        } else {
-                            echo htmlspecialchars($error);
-                        }
-                        ?>
-                    </div>
-                <?php endforeach; ?>
+        <!-- Estadísticas -->
+        <?php 
+        $totalErrores = count($errores);
+        $erroresLexicos = count(array_filter($errores, function($e) { return is_array($e) && ($e['tipo'] ?? '') == 'Léxico'; }));
+        $erroresSintacticos = count(array_filter($errores, function($e) { return is_array($e) && ($e['tipo'] ?? '') == 'Sintáctico'; }));
+        $erroresSemanticos = count(array_filter($errores, function($e) { return is_array($e) && ($e['tipo'] ?? '') == 'Semántico'; }));
+        ?>
+        
+        <?php if ($totalErrores > 0): ?>
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number"><?php echo $totalErrores; ?></div>
+                    <div class="stat-label">Total Errores</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" style="color: #ff9800;"><?php echo $erroresLexicos; ?></div>
+                    <div class="stat-label">Léxicos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" style="color: #f44336;"><?php echo $erroresSintacticos; ?></div>
+                    <div class="stat-label">Sintácticos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" style="color: #9c27b0;"><?php echo $erroresSemanticos; ?></div>
+                    <div class="stat-label">Semánticos</div>
+                </div>
             </div>
         <?php endif; ?>
         
+        <!-- Reporte de Errores -->
+        <?php if (!empty($errores)): ?>
+            <div class="error-container">
+                <div class="error-header">
+                    <h3>
+                        <span>❌ Reporte de Errores</span>
+                        <span style="font-size: 14px; background: rgba(255,255,255,0.2); padding: 3px 10px; border-radius: 20px;">
+                            Total: <?php echo count($errores); ?>
+                        </span>
+                    </h3>
+                </div>
+                
+                <table class="error-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Tipo</th>
+                            <th>Línea</th>
+                            <th>Columna</th>
+                            <th>Descripción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($errores as $index => $error): ?>
+                            <?php if (is_array($error)): ?>
+                                <tr>
+                                    <td><?php echo $index + 1; ?></td>
+                                    <td>
+                                        <?php 
+                                        $tipo = $error['tipo'] ?? 'Sistema';
+                                        $tipoLower = strtolower($tipo);
+                                        // Eliminar acentos para las clases CSS
+                                        $tipoClass = str_replace(['é', 'á', 'í', 'ó', 'ú'], ['e', 'a', 'i', 'o', 'u'], $tipoLower);
+                                        ?>
+                                        <span class="badge badge-<?php echo $tipoClass; ?>">
+                                            <?php echo htmlspecialchars($tipo); ?>
+                                        </span>
+                                    </td>
+                                    <td><?php echo $error['linea'] ?? 0; ?></td>
+                                    <td><?php echo $error['columna'] ?? 0; ?></td>
+                                    <td><?php echo htmlspecialchars($error['descripcion'] ?? ''); ?></td>
+                                </tr>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php endif; ?>
+        
+        <!-- Consola -->
         <div class="consola-header">
             <h3>📟 Consola:</h3>
         </div>
@@ -325,7 +496,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['codigo'])) {
             <?php endif; ?>
         </div>
         
-        <?php if (isset($resultado['tabla_simbolos']) && !empty($resultado['tabla_simbolos'])): ?>
+        <!-- Tabla de Símbolos -->
+        <?php if (!empty($tabla_simbolos)): ?>
             <h3>📊 Tabla de Símbolos:</h3>
             <table>
                 <thead>
@@ -338,7 +510,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['codigo'])) {
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($resultado['tabla_simbolos'] as $id => $info): ?>
+                    <?php foreach ($tabla_simbolos as $id => $info): ?>
                         <?php if (isset($info['tipo']) && $info['tipo'] !== 'funcion'): ?>
                         <tr>
                             <td><strong><?php echo htmlspecialchars($id); ?></strong></td>
@@ -357,34 +529,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['codigo'])) {
             </table>
         <?php endif; ?>
         
+        <!-- Ejemplos para probar errores -->
         <div class="ejemplo">
-            <h3>📝 Ejemplo de código válido:</h3>
+            <h3>📝 Ejemplos para probar errores:</h3>
+            
+            <p><strong>🔴 Error Léxico (caracter no válido):</strong></p>
             <pre>
 func main() {
-    // Declaración explícita
-    var x int32 = 10
-    var y int32
-    
-    // Declaración corta
-    nombre := "Golampi"
-    esDivertido := true
-    
-    // Asignaciones
-    x = x + 5
-    y = 20
-    
-    // Impresión
-    fmt.Println("Hola", nombre)
-    fmt.Println("x =", x)
-    fmt.Println("y =", y)
-    fmt.Println("esDivertido =", esDivertido)
+    var x int32 = 10 @ 20  // Error: @ no es válido
+    fmt.Println(x)
 }
             </pre>
-            <p><strong>Para probar el for, usa:</strong></p>
+            
+            <p><strong>🔴 Error Sintáctico (falta paréntesis):</strong></p>
             <pre>
 func main() {
-    for i := 0; i < 5; i++ {
-        fmt.Println(i)
+    if x > 5 {  // Error: falta paréntesis de cierre
+        fmt.Println("Hola"
+}
+            </pre>
+            
+            <p><strong>🔴 Error Semántico (variable no declarada):</strong></p>
+            <pre>
+func main() {
+    y = x + 10  // Error: x no declarada
+    fmt.Println(y)
+}
+            </pre>
+            
+            <p><strong>✅ Código correcto:</strong></p>
+            <pre>
+func main() {
+    x := 10
+    if x > 5 {
+        fmt.Println("x es mayor que 5")
     }
 }
             </pre>

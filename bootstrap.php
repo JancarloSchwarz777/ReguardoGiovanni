@@ -1,10 +1,9 @@
 <?php
 // bootstrap.php - Cargador inicial
 
-// 1. Composer autoload
 require_once __DIR__ . '/vendor/autoload.php';
 
-// 2. Archivos ANTLR generados
+// Archivos ANTLR generados
 $archivos = [
     'src/gramatica/gramatica/GolampiLexer.php',
     'src/gramatica/gramatica/GolampiParser.php',
@@ -21,5 +20,14 @@ foreach ($archivos as $archivo) {
     }
 }
 
-// 3. Visitors personalizados
+// Ahora cargamos automáticamente todos los traits
+$traits = glob(__DIR__ . '/src/visitors/traits/*.php');
+foreach ($traits as $trait) {
+    require_once $trait;
+}
+
+// Visitor principal
 require_once __DIR__ . '/src/visitors/Interpreter.php';
+
+// ErrorListener (AGREGAR ESTA LÍNEA)
+require_once __DIR__ . '/src/ErrorListener.php';
