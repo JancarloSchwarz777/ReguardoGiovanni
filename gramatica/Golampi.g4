@@ -167,7 +167,7 @@ caso: CASE listaExpresiones DOS_PUNTOS sentencia*;
 defaultBloque: DEFAULT DOS_PUNTOS sentencia*;
 
 // === TRANSFERENCIA ===
-returnStmt: RETURN expresion?;
+returnStmt: RETURN (expresion (COMA expresion)*)?;
 breakStmt: BREAK;
 continueStmt: CONTINUE;
 

@@ -4,9 +4,10 @@ trait ExpresionesTrait
 {
 
 // ============================================================ EXPRESIONES ============================================================
+    // En ExpresionesTrait.php, modificar visitExpresionPrimaria:
+
     public function visitExpresionPrimaria($ctx)
     {
-
         if ($ctx->NUMERO_ENTERO()) {
             return (int)$ctx->NUMERO_ENTERO()->getText();
         }
@@ -39,8 +40,12 @@ trait ExpresionesTrait
         
         if ($ctx->IDENTIFICADOR()) {
             $id = $ctx->IDENTIFICADOR()->getText();
+            error_log("Accediendo a variable: $id");
+            
             if (isset($this->tablaSimbolos[$id])) {
-                return $this->tablaSimbolos[$id]['valor'];
+                $valor = $this->tablaSimbolos[$id]['valor'];
+                error_log("  Valor encontrado: " . $this->formatearValor($valor));
+                return $valor;
             } else {
                 $this->agregarErrorSemantico(
                     "Variable '$id' no declarada",
@@ -49,6 +54,11 @@ trait ExpresionesTrait
                 );
                 return null;
             }
+        }
+        
+        if ($ctx->llamadaFuncion()) {
+            error_log("Expresión primaria contiene llamada a función");
+            return $this->visit($ctx->llamadaFuncion());
         }
         
         if ($ctx->expresion()) {

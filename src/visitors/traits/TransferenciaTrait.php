@@ -50,19 +50,4 @@ trait TransferenciaTrait
         return null;
     }
     
-    public function visitReturnStmt($ctx)
-    {
-        $linea = $ctx->getStart()->getLine();
-        $columna = $ctx->getStart()->getCharPositionInLine();
-        
-        error_log(">>> RETURN en línea $linea");
-        
-        if ($ctx->expresion()) {
-            $valor = $this->visit($ctx->expresion());
-            error_log("Valor retornado: " . $this->formatearValor($valor));
-            return $valor;
-        }
-        
-        return null;
-    }
 }

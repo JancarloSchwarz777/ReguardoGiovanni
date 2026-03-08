@@ -224,18 +224,51 @@ trait DeclaracionesTrait
         return null;
     }
     
+    // En DeclaracionesTrait.php, modificar visitDeclaracionCorta:
     public function visitDeclaracionCorta($ctx)
     {
         $ids = $ctx->listaIdentificadores()->IDENTIFICADOR();
         $expresiones = $ctx->listaExpresiones()->expresion();
         
-        // Validar cantidad
-        if (count($ids) != count($expresiones)) {
+        error_log("=== DECLARACIÓN CORTA con " . count($ids) . " IDs y " . count($expresiones) . " expresiones ===");
+        
+        // Evaluar todas las expresiones primero
+        $valoresExpresiones = [];
+        $valoresAplanados = [];
+        
+        foreach ($expresiones as $expr) {
+            $valor = $this->visit($expr);
+            $valoresExpresiones[] = $valor;
+            error_log("  Expresión evaluada: " . $this->formatearValor($valor) . " (tipo: " . $this->obtenerTipo($valor) . ")");
+            
+            // Si es un array y parece ser de múltiples retornos (no un arreglo del lenguaje)
+            if (is_array($valor) && isset($valor[0]) && !$this->esArregloEstructurado($valor)) {
+                // Es un múltiple retorno - aplanarlo
+                error_log("  → Múltiples retornos detectados: " . count($valor) . " valores");
+                foreach ($valor as $v) {
+                    $valoresAplanados[] = $v;
+                }
+            } else {
+                // Es un valor simple
+                $valoresAplanados[] = $valor;
+            }
+        }
+        
+        error_log("  Total valores después de aplanar: " . count($valoresAplanados));
+        
+        // Validar cantidad después de aplanar
+        if (count($ids) != count($valoresAplanados)) {
             $this->agregarErrorSemantico(
-                "La cantidad de identificadores no coincide con la cantidad de expresiones",
+                "La cantidad de identificadores (" . count($ids) . 
+                ") no coincide con la cantidad de valores retornados (" . count($valoresAplanados) . ")",
                 $ctx->getStart()->getLine(),
                 $ctx->getStart()->getCharPositionInLine()
             );
+            
+            // Mostrar detalles para debugging
+            error_log("  IDs: " . implode(', ', array_map(function($id) { return $id->getText(); }, $ids)));
+            error_log("  Valores aplanados: " . print_r($valoresAplanados, true));
+            
             return null;
         }
         
@@ -245,17 +278,6 @@ trait DeclaracionesTrait
             $id = $idNode->getText();
             if (!$this->existeEnAmbitoActual($id)) {
                 $nuevasVariables++;
-            } else {
-                // Verificar que no sea constante si ya existe
-                $claveAmbito = $this->tablaSimbolos[$id]['ambito'] . '.' . $id;
-                if (isset($this->constantes[$claveAmbito])) {
-                    $this->agregarErrorSemantico(
-                        "No se puede redeclarar la constante '$id'",
-                        $idNode->getSymbol()->getLine(),
-                        $idNode->getSymbol()->getCharPositionInLine()
-                    );
-                    return null;
-                }
             }
         }
         
@@ -268,16 +290,20 @@ trait DeclaracionesTrait
             return null;
         }
         
+        // Ahora asignar cada valor aplanado a su identificador correspondiente
         foreach ($ids as $i => $idNode) {
             $id = $idNode->getText();
             $linea = $idNode->getSymbol()->getLine();
             $columna = $idNode->getSymbol()->getCharPositionInLine();
             
-            // Si ya existe, es una reasignación (pero ya validamos que no sea constante arriba)
+            $valor = $valoresAplanados[$i];
+            $tipoValor = $this->obtenerTipo($valor);
+            
+            error_log("  Asignando valor $i a $id: " . $this->formatearValor($valor) . " (tipo: $tipoValor)");
+            
+            // Si ya existe, es una reasignación
             if ($this->existeEnAmbitoActual($id)) {
-                // Es reasignación, no declaración
-                $valor = $this->visit($expresiones[$i]);
-                $tipoValor = $this->obtenerTipo($valor);
+                error_log("  Reasignando variable existente: $id");
                 $tipoVariable = $this->tablaSimbolos[$id]['tipo'];
                 
                 if (!$this->tiposCompatiblesAsignacion($tipoVariable, $tipoValor)) {
@@ -292,6 +318,8 @@ trait DeclaracionesTrait
                 $this->tablaSimbolos[$id]['valor'] = $valor;
             } else {
                 // Es declaración nueva
+                error_log("  Declarando nueva variable: $id con tipo $tipoValor");
+                
                 // Verificar palabra reservada
                 if ($this->esPalabraReservada($id)) {
                     $this->agregarErrorSemantico(
@@ -302,12 +330,8 @@ trait DeclaracionesTrait
                     continue;
                 }
                 
-                // Evaluar expresión
-                $valor = $this->visit($expresiones[$i]);
-                $tipo = $this->obtenerTipo($valor);
-                
                 // Validar nil
-                if ($tipo === 'nil') {
+                if ($tipoValor === 'nil') {
                     $this->agregarErrorSemantico(
                         "No se puede inferir tipo de nil en declaración corta",
                         $linea,
@@ -318,7 +342,7 @@ trait DeclaracionesTrait
                 
                 // Registrar en tabla de símbolos
                 $this->tablaSimbolos[$id] = [
-                    'tipo' => $tipo,
+                    'tipo' => $tipoValor,
                     'ambito' => $this->ambitoActual,
                     'valor' => $valor,
                     'linea' => $linea,
@@ -329,7 +353,25 @@ trait DeclaracionesTrait
             }
         }
         
+        // Debug: mostrar todas las variables después de la declaración
+        error_log("  Variables después de declaración:");
+        foreach ($ids as $idNode) {
+            $id = $idNode->getText();
+            if (isset($this->tablaSimbolos[$id])) {
+                error_log("    $id = " . $this->formatearValor($this->tablaSimbolos[$id]['valor']) . 
+                        " (tipo: " . $this->tablaSimbolos[$id]['tipo'] . ")");
+            }
+        }
+        
         return null;
+    }
+
+    // Método auxiliar para distinguir entre arreglos y múltiples retornos
+    private function esArreglo($valor)
+    {
+        // Por ahora, asumimos que un array es un arreglo si sus keys son numéricas consecutivas
+        // y fue creado como arreglo (esto necesitará refinarse)
+        return is_array($valor) && !isset($valor['__multiple_return']);
     }
 
 }

@@ -33,9 +33,21 @@ trait UtilidadesTrait
     {
         if ($valor === null) return 'nil';
         if (is_bool($valor)) return $valor ? 'true' : 'false';
-        if (is_string($valor)) return $valor;
-        if (is_float($valor) && floor($valor) == $valor) {
-            return (string)(int)$valor;
+        if (is_string($valor)) return '"' . $valor . '"';
+        if (is_int($valor)) return (string)$valor;
+        if (is_float($valor)) {
+            if (floor($valor) == $valor) {
+                return (string)(int)$valor;
+            }
+            return (string)$valor;
+        }
+        if (is_array($valor)) {
+            // Si es un array simple (posiblemente múltiples retornos)
+            $elementos = [];
+            foreach ($valor as $v) {
+                $elementos[] = $this->formatearValor($v);
+            }
+            return '[' . implode(', ', $elementos) . ']';
         }
         return (string)$valor;
     }
@@ -130,14 +142,10 @@ trait UtilidadesTrait
         if (is_float($valor)) return 'float32';
         if (is_string($valor)) return 'string';
         if (is_bool($valor)) return 'bool';
-        if (is_array($valor)) return 'array';
-        
-        // Si es numérico pero no int/float (ej: "123" como string)
-        if (is_numeric($valor) && !is_string($valor)) {
-            if (strpos((string)$valor, '.') !== false) {
-                return 'float32';
-            }
-            return 'int32';
+        if (is_array($valor)) {
+            // Si es un array de múltiples retornos, tomamos el tipo del primer elemento
+            // para efectos de la declaración corta (esto se maneja aparte)
+            return 'array';
         }
         
         return 'unknown';
@@ -261,6 +269,21 @@ trait UtilidadesTrait
             }
         }
         error_log("================================");
+    }
+
+    /**
+     * Verifica si un array es un arreglo estructurado del lenguaje
+     * (diferente de un múltiple retorno)
+     */
+    private function esArregloEstructurado($valor)
+    {
+        if (!is_array($valor)) {
+            return false;
+        }
+        
+        // Por ahora, asumimos que los arreglos del lenguaje tendrán una estructura específica
+        // Esto lo ajustaremos cuando implementemos arreglos
+        return false;
     }
 
 }
