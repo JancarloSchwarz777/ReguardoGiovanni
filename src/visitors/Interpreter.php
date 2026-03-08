@@ -5,6 +5,7 @@ use Antlr\Antlr4\Runtime\Tree\AbstractParseTreeVisitor;
 require_once __DIR__ . '/traits/AsignacionTrait.php';
 require_once __DIR__ . '/traits/ControlFlujoTrait.php';
 require_once __DIR__ . '/traits/ControlForTrait.php';
+require_once __DIR__ . '/traits/ControlSwitchTrait.php';
 require_once __DIR__ . '/traits/DeclaracionesTrait.php';
 require_once __DIR__ . '/traits/ExpresionesTrait.php';
 require_once __DIR__ . '/traits/FuncionEmbTrait.php';
@@ -19,6 +20,7 @@ class Interpreter extends GolampiBaseVisitor
     use AsignacionTrait;
     use ControlFlujoTrait;
     use ControlForTrait;
+    use ControlSwitchTrait;
     use DeclaracionesTrait;
     use ExpresionesTrait;
     use FuncionEmbTrait;
@@ -26,6 +28,9 @@ class Interpreter extends GolampiBaseVisitor
     use TransferenciaTrait;
     use UtilidadesTrait;
 
+    // Propiedades para switch
+    private $enSwitch = false;
+    private $breakSwitch = false;
 
     // Tabla de símbolos global
     private $tablaSimbolos = [];
@@ -89,6 +94,9 @@ class Interpreter extends GolampiBaseVisitor
         foreach ($ctx->funcion() as $funcion) {
             $this->visit($funcion);
         }
+
+        error_log("CONSOLA FINAL: " . print_r($this->consola, true)); // Debug
+
         
         return [
             'consola' => $this->consola,

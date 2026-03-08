@@ -1,4 +1,5 @@
 <?php
+// TransferenciaTrait.php
 trait TransferenciaTrait
 {
     public function visitBreakStmt($ctx)
@@ -6,11 +7,19 @@ trait TransferenciaTrait
         $linea = $ctx->getStart()->getLine();
         $columna = $ctx->getStart()->getCharPositionInLine();
         
-        error_log("BREAK en línea $linea");
+        error_log(">>> BREAK en línea $linea");
         
+        // Verificar si estamos en un switch
+        if (isset($this->enSwitch) && $this->enSwitch) {
+            error_log("Break en switch detectado");
+            $this->breakSwitch = true;
+            return null;
+        }
+        
+        // Verificar si estamos en un ciclo
         if (!isset($this->enBucle) || !$this->enBucle) {
             $this->agregarErrorSemantico(
-                "break solo puede usarse dentro de un ciclo",
+                "break solo puede usarse dentro de un ciclo o switch",
                 $linea,
                 $columna
             );
@@ -26,7 +35,7 @@ trait TransferenciaTrait
         $linea = $ctx->getStart()->getLine();
         $columna = $ctx->getStart()->getCharPositionInLine();
         
-        error_log("CONTINUE en línea $linea");
+        error_log(">>> CONTINUE en línea $linea");
         
         if (!isset($this->enBucle) || !$this->enBucle) {
             $this->agregarErrorSemantico(
@@ -46,11 +55,11 @@ trait TransferenciaTrait
         $linea = $ctx->getStart()->getLine();
         $columna = $ctx->getStart()->getCharPositionInLine();
         
-        error_log("RETURN en línea $linea");
+        error_log(">>> RETURN en línea $linea");
         
         if ($ctx->expresion()) {
             $valor = $this->visit($ctx->expresion());
-            error_log("Valor de retorno: " . $this->formatearValor($valor));
+            error_log("Valor retornado: " . $this->formatearValor($valor));
             return $valor;
         }
         

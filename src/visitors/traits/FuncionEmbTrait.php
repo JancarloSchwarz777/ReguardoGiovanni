@@ -52,6 +52,7 @@ trait FuncionEmbTrait
         }
         
         $lineaTexto = implode(' ', $salida);
+        error_log("Println agregando a consola: " . $lineaTexto);
         $this->consola[] = $lineaTexto;
         
         return null;

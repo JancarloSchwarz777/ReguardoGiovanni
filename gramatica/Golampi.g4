@@ -12,6 +12,9 @@ FOR: 'for';
 RETURN: 'return';
 BREAK: 'break';
 CONTINUE: 'continue';
+SWITCH: 'switch';
+CASE: 'case';
+DEFAULT: 'default';
 NIL: 'nil';
 TRUE: 'true';
 FALSE: 'false';
@@ -95,9 +98,10 @@ sentencia: declaracionVar PUNTO_COMA?
         | declaracionConstante PUNTO_COMA?
         | declaracionCorta PUNTO_COMA?
         | asignacion PUNTO_COMA?
-        | llamadaFuncion PUNTO_COMA?      // ← Aquí incluimos llamadas a funciones
+        | llamadaFuncion PUNTO_COMA?      
         | ifStmt
         | forStmt
+        | switchStmt  
         | returnStmt PUNTO_COMA?
         | breakStmt PUNTO_COMA?
         | continueStmt PUNTO_COMA?
@@ -156,6 +160,11 @@ forHeader: forClause
 forClause: initStmt? ';' expresion? ';' postStmt?;
 initStmt: declaracionCorta | asignacion | expresion;
 postStmt: asignacion | expresion | INCREMENTO | DECREMENTO;
+
+switchStmt: SWITCH expresion LLAVE_IZQ casoBloques LLAVE_DER;
+casoBloques: (caso | defaultBloque)*;
+caso: CASE listaExpresiones DOS_PUNTOS sentencia*;
+defaultBloque: DEFAULT DOS_PUNTOS sentencia*;
 
 // === TRANSFERENCIA ===
 returnStmt: RETURN expresion?;

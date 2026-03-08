@@ -312,6 +312,46 @@ interface GolampiListener extends ParseTreeListener {
 	 */
 	public function exitPostStmt(Context\PostStmtContext $context): void;
 	/**
+	 * Enter a parse tree produced by {@see GolampiParser::switchStmt()}.
+	 * @param $context The parse tree.
+	 */
+	public function enterSwitchStmt(Context\SwitchStmtContext $context): void;
+	/**
+	 * Exit a parse tree produced by {@see GolampiParser::switchStmt()}.
+	 * @param $context The parse tree.
+	 */
+	public function exitSwitchStmt(Context\SwitchStmtContext $context): void;
+	/**
+	 * Enter a parse tree produced by {@see GolampiParser::casoBloques()}.
+	 * @param $context The parse tree.
+	 */
+	public function enterCasoBloques(Context\CasoBloquesContext $context): void;
+	/**
+	 * Exit a parse tree produced by {@see GolampiParser::casoBloques()}.
+	 * @param $context The parse tree.
+	 */
+	public function exitCasoBloques(Context\CasoBloquesContext $context): void;
+	/**
+	 * Enter a parse tree produced by {@see GolampiParser::caso()}.
+	 * @param $context The parse tree.
+	 */
+	public function enterCaso(Context\CasoContext $context): void;
+	/**
+	 * Exit a parse tree produced by {@see GolampiParser::caso()}.
+	 * @param $context The parse tree.
+	 */
+	public function exitCaso(Context\CasoContext $context): void;
+	/**
+	 * Enter a parse tree produced by {@see GolampiParser::defaultBloque()}.
+	 * @param $context The parse tree.
+	 */
+	public function enterDefaultBloque(Context\DefaultBloqueContext $context): void;
+	/**
+	 * Exit a parse tree produced by {@see GolampiParser::defaultBloque()}.
+	 * @param $context The parse tree.
+	 */
+	public function exitDefaultBloque(Context\DefaultBloqueContext $context): void;
+	/**
 	 * Enter a parse tree produced by {@see GolampiParser::returnStmt()}.
 	 * @param $context The parse tree.
 	 */
