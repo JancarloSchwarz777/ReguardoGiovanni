@@ -15,7 +15,7 @@ trait UtilidadesTrait
             case 'float32': return 0.0;
             case 'string': return "";
             case 'bool': return false;
-            case 'rune': return '\u0000';
+            case 'rune': return ''; // Carácter nulo
             default: return null;
         }
     }
@@ -31,6 +31,10 @@ trait UtilidadesTrait
     
     private function formatearValor($valor)
     {
+        if ($this->esReferencia($valor)) {
+            return "&" . $valor['id'] . " (" . $valor['tipo_base'] . "*)";
+        }
+        
         if ($valor === null) return 'nil';
         if (is_bool($valor)) return $valor ? 'true' : 'false';
         if (is_string($valor)) return '"' . $valor . '"';
@@ -42,7 +46,6 @@ trait UtilidadesTrait
             return (string)$valor;
         }
         if (is_array($valor)) {
-            // Si es un array simple (posiblemente múltiples retornos)
             $elementos = [];
             foreach ($valor as $v) {
                 $elementos[] = $this->formatearValor($v);
@@ -55,22 +58,27 @@ trait UtilidadesTrait
     /**
      * Verifica si dos tipos son compatibles para una operación
      */
+    // En UtilidadesTrait.php, mejorar tiposCompatibles:
+
     private function tiposCompatibles($tipo1, $tipo2, $operacion)
     {
         $compatibilidad = [
-            // Operadores aritméticos (ya existentes)
+            // Operadores aritméticos
             '+' => [
-                'int32' => ['int32' => 'int32', 'float32' => 'float32'],
+                'int32' => ['int32' => 'int32', 'float32' => 'float32', 'rune' => 'rune'],
                 'float32' => ['int32' => 'float32', 'float32' => 'float32'],
-                'string' => ['string' => 'string']
+                'string' => ['string' => 'string', 'rune' => 'string'], // string + rune = string
+                'rune' => ['int32' => 'rune', 'rune' => 'rune', 'string' => 'string']
             ],
             '-' => [
-                'int32' => ['int32' => 'int32', 'float32' => 'float32'],
-                'float32' => ['int32' => 'float32', 'float32' => 'float32']
+                'int32' => ['int32' => 'int32', 'float32' => 'float32', 'rune' => 'int32'],
+                'float32' => ['int32' => 'float32', 'float32' => 'float32'],
+                'rune' => ['int32' => 'int32', 'rune' => 'int32']
             ],
             '*' => [
-                'int32' => ['int32' => 'int32', 'float32' => 'float32'],
-                'float32' => ['int32' => 'float32', 'float32' => 'float32']
+                'int32' => ['int32' => 'int32', 'float32' => 'float32', 'rune' => 'int32'],
+                'float32' => ['int32' => 'float32', 'float32' => 'float32'],
+                'rune' => ['int32' => 'int32']
             ],
             '/' => [
                 'int32' => ['int32' => 'int32', 'float32' => 'float32'],
@@ -80,40 +88,44 @@ trait UtilidadesTrait
                 'int32' => ['int32' => 'int32']
             ],
             
-            // Operadores relacionales (todos devuelven bool)
+            // Operadores relacionales
             '==' => [
-                'int32' => ['int32' => 'bool', 'float32' => 'bool'],
+                'int32' => ['int32' => 'bool', 'float32' => 'bool', 'rune' => 'bool'],
                 'float32' => ['int32' => 'bool', 'float32' => 'bool'],
                 'bool' => ['bool' => 'bool'],
-                'rune' => ['rune' => 'bool'],
-                'string' => ['string' => 'bool']
+                'rune' => ['rune' => 'bool', 'int32' => 'bool', 'string' => 'bool'],
+                'string' => ['string' => 'bool', 'rune' => 'bool']
             ],
             '!=' => [
-                'int32' => ['int32' => 'bool', 'float32' => 'bool'],
+                'int32' => ['int32' => 'bool', 'float32' => 'bool', 'rune' => 'bool'],
                 'float32' => ['int32' => 'bool', 'float32' => 'bool'],
                 'bool' => ['bool' => 'bool'],
-                'rune' => ['rune' => 'bool'],
-                'string' => ['string' => 'bool']
+                'rune' => ['rune' => 'bool', 'int32' => 'bool', 'string' => 'bool'],
+                'string' => ['string' => 'bool', 'rune' => 'bool']
             ],
             '<' => [
-                'int32' => ['int32' => 'bool', 'float32' => 'bool'],
+                'int32' => ['int32' => 'bool', 'float32' => 'bool', 'rune' => 'bool'],
                 'float32' => ['int32' => 'bool', 'float32' => 'bool'],
-                'string' => ['string' => 'bool'] // Comparación lexicográfica
+                'string' => ['string' => 'bool', 'rune' => 'bool'],
+                'rune' => ['int32' => 'bool', 'rune' => 'bool', 'string' => 'bool']
             ],
             '>' => [
-                'int32' => ['int32' => 'bool', 'float32' => 'bool'],
+                'int32' => ['int32' => 'bool', 'float32' => 'bool', 'rune' => 'bool'],
                 'float32' => ['int32' => 'bool', 'float32' => 'bool'],
-                'string' => ['string' => 'bool']
+                'string' => ['string' => 'bool', 'rune' => 'bool'],
+                'rune' => ['int32' => 'bool', 'rune' => 'bool', 'string' => 'bool']
             ],
             '<=' => [
-                'int32' => ['int32' => 'bool', 'float32' => 'bool'],
+                'int32' => ['int32' => 'bool', 'float32' => 'bool', 'rune' => 'bool'],
                 'float32' => ['int32' => 'bool', 'float32' => 'bool'],
-                'string' => ['string' => 'bool']
+                'string' => ['string' => 'bool', 'rune' => 'bool'],
+                'rune' => ['int32' => 'bool', 'rune' => 'bool', 'string' => 'bool']
             ],
             '>=' => [
-                'int32' => ['int32' => 'bool', 'float32' => 'bool'],
+                'int32' => ['int32' => 'bool', 'float32' => 'bool', 'rune' => 'bool'],
                 'float32' => ['int32' => 'bool', 'float32' => 'bool'],
-                'string' => ['string' => 'bool']
+                'string' => ['string' => 'bool', 'rune' => 'bool'],
+                'rune' => ['int32' => 'bool', 'rune' => 'bool', 'string' => 'bool']
             ],
             
             // Operadores lógicos
@@ -137,16 +149,22 @@ trait UtilidadesTrait
      */
     private function obtenerTipo($valor)
     {
+        if ($this->esReferencia($valor)) {
+            return 'puntero';
+        }
+        
         if ($valor === null) return 'nil';
         if (is_int($valor)) return 'int32';
         if (is_float($valor)) return 'float32';
-        if (is_string($valor)) return 'string';
-        if (is_bool($valor)) return 'bool';
-        if (is_array($valor)) {
-            // Si es un array de múltiples retornos, tomamos el tipo del primer elemento
-            // para efectos de la declaración corta (esto se maneja aparte)
-            return 'array';
+        if (is_string($valor)) {
+            // Si es un string de longitud 1, es rune
+            if (strlen($valor) === 1) {
+                return 'rune';  // ✅ Debe devolver 'rune', no 'string'
+            }
+            return 'string';
         }
+        if (is_bool($valor)) return 'bool';
+        if (is_array($valor)) return 'array';
         
         return 'unknown';
     }
@@ -284,6 +302,31 @@ trait UtilidadesTrait
         // Por ahora, asumimos que los arreglos del lenguaje tendrán una estructura específica
         // Esto lo ajustaremos cuando implementemos arreglos
         return false;
+    }
+
+    /**
+     * Verifica si un valor es una referencia (puntero)
+     */
+    private function esReferencia($valor)
+    {
+        return is_array($valor) && isset($valor['__referencia']) && $valor['__referencia'] === true;
+    }
+
+    /**
+     * Obtiene el valor real de una referencia
+     */
+    private function obtenerValorReferencia($referencia)
+    {
+        if (!$this->esReferencia($referencia)) {
+            return $referencia;
+        }
+        
+        $id = $referencia['id'];
+        if (!isset($this->tablaSimbolos[$id])) {
+            return null;
+        }
+        
+        return $this->tablaSimbolos[$id]['valor'];
     }
 
 }

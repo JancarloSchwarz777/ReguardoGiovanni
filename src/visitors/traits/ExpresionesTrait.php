@@ -1,10 +1,8 @@
 <?php
 trait ExpresionesTrait
-
 {
 
 // ============================================================ EXPRESIONES ============================================================
-    // En ExpresionesTrait.php, modificar visitExpresionPrimaria:
 
     public function visitExpresionPrimaria($ctx)
     {
@@ -23,7 +21,18 @@ trait ExpresionesTrait
         
         if ($ctx->CARACTER()) {
             $texto = $ctx->CARACTER()->getText();
-            return substr($texto, 1, -1);  // Quitar comillas simples
+            $contenido = substr($texto, 1, -1);  // Quitar comillas simples
+            
+            // Manejar caracteres escapados
+            if ($contenido === '\\n') return "\n";
+            if ($contenido === '\\t') return "\t";
+            if ($contenido === '\\r') return "\r";
+            if ($contenido === '\\\\') return "\\";
+            if ($contenido === '\\\'') return "'";
+            if ($contenido === '\\"') return '"';
+            
+            // Si es un solo carácter, devolverlo como string de 1 carácter
+            return $contenido;
         }
         
         if ($ctx->TRUE()) {
@@ -43,9 +52,25 @@ trait ExpresionesTrait
             error_log("Accediendo a variable: $id");
             
             if (isset($this->tablaSimbolos[$id])) {
-                $valor = $this->tablaSimbolos[$id]['valor'];
-                error_log("  Valor encontrado: " . $this->formatearValor($valor));
-                return $valor;
+                $info = $this->tablaSimbolos[$id];
+                
+                // Si es un puntero, devolvemos el valor que contiene
+                if ($info['es_puntero'] ?? false) {
+                    $valor = $info['valor'];
+                    error_log("  Es un puntero, valor: " . $this->formatearValor($valor));
+                    
+                    // Si el puntero tiene un valor (referencia), lo devolvemos
+                    if ($valor !== null && $this->esReferencia($valor)) {
+                        return $valor;
+                    }
+                    
+                    // Si es nil, devolvemos nil
+                    return null;
+                }
+                
+                // Variables normales devuelven su valor
+                error_log("  Valor encontrado: " . $this->formatearValor($info['valor']));
+                return $info['valor'];
             } else {
                 $this->agregarErrorSemantico(
                     "Variable '$id' no declarada",
@@ -57,7 +82,6 @@ trait ExpresionesTrait
         }
         
         if ($ctx->llamadaFuncion()) {
-            error_log("Expresión primaria contiene llamada a función");
             return $this->visit($ctx->llamadaFuncion());
         }
         
@@ -74,63 +98,32 @@ trait ExpresionesTrait
             return $this->visit($ctx->expresionMultiplicativa(0));
         }
         
-        $resultado = $this->visit($ctx->expresionMultiplicativa(0));
-        $tipoResultado = $this->obtenerTipo($resultado);
+        // IMPORTANTE: Evaluar todos los operandos primero, preservando el entorno
+        $valores = [];
+        $tipos = [];
         
-        for ($i = 1; $i < count($ctx->expresionMultiplicativa()); $i++) {
-            $op = $ctx->getChild(2 * $i - 1)->getText();
-            $valor = $this->visit($ctx->expresionMultiplicativa($i));
-            $tipoValor = $this->obtenerTipo($valor);
+        // Guardar el estado actual antes de evaluar los operandos
+        $ambitoOriginal = $this->ambitoActual;
+        $pilaOriginal = $this->pilaAmbitos;
+        $tablaOriginal = $this->tablaSimbolos; // Guardar también la tabla de símbolos
+        
+        for ($i = 0; $i < count($ctx->expresionMultiplicativa()); $i++) {
+            // Restaurar el entorno original para cada evaluación
+            $this->ambitoActual = $ambitoOriginal;
+            $this->pilaAmbitos = $pilaOriginal;
+            $this->tablaSimbolos = $tablaOriginal;
             
-            // Validar nil
-            if ($tipoResultado === 'nil' || $tipoValor === 'nil') {
-                $this->agregarErrorSemantico(
-                    "Operación con nil no permitida",
-                    $ctx->getStart()->getLine(),
-                    $ctx->getStart()->getCharPositionInLine()
-                );
-                return null;
-            }
-            
-            // Validar compatibilidad de tipos
-            $tipoEsperado = $this->tiposCompatibles($tipoResultado, $tipoValor, $op);
-            if ($tipoEsperado === null) {
-                $this->agregarErrorSemantico(
-                    "Operación '$op' no válida entre tipos '$tipoResultado' y '$tipoValor'",
-                    $ctx->getStart()->getLine(),
-                    $ctx->getStart()->getCharPositionInLine()
-                );
-                return null;
-            }
-            
-            // Realizar operación con validación de división por cero
-            if ($op === '+') {
-                $resultado += $valor;
-            } elseif ($op === '-') {
-                $resultado -= $valor;
-            }
-            
-            $tipoResultado = $tipoEsperado;
+            $valores[] = $this->visit($ctx->expresionMultiplicativa($i));
+            $tipos[] = $this->obtenerTipo($valores[$i]);
         }
         
-        return $resultado;
-    }
-    
-    
-
-    public function visitExpresionMultiplicativa($ctx)
-    {
-        if (count($ctx->expresionUnaria()) == 1) {
-            return $this->visit($ctx->expresionUnaria(0));
-        }
+        $resultado = $valores[0];
+        $tipoResultado = $tipos[0];
         
-        $resultado = $this->visit($ctx->expresionUnaria(0));
-        $tipoResultado = $this->obtenerTipo($resultado);
-        
-        for ($i = 1; $i < count($ctx->expresionUnaria()); $i++) {
+        for ($i = 1; $i < count($valores); $i++) {
             $op = $ctx->getChild(2 * $i - 1)->getText();
-            $valor = $this->visit($ctx->expresionUnaria($i));
-            $tipoValor = $this->obtenerTipo($valor);
+            $valor = $valores[$i];
+            $tipoValor = $tipos[$i];
             
             // Validar nil
             if ($tipoResultado === 'nil' || $tipoValor === 'nil') {
@@ -154,6 +147,70 @@ trait ExpresionesTrait
             }
             
             // Realizar operación
+            if ($op === '+') {
+                $resultado += $valor;
+            } elseif ($op === '-') {
+                $resultado -= $valor;
+            }
+            
+            $tipoResultado = $tipoEsperado;
+        }
+        
+        return $resultado;
+    }
+    
+    public function visitExpresionMultiplicativa($ctx)
+    {
+        if (count($ctx->expresionUnaria()) == 1) {
+            return $this->visit($ctx->expresionUnaria(0));
+        }
+        
+        // IMPORTANTE: Evaluar todos los operandos primero, preservando el entorno
+        $valores = [];
+        $tipos = [];
+        
+        // Guardar el estado actual antes de evaluar los operandos
+        $ambitoOriginal = $this->ambitoActual;
+        $pilaOriginal = $this->pilaAmbitos;
+        $tablaOriginal = $this->tablaSimbolos; // Guardar también la tabla de símbolos
+        
+        for ($i = 0; $i < count($ctx->expresionUnaria()); $i++) {
+            // Restaurar el entorno original para cada evaluación
+            $this->ambitoActual = $ambitoOriginal;
+            $this->pilaAmbitos = $pilaOriginal;
+            $this->tablaSimbolos = $tablaOriginal;
+            
+            $valores[] = $this->visit($ctx->expresionUnaria($i));
+            $tipos[] = $this->obtenerTipo($valores[$i]);
+        }
+        
+        $resultado = $valores[0];
+        $tipoResultado = $tipos[0];
+        
+        for ($i = 1; $i < count($valores); $i++) {
+            $op = $ctx->getChild(2 * $i - 1)->getText();
+            $valor = $valores[$i];
+            $tipoValor = $tipos[$i];
+            
+            if ($tipoResultado === 'nil' || $tipoValor === 'nil') {
+                $this->agregarErrorSemantico(
+                    "Operación con nil no permitida",
+                    $ctx->getStart()->getLine(),
+                    $ctx->getStart()->getCharPositionInLine()
+                );
+                return null;
+            }
+            
+            $tipoEsperado = $this->tiposCompatibles($tipoResultado, $tipoValor, $op);
+            if ($tipoEsperado === null) {
+                $this->agregarErrorSemantico(
+                    "Operación '$op' no válida entre tipos '$tipoResultado' y '$tipoValor'",
+                    $ctx->getStart()->getLine(),
+                    $ctx->getStart()->getCharPositionInLine()
+                );
+                return null;
+            }
+            
             if ($op === '*') {
                 $resultado *= $valor;
             } elseif ($op === '/') {
@@ -202,7 +259,6 @@ trait ExpresionesTrait
         $linea = $ctx->getStart()->getLine();
         $columna = $ctx->getStart()->getCharPositionInLine();
         
-        // Validar que la primera expresión sea bool
         if (!is_bool($resultado) && $resultado !== null) {
             $this->agregarErrorSemantico(
                 "Operador lógico requiere expresiones booleanas",
@@ -215,7 +271,6 @@ trait ExpresionesTrait
         for ($i = 1; $i < count($ctx->expresionComparacion()); $i++) {
             $op = $ctx->getChild(2 * $i - 1)->getText();
             
-            // Cortocircuito
             if ($op === '&&' && $resultado === false) {
                 return false;
             }
@@ -225,7 +280,6 @@ trait ExpresionesTrait
             
             $valor = $this->visit($ctx->expresionComparacion($i));
             
-            // Validar que sea bool
             if (!is_bool($valor) && $valor !== null) {
                 $this->agregarErrorSemantico(
                     "Operador lógico requiere expresiones booleanas",
@@ -245,9 +299,6 @@ trait ExpresionesTrait
         return $resultado;
     }
 
-    /**
-     * Operadores relacionales: ==, !=, <, >, <=, >=
-     */
     public function visitExpresionComparacion($ctx)
     {
         if (count($ctx->expresionAditiva()) == 1) {
@@ -264,8 +315,16 @@ trait ExpresionesTrait
             $valor = $this->visit($ctx->expresionAditiva($i));
             $tipoValor = $this->obtenerTipo($valor);
             
-            // Validar nil
             if ($tipoResultado === 'nil' || $tipoValor === 'nil') {
+                if ($op === '==') {
+                    return ($tipoResultado === 'nil' && $tipoValor === 'nil') || 
+                            ($resultado === null && $valor === null);
+                }
+                if ($op === '!=') {
+                    return !(($tipoResultado === 'nil' && $tipoValor === 'nil') || 
+                            ($resultado === null && $valor === null));
+                }
+                
                 $this->agregarErrorSemantico(
                     "Operación relacional con nil no permitida",
                     $linea,
@@ -274,7 +333,6 @@ trait ExpresionesTrait
                 return false;
             }
             
-            // Validar compatibilidad de tipos para la operación
             $tipoEsperado = $this->tiposCompatibles($tipoResultado, $tipoValor, $op);
             if ($tipoEsperado === null) {
                 $this->agregarErrorSemantico(
@@ -285,7 +343,6 @@ trait ExpresionesTrait
                 return false;
             }
             
-            // Realizar la comparación según el operador
             switch ($op) {
                 case '==':
                     $resultado = ($resultado == $valor);
@@ -307,10 +364,178 @@ trait ExpresionesTrait
                     break;
             }
             
-            $tipoResultado = 'bool'; // Todas las comparaciones devuelven bool
+            $tipoResultado = 'bool';
         }
         
         return $resultado;
     }
 
+    public function visitExpresionUnaria($ctx)
+    {
+        $op = null;
+        if ($ctx->NOT()) {
+            $op = '!';
+        } elseif ($ctx->MENOS()) {
+            $op = '-';
+        } elseif ($ctx->MULT()) {
+            $op = '*';
+        } elseif ($ctx->getChild(0) && $ctx->getChild(0)->getText() === '&') {
+            $op = '&';
+        }
+        
+        $linea = $ctx->getStart()->getLine();
+        $columna = $ctx->getStart()->getCharPositionInLine();
+        
+        if ($op === null) {
+            return $this->visit($ctx->expresionPrimaria());
+        }
+        
+        switch ($op) {
+            case '!':
+                $valor = $this->visit($ctx->expresionPrimaria());
+                if (!is_bool($valor) && $valor !== null) {
+                    $this->agregarErrorSemantico(
+                        "Operador '!' solo válido para booleanos",
+                        $linea,
+                        $columna
+                    );
+                    return null;
+                }
+                return !$valor;
+                
+            case '-':
+                $valor = $this->visit($ctx->expresionPrimaria());
+                if (!$this->esTipoNumerico($this->obtenerTipo($valor))) {
+                    $this->agregarErrorSemantico(
+                        "Operador '-' solo válido para tipos numéricos",
+                        $linea,
+                        $columna
+                    );
+                    return null;
+                }
+                return -$valor;
+                
+            case '*':
+                $valor = $this->visit($ctx->expresionPrimaria());
+                return $this->desreferenciar($valor, $linea, $columna);
+                
+            case '&':
+                // Pasar el contexto directamente, NO evaluarlo
+                return $this->referenciar($ctx->expresionPrimaria(), $linea, $columna);
+        }
+        
+        return null;
+    }
+
+    private function referenciar($exprCtx, $linea, $columna)
+    {
+        error_log("=== REFERENCIANDO ===");
+        
+        // Si es una expresión primaria con identificador
+        if ($exprCtx instanceof \GolampiParser\ExpresionPrimariaContext) {
+            if ($exprCtx->IDENTIFICADOR()) {
+                $id = $exprCtx->IDENTIFICADOR()->getText();
+                error_log("  Referencia a variable: $id");
+                
+                if (!isset($this->tablaSimbolos[$id])) {
+                    $this->agregarErrorSemantico(
+                        "Variable '$id' no declarada",
+                        $linea,
+                        $columna
+                    );
+                    return null;
+                }
+                
+                // Crear una referencia a la variable
+                $referencia = [
+                    '__referencia' => true,
+                    'id' => $id,
+                    'ambito' => $this->tablaSimbolos[$id]['ambito'],
+                    'tipo_base' => $this->tablaSimbolos[$id]['tipo']
+                ];
+                
+                error_log("  Referencia creada: " . $this->formatearValor($referencia));
+                return $referencia;
+            }
+        }
+        
+        // También podría ser un identificador directamente
+        if (method_exists($exprCtx, 'getText')) {
+            $texto = $exprCtx->getText();
+            error_log("  Texto del contexto: $texto");
+            
+            if (preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $texto)) {
+                $id = $texto;
+                error_log("  Referencia a variable (por texto): $id");
+                
+                if (!isset($this->tablaSimbolos[$id])) {
+                    $this->agregarErrorSemantico(
+                        "Variable '$id' no declarada",
+                        $linea,
+                        $columna
+                    );
+                    return null;
+                }
+                
+                $referencia = [
+                    '__referencia' => true,
+                    'id' => $id,
+                    'ambito' => $this->tablaSimbolos[$id]['ambito'],
+                    'tipo_base' => $this->tablaSimbolos[$id]['tipo']
+                ];
+                
+                error_log("  Referencia creada: " . $this->formatearValor($referencia));
+                return $referencia;
+            }
+        }
+        
+        error_log("  Error: No es un identificador válido");
+        $this->agregarErrorSemantico(
+            "Operador '&' solo puede aplicarse a variables",
+            $linea,
+            $columna
+        );
+        return null;
+    }
+
+    private function desreferenciar($valor, $linea, $columna)
+    {
+        error_log("=== DESREFERENCIANDO ===");
+        error_log("  Valor: " . $this->formatearValor($valor));
+        
+        if ($valor === null) {
+            $this->agregarErrorSemantico(
+                "No se puede desreferenciar nil",
+                $linea,
+                $columna
+            );
+            return null;
+        }
+        
+        if (!$this->esReferencia($valor)) {
+            $this->agregarErrorSemantico(
+                "Operador '*' solo puede aplicarse a punteros",
+                $linea,
+                $columna
+            );
+            return null;
+        }
+        
+        $id = $valor['id'];
+        error_log("  Referencia a variable: $id");
+        
+        if (!isset($this->tablaSimbolos[$id])) {
+            $this->agregarErrorSemantico(
+                "La variable referenciada '$id' ya no existe",
+                $linea,
+                $columna
+            );
+            return null;
+        }
+        
+        $valorReal = $this->tablaSimbolos[$id]['valor'];
+        error_log("  Valor desreferenciado: " . $this->formatearValor($valorReal));
+        
+        return $valorReal;
+    }
 }

@@ -147,10 +147,13 @@ trait DeclaracionesTrait
     public function visitDeclaracionVar($ctx)
     {
         $tipo = $ctx->tipo()->getText();
+        $esPuntero = (strpos($tipo, '*') === 0);
+        $tipoBase = $esPuntero ? substr($tipo, 1) : $tipo;
+        
         $ids = $ctx->listaIdentificadores()->IDENTIFICADOR();
         $expresiones = $ctx->listaExpresiones() ? $ctx->listaExpresiones()->expresion() : [];
         
-        error_log("Declaración var en ámbito: " . $this->ambitoActual);
+        error_log("Declaración var en ámbito: " . $this->ambitoActual . ", tipo: $tipo" . ($esPuntero ? " (puntero a $tipoBase)" : ""));
         
         // Validar cantidad de IDs vs expresiones
         if (count($expresiones) > 0 && count($ids) != count($expresiones)) {
@@ -195,22 +198,34 @@ trait DeclaracionesTrait
                 $valor = $this->visit($expresiones[$i]);
                 $tipoValor = $this->obtenerTipo($valor);
                 
-                if (!$this->tiposCompatiblesAsignacion($tipo, $tipoValor)) {
+                // Si es puntero, validar que el valor sea una referencia
+                if ($esPuntero) {
+                    if (!$this->esReferencia($valor)) {
+                        $this->agregarErrorSemantico(
+                            "No se puede asignar valor de tipo '$tipoValor' a puntero de tipo '$tipoBase'",
+                            $linea,
+                            $columna
+                        );
+                        $valor = null; // nil por defecto
+                    }
+                } else if (!$this->tiposCompatiblesAsignacion($tipoBase, $tipoValor)) {
                     $this->agregarErrorSemantico(
-                        "No se puede asignar valor de tipo '$tipoValor' a variable de tipo '$tipo'",
+                        "No se puede asignar valor de tipo '$tipoValor' a variable de tipo '$tipoBase'",
                         $linea,
                         $columna
                     );
-                    $valor = $this->valorPorDefecto($tipo);
+                    $valor = $this->valorPorDefecto($tipoBase);
                 }
             } else {
-                $valor = $this->valorPorDefecto($tipo);
+                $valor = $esPuntero ? null : $this->valorPorDefecto($tipoBase); // nil para punteros
             }
             
             // Registrar en tabla de símbolos
             $this->tablaSimbolos[$id] = [
-                'tipo' => $tipo,
-                'ambito' => $this->ambitoActual,  // Asegurar que se guarda el ámbito actual
+                'tipo' => $tipo,  // Esto ya es 'rune' para rune, '*int32' para punteros
+                'tipo_base' => $tipoBase,
+                'es_puntero' => $esPuntero,
+                'ambito' => $this->ambitoActual,
                 'valor' => $valor,
                 'linea' => $linea,
                 'columna' => $columna,
@@ -218,7 +233,7 @@ trait DeclaracionesTrait
             ];
             $this->tablaSimbolosHistorial[$id] = $this->tablaSimbolos[$id];
             
-            error_log("    → Registrada en tabla: " . $id . " (ámbito: " . $this->ambitoActual . ")");
+            error_log("    → Registrada en tabla: " . $id . " (tipo: $tipo" . ($esPuntero ? ", puntero a $tipoBase" : "") . ")");
         }
         
         return null;
@@ -241,15 +256,13 @@ trait DeclaracionesTrait
             $valoresExpresiones[] = $valor;
             error_log("  Expresión evaluada: " . $this->formatearValor($valor) . " (tipo: " . $this->obtenerTipo($valor) . ")");
             
-            // Si es un array y parece ser de múltiples retornos (no un arreglo del lenguaje)
+            // Si es un array y parece ser de múltiples retornos
             if (is_array($valor) && isset($valor[0]) && !$this->esArregloEstructurado($valor)) {
-                // Es un múltiple retorno - aplanarlo
                 error_log("  → Múltiples retornos detectados: " . count($valor) . " valores");
                 foreach ($valor as $v) {
                     $valoresAplanados[] = $v;
                 }
             } else {
-                // Es un valor simple
                 $valoresAplanados[] = $valor;
             }
         }
@@ -264,11 +277,6 @@ trait DeclaracionesTrait
                 $ctx->getStart()->getLine(),
                 $ctx->getStart()->getCharPositionInLine()
             );
-            
-            // Mostrar detalles para debugging
-            error_log("  IDs: " . implode(', ', array_map(function($id) { return $id->getText(); }, $ids)));
-            error_log("  Valores aplanados: " . print_r($valoresAplanados, true));
-            
             return null;
         }
         
@@ -318,7 +326,7 @@ trait DeclaracionesTrait
                 $this->tablaSimbolos[$id]['valor'] = $valor;
             } else {
                 // Es declaración nueva
-                error_log("  Declarando nueva variable: $id con tipo $tipoValor");
+                error_log("  Declarando nueva variable: $id");
                 
                 // Verificar palabra reservada
                 if ($this->esPalabraReservada($id)) {
@@ -340,15 +348,37 @@ trait DeclaracionesTrait
                     continue;
                 }
                 
-                // Registrar en tabla de símbolos
-                $this->tablaSimbolos[$id] = [
-                    'tipo' => $tipoValor,
-                    'ambito' => $this->ambitoActual,
-                    'valor' => $valor,
-                    'linea' => $linea,
-                    'columna' => $columna,
-                    'esConstante' => false
-                ];
+                // Registrar en tabla de símbolos con metadatos adecuados
+                if ($this->esReferencia($valor)) {
+                    // Es una referencia (puntero)
+                    $this->tablaSimbolos[$id] = [
+                        'tipo' => 'puntero',
+                        'tipo_base' => $valor['tipo_base'],
+                        'es_puntero' => true,
+                        'ambito' => $this->ambitoActual,
+                        'valor' => $valor,
+                        'linea' => $linea,
+                        'columna' => $columna,
+                        'esConstante' => false
+                    ];
+                    error_log("    → Variable '$id' registrada como PUNTERO a " . $valor['tipo_base']);
+                } else {
+                    // Variable normal - asegurar que rune se guarda como 'rune'
+                    $tipoGuardar = $tipoValor;
+                    if ($tipoValor === 'rune') {
+                        $tipoGuardar = 'rune';  // Explícitamente rune
+                    }
+                    
+                    $this->tablaSimbolos[$id] = [
+                        'tipo' => $tipoGuardar,
+                        'ambito' => $this->ambitoActual,
+                        'valor' => $valor,
+                        'linea' => $linea,
+                        'columna' => $columna,
+                        'esConstante' => false
+                    ];
+                }
+                
                 $this->tablaSimbolosHistorial[$id] = $this->tablaSimbolos[$id];
             }
         }
@@ -359,7 +389,8 @@ trait DeclaracionesTrait
             $id = $idNode->getText();
             if (isset($this->tablaSimbolos[$id])) {
                 error_log("    $id = " . $this->formatearValor($this->tablaSimbolos[$id]['valor']) . 
-                        " (tipo: " . $this->tablaSimbolos[$id]['tipo'] . ")");
+                        " (tipo: " . $this->tablaSimbolos[$id]['tipo'] . 
+                        ($this->tablaSimbolos[$id]['es_puntero'] ?? false ? ", puntero" : "") . ")");
             }
         }
         

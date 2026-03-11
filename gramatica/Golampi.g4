@@ -90,7 +90,14 @@ parametros: parametro (COMA parametro)*;
 parametro: IDENTIFICADOR tipo;
 
 tipos: tipo (COMA tipo)*;
-tipo: INT32 | FLOAT32 | STRING | BOOL | RUNE | '[' expresion ']' tipo;  // Arreglos
+tipo: INT32 
+     | FLOAT32 
+     | STRING 
+     | BOOL 
+     | RUNE 
+     | '[' expresion ']' tipo 
+     | MULT tipo  // Usar MULT explícitamente
+     ;
 
 bloque: LLAVE_IZQ sentencia* LLAVE_DER;
 
@@ -117,7 +124,7 @@ listaIdentificadores: IDENTIFICADOR (COMA IDENTIFICADOR)*;
 listaExpresiones: expresion (COMA expresion)*;
 
 // === ASIGNACIONES ===
-asignacion: IDENTIFICADOR (operadorAsignacion expresion | INCREMENTO | DECREMENTO);
+asignacion: (MULT)? IDENTIFICADOR (operadorAsignacion expresion | INCREMENTO | DECREMENTO);
 operadorAsignacion: ASIGNACION | MAS_ASIGNACION | MENOS_ASIGNACION;
 
 // === EXPRESIONES ===
@@ -127,7 +134,7 @@ expresionLogica: expresionComparacion ( (AND | OR) expresionComparacion )*;
 expresionComparacion: expresionAditiva ( (IGUAL | DIFERENTE | MAYOR | MENOR | MAYOR_IGUAL | MENOR_IGUAL) expresionAditiva )*;
 expresionAditiva: expresionMultiplicativa ( (MAS | MENOS) expresionMultiplicativa )*;
 expresionMultiplicativa: expresionUnaria ( (MULT | DIV | MOD) expresionUnaria )*;
-expresionUnaria: (NOT | MENOS)? expresionPrimaria;
+expresionUnaria: (NOT | MENOS | MULT | '&')? expresionPrimaria;
 expresionPrimaria: NUMERO_ENTERO
                  | NUMERO_DECIMAL
                  | CADENA
@@ -136,7 +143,7 @@ expresionPrimaria: NUMERO_ENTERO
                  | FALSE
                  | NIL
                  | IDENTIFICADOR
-                 | llamadaFuncion                          // ← Las llamadas a funciones son expresiones
+                 | llamadaFuncion
                  | PAREN_IZQ expresion PAREN_DER
                  | CORCHETE_IZQ listaExpresiones? CORCHETE_DER  // Arreglo literal
                  ;
@@ -174,4 +181,3 @@ continueStmt: CONTINUE;
 // === OPERADORES ADICIONALES ===
 MAS_ASIGNACION: '+=';
 MENOS_ASIGNACION: '-=';
-

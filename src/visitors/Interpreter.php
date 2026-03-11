@@ -177,6 +177,7 @@ class Interpreter extends GolampiBaseVisitor
     }
     
     // ============ BLOQUES ============
+    // En Interpreter.php
     public function visitBloque($ctx)
     {
         error_log(">>> ENTRANDO A BLOQUE con " . count($ctx->sentencia()) . " sentencias");
@@ -201,10 +202,21 @@ class Interpreter extends GolampiBaseVisitor
                     error_log("Return detectado en este bloque, deteniendo procesamiento");
                     break;
                 }
+                
+                // Si encontramos un continue, detener el procesamiento del resto del bloque
+                if ($this->continueFor) {
+                    error_log("Continue detectado en este bloque, deteniendo procesamiento");
+                    break;
+                }
+                
             } catch (ReturnException $e) {
                 $this->valoresRetorno = $e->getValores();
                 $this->retornoPendiente = true;
                 error_log("ReturnException capturada, saliendo del bloque");
+                break;
+            } catch (ContinueException $e) {
+                $this->continueFor = true;
+                error_log("ContinueException capturada, saliendo del bloque");
                 break;
             }
         }

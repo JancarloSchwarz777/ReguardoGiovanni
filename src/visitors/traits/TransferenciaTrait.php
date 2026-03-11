@@ -1,5 +1,4 @@
 <?php
-// TransferenciaTrait.php
 trait TransferenciaTrait
 {
     public function visitBreakStmt($ctx)
@@ -47,7 +46,17 @@ trait TransferenciaTrait
         }
         
         $this->continueFor = true;
-        return null;
+        
+        // IMPORTANTE: Lanzar una excepción para salir del bloque inmediatamente
+        throw new ContinueException();
     }
-    
+}
+
+// Excepción para manejar continue
+class ContinueException extends Exception
+{
+    public function __construct()
+    {
+        parent::__construct("Continue detectado");
+    }
 }

@@ -17,7 +17,11 @@ function formatearValorParaTabla($valor) {
         return (string)$valor;
     }
     if (is_array($valor)) {
-        // Verificar si es un múltiple retorno
+        // Si es una referencia (puntero)
+        if (isset($valor['__referencia']) && $valor['__referencia']) {
+            return '&' . $valor['id'];
+        }
+        // Si es un múltiple retorno
         $elementos = [];
         foreach ($valor as $v) {
             $elementos[] = formatearValorParaTabla($v);
@@ -515,8 +519,15 @@ function getErrorColor($tipo) {
                         <tr>
                             <td><strong><?php echo htmlspecialchars($id); ?></strong></td>
                             <td>
-                                <span class="badge badge-<?php echo htmlspecialchars($info['tipo']); ?>">
-                                    <?php echo htmlspecialchars($info['tipo']); ?>
+                                <?php 
+                                $tipoMostrar = $info['tipo'];
+                                // Si es puntero, mostrar como tipo_base*
+                                if (isset($info['es_puntero']) && $info['es_puntero']) {
+                                    $tipoMostrar = $info['tipo_base'] . '*';
+                                }
+                                ?>
+                                <span class="badge badge-<?php echo htmlspecialchars($tipoMostrar); ?>">
+                                    <?php echo htmlspecialchars($tipoMostrar); ?>
                                 </span>
                             </td>
                             <td><?php echo htmlspecialchars($info['ambito'] ?? 'global'); ?></td>
@@ -528,46 +539,7 @@ function getErrorColor($tipo) {
                 </tbody>
             </table>
         <?php endif; ?>
-        
-        <!-- Ejemplos para probar errores -->
-        <div class="ejemplo">
-            <h3>📝 Ejemplos para probar errores:</h3>
-            
-            <p><strong>🔴 Error Léxico (caracter no válido):</strong></p>
-            <pre>
-func main() {
-    var x int32 = 10 @ 20  // Error: @ no es válido
-    fmt.Println(x)
-}
-            </pre>
-            
-            <p><strong>🔴 Error Sintáctico (falta paréntesis):</strong></p>
-            <pre>
-func main() {
-    if x > 5 {  // Error: falta paréntesis de cierre
-        fmt.Println("Hola"
-}
-            </pre>
-            
-            <p><strong>🔴 Error Semántico (variable no declarada):</strong></p>
-            <pre>
-func main() {
-    y = x + 10  // Error: x no declarada
-    fmt.Println(y)
-}
-            </pre>
-            
-            <p><strong>✅ Código correcto:</strong></p>
-            <pre>
-func main() {
-    x := 10
-    if x > 5 {
-        fmt.Println("x es mayor que 5")
-    }
-}
-            </pre>
-        </div>
-    </div>
+
 
     <script>
         function nuevoArchivo() {

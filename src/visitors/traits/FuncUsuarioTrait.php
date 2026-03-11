@@ -19,14 +19,22 @@ trait FuncUsuarioTrait
         $this->valoresRetorno = [];
         
         if ($ctx->expresion()) {
+            // Verificar si hay múltiples expresiones (separadas por coma)
+            // En la gramática, return puede tener una lista de expresiones
             $expresiones = $ctx->expresion();
             
-            if (count($expresiones) > 0) {
+            // Si es un array, son múltiples expresiones
+            if (is_array($expresiones)) {
                 foreach ($expresiones as $expr) {
                     $valor = $this->visit($expr);
                     $this->valoresRetorno[] = $valor;
                     error_log("  Valor de retorno: " . $this->formatearValor($valor));
                 }
+            } else {
+                // Es una sola expresión
+                $valor = $this->visit($expresiones);
+                $this->valoresRetorno[] = $valor;
+                error_log("  Valor de retorno: " . $this->formatearValor($valor));
             }
         }
         
@@ -73,9 +81,8 @@ trait FuncUsuarioTrait
         $this->pilaLlamadas[] = [
             'ambito' => $this->ambitoActual,
             'pilaAmbitos' => $this->pilaAmbitos,
-            'tablaSimbolos' => $this->tablaSimbolos,
             'consola' => $this->consola,
-            'retornoPendiente' => $this->retornoPendiente, // Guardar estado de return
+            'retornoPendiente' => $this->retornoPendiente,
             'valoresRetorno' => $this->valoresRetorno
         ];
         
@@ -99,45 +106,71 @@ trait FuncUsuarioTrait
             return null;
         }
         
+        // IMPORTANTE: Evaluar todos los argumentos ANTES de entrar al ámbito de la función
+        // Esto evita problemas en recursión donde una llamada puede afectar a otra
+        $argumentosEvaluados = [];
+        foreach ($argumentos as $idx => $arg) {
+            error_log("  Evaluando argumento $idx para $nombre");
+            $argumentosEvaluados[] = $this->visit($arg);
+        }
+        
         // Crear nuevo ámbito para la función
         $this->entrarAmbito('funcion_' . $nombre);
         
-        // Procesar parámetros (paso por valor)
+        // Procesar parámetros usando los argumentos ya evaluados
         foreach ($listaParametros as $idx => $parametro) {
             $nombreParam = $parametro->IDENTIFICADOR()->getText();
             $tipoParam = $parametro->tipo()->getText();
+            $esPunteroParam = (strpos($tipoParam, '*') === 0);
+            $tipoBaseParam = $esPunteroParam ? substr($tipoParam, 1) : $tipoParam;
             
-            // Evaluar el argumento
-            $valorArg = $this->visit($argumentos[$idx]);
-            $tipoArg = $this->obtenerTipo($valorArg);
+            // Usar el argumento ya evaluado
+            $valorArg = $argumentosEvaluados[$idx];
             
-            error_log("  Parámetro $nombreParam: tipo esperado $tipoParam, recibido $tipoArg (" . $this->formatearValor($valorArg) . ")");
-            
-            // Validar tipo del argumento
-            if (!$this->tiposCompatiblesAsignacion($tipoParam, $tipoArg)) {
-                $this->agregarErrorSemantico(
-                    "Tipo de argumento inválido en llamada a $nombre: " .
-                    "se esperaba $tipoParam, se recibió $tipoArg",
-                    $linea,
-                    $columna
-                );
+            // Si el parámetro espera un puntero, el argumento debe ser una referencia
+            if ($esPunteroParam) {
+                if (!$this->esReferencia($valorArg)) {
+                    $tipoArg = $this->obtenerTipo($valorArg);
+                    $this->agregarErrorSemantico(
+                        "Se esperaba un puntero a '$tipoBaseParam', se recibió '$tipoArg'",
+                        $linea,
+                        $columna
+                    );
+                    $this->restaurarEstadoLlamada();
+                    return null;
+                }
                 
-                // Restaurar estado y salir
-                $this->restaurarEstadoLlamada();
-                return null;
+                $valorParam = $valorArg;
+            } else {
+                $tipoArg = $this->obtenerTipo($valorArg);
+                
+                if (!$this->tiposCompatiblesAsignacion($tipoBaseParam, $tipoArg)) {
+                    $this->agregarErrorSemantico(
+                        "Tipo de argumento inválido en llamada a $nombre: " .
+                        "se esperaba $tipoBaseParam, se recibió $tipoArg",
+                        $linea,
+                        $columna
+                    );
+                    $this->restaurarEstadoLlamada();
+                    return null;
+                }
+                
+                $valorParam = $valorArg;
             }
             
             // Registrar parámetro en tabla de símbolos
             $this->tablaSimbolos[$nombreParam] = [
                 'tipo' => $tipoParam,
+                'tipo_base' => $tipoBaseParam,
+                'es_puntero' => $esPunteroParam,
                 'ambito' => $this->ambitoActual,
-                'valor' => $valorArg,
+                'valor' => $valorParam,
+                'es_referencia' => $esPunteroParam,
                 'linea' => $funcionCtx->getStart()->getLine(),
                 'columna' => $funcionCtx->getStart()->getCharPositionInLine(),
                 'esParametro' => true
             ];
             
-            // Guardar en historial
             $this->tablaSimbolosHistorial[$nombreParam] = $this->tablaSimbolos[$nombreParam];
         }
         
@@ -171,7 +204,7 @@ trait FuncUsuarioTrait
             }
         }
         
-        // Restaurar estado anterior (esto restaura retornoPendiente a su valor original)
+        // Restaurar estado anterior
         $this->restaurarEstadoLlamada();
         
         error_log("=== FIN LLAMADA A $nombre, retorna: " . 
@@ -191,9 +224,6 @@ trait FuncUsuarioTrait
         
         error_log("Analizando tipos de retorno para: " . $texto);
         
-        // Buscar el patrón de retorno después de los parámetros
-        // Patrón: ... ) tipo { ...  o ... ) (tipo1, tipo2) { ...
-        
         $textoCompleto = $texto;
         
         // Buscar después del primer ')' que cierra los parámetros
@@ -206,7 +236,6 @@ trait FuncUsuarioTrait
             
             // Si sigue un '(' entonces son múltiples retornos
             if (strpos($despuesParen, '(') === 0) {
-                // Extraer lo que está entre paréntesis
                 $posParenApertura = strpos($despuesParen, '(');
                 $posParenCierreRet = strpos($despuesParen, ')');
                 if ($posParenApertura !== false && $posParenCierreRet !== false) {
@@ -219,7 +248,6 @@ trait FuncUsuarioTrait
                 }
             } else {
                 // Es un solo tipo de retorno
-                // Buscar hasta el siguiente '{'
                 $posLlave = strpos($despuesParen, '{');
                 if ($posLlave !== false) {
                     $tipoStr = substr($despuesParen, 0, $posLlave);
@@ -252,12 +280,11 @@ trait FuncUsuarioTrait
         if ($estadoAnterior) {
             $this->ambitoActual = $estadoAnterior['ambito'];
             $this->pilaAmbitos = $estadoAnterior['pilaAmbitos'];
-            $this->tablaSimbolos = $estadoAnterior['tablaSimbolos'];
             $this->consola = $estadoAnterior['consola'];
             $this->retornoPendiente = $estadoAnterior['retornoPendiente'] ?? false;
             $this->valoresRetorno = $estadoAnterior['valoresRetorno'] ?? [];
             
-            error_log(">>> Estado restaurado: retornoPendiente = " . ($this->retornoPendiente ? 'true' : 'false'));
+            error_log(">>> Estado restaurado (sin tabla de símbolos): retornoPendiente = " . ($this->retornoPendiente ? 'true' : 'false'));
         }
     }
 }
