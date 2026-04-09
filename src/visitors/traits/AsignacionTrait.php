@@ -95,7 +95,7 @@ trait AsignacionTrait
             return $nuevoValor;
         }
         
-        // Asignación compuesta (+=, -=) o simple (=)
+        // Asignación compuesta (+=, -=, *=, /=) o simple (=)
         if ($ctx->expresion()) {
             $opAsignacion = '=';
             if ($ctx->operadorAsignacion()) {
@@ -104,6 +104,10 @@ trait AsignacionTrait
                     $opAsignacion = '+=';
                 } elseif ($opToken === '-=') {
                     $opAsignacion = '-=';
+                } elseif ($opToken === '*=') {
+                    $opAsignacion = '*=';
+                } elseif ($opToken === '/=') {
+                    $opAsignacion = '/=';
                 }
             }
             
@@ -111,9 +115,9 @@ trait AsignacionTrait
             $valor = $this->visit($ctx->expresion());
             $tipoValor = $this->obtenerTipo($valor);
             
-            // CASO ESPECIAL: Operador compuesto (+=, -=) con desreferenciación
-            if ($esDesreferenciacion && ($opAsignacion === '+=' || $opAsignacion === '-=')) {
-                // Ya tenemos $variableReal (la variable apuntada)
+            // CASO ESPECIAL: Operador compuesto con desreferenciación
+            if ($esDesreferenciacion && ($opAsignacion === '+=' || $opAsignacion === '-=' || 
+                                         $opAsignacion === '*=' || $opAsignacion === '/=')) {
                 if (!isset($this->tablaSimbolos[$variableReal])) {
                     $this->agregarErrorSemantico(
                         "Variable '$variableReal' no declarada",
@@ -149,8 +153,31 @@ trait AsignacionTrait
                     return null;
                 }
                 
-                // Calcular nuevo valor
-                $nuevoValor = $opAsignacion === '+=' ? $valorActual + $valor : $valorActual - $valor;
+                // Calcular nuevo valor según el operador
+                $nuevoValor = null;
+                switch ($opAsignacion) {
+                    case '+=':
+                        $nuevoValor = $valorActual + $valor;
+                        break;
+                    case '-=':
+                        $nuevoValor = $valorActual - $valor;
+                        break;
+                    case '*=':
+                        $nuevoValor = $valorActual * $valor;
+                        break;
+                    case '/=':
+                        if ($valor == 0) {
+                            $this->agregarErrorSemantico(
+                                "División por cero",
+                                $linea,
+                                $columna
+                            );
+                            return null;
+                        }
+                        $nuevoValor = $valorActual / $valor;
+                        break;
+                }
+                
                 $tipoResultado = $this->obtenerTipo($nuevoValor);
                 
                 // Validar compatibilidad
@@ -212,8 +239,10 @@ trait AsignacionTrait
                 return $valor;
             }
             
-            // Para += y -= con tipos normales
-            if ($opAsignacion === '+=' || $opAsignacion === '-=') {
+            // Para +=, -=, *=, /= con tipos normales
+            if ($opAsignacion === '+=' || $opAsignacion === '-=' || 
+                $opAsignacion === '*=' || $opAsignacion === '/=') {
+                
                 if (!$this->esTipoNumerico($tipoVariable)) {
                     $this->agregarErrorSemantico(
                         "Operador '$opAsignacion' solo válido para tipos numéricos",
@@ -232,7 +261,30 @@ trait AsignacionTrait
                     return null;
                 }
                 
-                $nuevoValor = $opAsignacion === '+=' ? $valorActual + $valor : $valorActual - $valor;
+                $nuevoValor = null;
+                switch ($opAsignacion) {
+                    case '+=':
+                        $nuevoValor = $valorActual + $valor;
+                        break;
+                    case '-=':
+                        $nuevoValor = $valorActual - $valor;
+                        break;
+                    case '*=':
+                        $nuevoValor = $valorActual * $valor;
+                        break;
+                    case '/=':
+                        if ($valor == 0) {
+                            $this->agregarErrorSemantico(
+                                "División por cero",
+                                $linea,
+                                $columna
+                            );
+                            return null;
+                        }
+                        $nuevoValor = $valorActual / $valor;
+                        break;
+                }
+                
                 $tipoResultado = $this->obtenerTipo($nuevoValor);
                 
                 if (!$this->tiposCompatiblesAsignacion($tipoVariable, $tipoResultado)) {

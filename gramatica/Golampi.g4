@@ -83,20 +83,21 @@ WS: [ \t\r\n]+ -> skip;
 programa: (funcion)* EOF;
 
 funcion: FUNC IDENTIFICADOR '(' parametros? ')' (tipo | '(' tipos? ')')? bloque
-       | FUNC MAIN '(' ')' bloque  // Función main especial
+       | FUNC MAIN '(' ')' bloque
        ;
 
 parametros: parametro (COMA parametro)*;
 parametro: IDENTIFICADOR tipo;
 
 tipos: tipo (COMA tipo)*;
+
 tipo: INT32 
      | FLOAT32 
      | STRING 
      | BOOL 
      | RUNE 
      | '[' expresion ']' tipo 
-     | MULT tipo  // Usar MULT explícitamente
+     | MULT tipo
      ;
 
 bloque: LLAVE_IZQ sentencia* LLAVE_DER;
@@ -125,7 +126,7 @@ listaExpresiones: expresion (COMA expresion)*;
 
 // === ASIGNACIONES ===
 asignacion: (MULT)? IDENTIFICADOR (operadorAsignacion expresion | INCREMENTO | DECREMENTO);
-operadorAsignacion: ASIGNACION | MAS_ASIGNACION | MENOS_ASIGNACION;
+operadorAsignacion: ASIGNACION | MAS_ASIGNACION | MENOS_ASIGNACION | MULT_ASIGNACION | DIV_ASIGNACION;
 
 // === EXPRESIONES ===
 expresion: expresionLogica;
@@ -135,7 +136,9 @@ expresionComparacion: expresionAditiva ( (IGUAL | DIFERENTE | MAYOR | MENOR | MA
 expresionAditiva: expresionMultiplicativa ( (MAS | MENOS) expresionMultiplicativa )*;
 expresionMultiplicativa: expresionUnaria ( (MULT | DIV | MOD) expresionUnaria )*;
 expresionUnaria: (NOT | MENOS | MULT | '&')? expresionPrimaria;
-expresionPrimaria: NUMERO_ENTERO
+
+expresionPrimaria: IDENTIFICADOR (CORCHETE_IZQ expresion CORCHETE_DER)+
+                 | NUMERO_ENTERO
                  | NUMERO_DECIMAL
                  | CADENA
                  | CARACTER
@@ -143,17 +146,31 @@ expresionPrimaria: NUMERO_ENTERO
                  | FALSE
                  | NIL
                  | IDENTIFICADOR
+                 | PRINTLN
+                 | LEN
+                 | NOW
+                 | SUBSTR
+                 | TYPEOF
+                 | tipo PAREN_IZQ expresion PAREN_DER 
                  | llamadaFuncion
                  | PAREN_IZQ expresion PAREN_DER
-                 | CORCHETE_IZQ listaExpresiones? CORCHETE_DER  // Arreglo literal
+                 | arregloLiteral
                  ;
 
-// === FUNCIONES ===
-llamadaFuncion: (IDENTIFICADOR | PRINTLN) PAREN_IZQ argumentos? PAREN_DER;
-argumentos: expresion (COMA expresion)*;
+// Regla específica para literales de arreglo como: [5]int32{1,2,3}
+arregloLiteral: CORCHETE_IZQ listaExpresiones? CORCHETE_DER tipo LLAVE_IZQ valoresArreglo LLAVE_DER;
 
-// === FUNCIONES EMBEBIDAS (built-in) ===
-// Nota: Estas son tratadas como identificadores especiales en el visitor
+// Valores dentro de las llaves
+valoresArreglo: (elementoArreglo (COMA elementoArreglo)*)?;
+
+// Un elemento puede ser una expresión o un sub-arreglo anidado
+elementoArreglo: expresion
+               | LLAVE_IZQ valoresArreglo LLAVE_DER
+               ;
+
+/// === FUNCIONES ===
+llamadaFuncion: (IDENTIFICADOR | PRINTLN | LEN | NOW | SUBSTR | TYPEOF) PAREN_IZQ argumentos? PAREN_DER;
+argumentos: expresion (COMA expresion)*;
 
 // === CONTROL DE FLUJO ===
 ifStmt: IF expresion bloque (ELSE (ifStmt | bloque))?;
@@ -178,6 +195,8 @@ returnStmt: RETURN (expresion (COMA expresion)*)?;
 breakStmt: BREAK;
 continueStmt: CONTINUE;
 
-// === OPERADORES ADICIONALES ===
+/// === OPERADORES ADICIONALES ===
 MAS_ASIGNACION: '+=';
 MENOS_ASIGNACION: '-=';
+MULT_ASIGNACION: '*=';
+DIV_ASIGNACION: '/=';

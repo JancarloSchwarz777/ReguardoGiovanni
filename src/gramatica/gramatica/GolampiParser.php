@@ -37,7 +37,7 @@ namespace {
                PUNTO_COMA = 54, DECLARACION_CORTA = 55, NUMERO_ENTERO = 56, 
                NUMERO_DECIMAL = 57, CADENA = 58, CARACTER = 59, IDENTIFICADOR = 60, 
                COMENTARIO_LINEA = 61, COMENTARIO_BLOQUE = 62, WS = 63, MAS_ASIGNACION = 64, 
-               MENOS_ASIGNACION = 65;
+               MENOS_ASIGNACION = 65, MULT_ASIGNACION = 66, DIV_ASIGNACION = 67;
 
 		public const RULE_programa = 0, RULE_funcion = 1, RULE_parametros = 2, 
                RULE_parametro = 3, RULE_tipos = 4, RULE_tipo = 5, RULE_bloque = 6, 
@@ -79,7 +79,7 @@ namespace {
 		    "'!='", "'>'", "'<'", "'>='", "'<='", "'&&'", "'||'", "'!'", "'++'", 
 		    "'--'", "'('", "')'", "'{'", "'}'", "'['", "']'", "','", "'.'", "':'", 
 		    "';'", "':='", null, null, null, null, null, null, null, null, "'+='", 
-		    "'-='"
+		    "'-='", "'*='", "'/='"
 		];
 
 		/**
@@ -95,11 +95,12 @@ namespace {
 		    "LLAVE_IZQ", "LLAVE_DER", "CORCHETE_IZQ", "CORCHETE_DER", "COMA", 
 		    "PUNTO", "DOS_PUNTOS", "PUNTO_COMA", "DECLARACION_CORTA", "NUMERO_ENTERO", 
 		    "NUMERO_DECIMAL", "CADENA", "CARACTER", "IDENTIFICADOR", "COMENTARIO_LINEA", 
-		    "COMENTARIO_BLOQUE", "WS", "MAS_ASIGNACION", "MENOS_ASIGNACION"
+		    "COMENTARIO_BLOQUE", "WS", "MAS_ASIGNACION", "MENOS_ASIGNACION", "MULT_ASIGNACION", 
+		    "DIV_ASIGNACION"
 		];
 
 		private const SERIALIZED_ATN =
-			[4, 1, 65, 392, 2, 0, 7, 0, 2, 1, 7, 1, 2, 2, 7, 2, 2, 3, 7, 3, 2, 4, 
+			[4, 1, 67, 402, 2, 0, 7, 0, 2, 1, 7, 1, 2, 2, 7, 2, 2, 3, 7, 3, 2, 4, 
 		    7, 4, 2, 5, 7, 5, 2, 6, 7, 6, 2, 7, 7, 7, 2, 8, 7, 8, 2, 9, 7, 9, 
 		    2, 10, 7, 10, 2, 11, 7, 11, 2, 12, 7, 12, 2, 13, 7, 13, 2, 14, 7, 
 		    14, 2, 15, 7, 15, 2, 16, 7, 16, 2, 17, 7, 17, 2, 18, 7, 18, 2, 19, 
@@ -129,55 +130,56 @@ namespace {
 		    18, 253, 8, 18, 10, 18, 12, 18, 256, 9, 18, 1, 19, 1, 19, 1, 19, 5, 
 		    19, 261, 8, 19, 10, 19, 12, 19, 264, 9, 19, 1, 20, 3, 20, 267, 8, 
 		    20, 1, 20, 1, 20, 1, 21, 1, 21, 1, 21, 1, 21, 1, 21, 1, 21, 1, 21, 
-		    1, 21, 1, 21, 1, 21, 1, 21, 1, 21, 1, 21, 1, 21, 1, 21, 3, 21, 286, 
-		    8, 21, 1, 21, 3, 21, 289, 8, 21, 1, 22, 1, 22, 1, 22, 3, 22, 294, 
-		    8, 22, 1, 22, 1, 22, 1, 23, 1, 23, 1, 23, 5, 23, 301, 8, 23, 10, 23, 
-		    12, 23, 304, 9, 23, 1, 24, 1, 24, 1, 24, 1, 24, 1, 24, 1, 24, 3, 24, 
-		    312, 8, 24, 3, 24, 314, 8, 24, 1, 25, 1, 25, 1, 25, 1, 25, 1, 26, 
-		    1, 26, 1, 26, 3, 26, 323, 8, 26, 1, 27, 3, 27, 326, 8, 27, 1, 27, 
-		    1, 27, 3, 27, 330, 8, 27, 1, 27, 1, 27, 3, 27, 334, 8, 27, 1, 28, 
-		    1, 28, 1, 28, 3, 28, 339, 8, 28, 1, 29, 1, 29, 1, 29, 1, 29, 3, 29, 
-		    345, 8, 29, 1, 30, 1, 30, 1, 30, 1, 30, 1, 30, 1, 30, 1, 31, 1, 31, 
-		    5, 31, 355, 8, 31, 10, 31, 12, 31, 358, 9, 31, 1, 32, 1, 32, 1, 32, 
-		    1, 32, 5, 32, 364, 8, 32, 10, 32, 12, 32, 367, 9, 32, 1, 33, 1, 33, 
-		    1, 33, 5, 33, 372, 8, 33, 10, 33, 12, 33, 375, 9, 33, 1, 34, 1, 34, 
-		    1, 34, 1, 34, 5, 34, 381, 8, 34, 10, 34, 12, 34, 384, 9, 34, 3, 34, 
-		    386, 8, 34, 1, 35, 1, 35, 1, 36, 1, 36, 1, 36, 0, 0, 37, 0, 2, 4, 
-		    6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 
-		    40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 62, 64, 66, 68, 70, 72, 
-		    0, 7, 2, 0, 28, 28, 64, 65, 1, 0, 40, 41, 1, 0, 34, 39, 1, 0, 29, 
-		    30, 1, 0, 31, 33, 3, 0, 1, 1, 30, 31, 42, 42, 2, 0, 18, 18, 60, 60, 
-		    430, 0, 77, 1, 0, 0, 0, 2, 103, 1, 0, 0, 0, 4, 105, 1, 0, 0, 0, 6, 
-		    113, 1, 0, 0, 0, 8, 116, 1, 0, 0, 0, 10, 136, 1, 0, 0, 0, 12, 138, 
-		    1, 0, 0, 0, 14, 183, 1, 0, 0, 0, 16, 185, 1, 0, 0, 0, 18, 192, 1, 
-		    0, 0, 0, 20, 198, 1, 0, 0, 0, 22, 202, 1, 0, 0, 0, 24, 210, 1, 0, 
-		    0, 0, 26, 219, 1, 0, 0, 0, 28, 229, 1, 0, 0, 0, 30, 231, 1, 0, 0, 
-		    0, 32, 233, 1, 0, 0, 0, 34, 241, 1, 0, 0, 0, 36, 249, 1, 0, 0, 0, 
-		    38, 257, 1, 0, 0, 0, 40, 266, 1, 0, 0, 0, 42, 288, 1, 0, 0, 0, 44, 
-		    290, 1, 0, 0, 0, 46, 297, 1, 0, 0, 0, 48, 305, 1, 0, 0, 0, 50, 315, 
-		    1, 0, 0, 0, 52, 322, 1, 0, 0, 0, 54, 325, 1, 0, 0, 0, 56, 338, 1, 
-		    0, 0, 0, 58, 344, 1, 0, 0, 0, 60, 346, 1, 0, 0, 0, 62, 356, 1, 0, 
-		    0, 0, 64, 359, 1, 0, 0, 0, 66, 368, 1, 0, 0, 0, 68, 376, 1, 0, 0, 
-		    0, 70, 387, 1, 0, 0, 0, 72, 389, 1, 0, 0, 0, 74, 76, 3, 2, 1, 0, 75, 
-		    74, 1, 0, 0, 0, 76, 79, 1, 0, 0, 0, 77, 75, 1, 0, 0, 0, 77, 78, 1, 
-		    0, 0, 0, 78, 80, 1, 0, 0, 0, 79, 77, 1, 0, 0, 0, 80, 81, 5, 0, 0, 
-		    1, 81, 1, 1, 0, 0, 0, 82, 83, 5, 4, 0, 0, 83, 84, 5, 60, 0, 0, 84, 
-		    86, 5, 45, 0, 0, 85, 87, 3, 4, 2, 0, 86, 85, 1, 0, 0, 0, 86, 87, 1, 
-		    0, 0, 0, 87, 88, 1, 0, 0, 0, 88, 95, 5, 46, 0, 0, 89, 96, 3, 10, 5, 
-		    0, 90, 92, 5, 45, 0, 0, 91, 93, 3, 8, 4, 0, 92, 91, 1, 0, 0, 0, 92, 
-		    93, 1, 0, 0, 0, 93, 94, 1, 0, 0, 0, 94, 96, 5, 46, 0, 0, 95, 89, 1, 
-		    0, 0, 0, 95, 90, 1, 0, 0, 0, 95, 96, 1, 0, 0, 0, 96, 97, 1, 0, 0, 
-		    0, 97, 104, 3, 12, 6, 0, 98, 99, 5, 4, 0, 0, 99, 100, 5, 5, 0, 0, 
-		    100, 101, 5, 45, 0, 0, 101, 102, 5, 46, 0, 0, 102, 104, 3, 12, 6, 
-		    0, 103, 82, 1, 0, 0, 0, 103, 98, 1, 0, 0, 0, 104, 3, 1, 0, 0, 0, 105, 
-		    110, 3, 6, 3, 0, 106, 107, 5, 51, 0, 0, 107, 109, 3, 6, 3, 0, 108, 
-		    106, 1, 0, 0, 0, 109, 112, 1, 0, 0, 0, 110, 108, 1, 0, 0, 0, 110, 
-		    111, 1, 0, 0, 0, 111, 5, 1, 0, 0, 0, 112, 110, 1, 0, 0, 0, 113, 114, 
-		    5, 60, 0, 0, 114, 115, 3, 10, 5, 0, 115, 7, 1, 0, 0, 0, 116, 121, 
-		    3, 10, 5, 0, 117, 118, 5, 51, 0, 0, 118, 120, 3, 10, 5, 0, 119, 117, 
-		    1, 0, 0, 0, 120, 123, 1, 0, 0, 0, 121, 119, 1, 0, 0, 0, 121, 122, 
-		    1, 0, 0, 0, 122, 9, 1, 0, 0, 0, 123, 121, 1, 0, 0, 0, 124, 137, 5, 
-		    23, 0, 0, 125, 137, 5, 24, 0, 0, 126, 137, 5, 25, 0, 0, 127, 137, 
+		    1, 21, 1, 21, 1, 21, 1, 21, 1, 21, 1, 21, 1, 21, 1, 21, 1, 21, 1, 
+		    21, 1, 21, 1, 21, 1, 21, 1, 21, 1, 21, 1, 21, 1, 21, 1, 21, 3, 21, 
+		    296, 8, 21, 1, 21, 3, 21, 299, 8, 21, 1, 22, 1, 22, 1, 22, 3, 22, 
+		    304, 8, 22, 1, 22, 1, 22, 1, 23, 1, 23, 1, 23, 5, 23, 311, 8, 23, 
+		    10, 23, 12, 23, 314, 9, 23, 1, 24, 1, 24, 1, 24, 1, 24, 1, 24, 1, 
+		    24, 3, 24, 322, 8, 24, 3, 24, 324, 8, 24, 1, 25, 1, 25, 1, 25, 1, 
+		    25, 1, 26, 1, 26, 1, 26, 3, 26, 333, 8, 26, 1, 27, 3, 27, 336, 8, 
+		    27, 1, 27, 1, 27, 3, 27, 340, 8, 27, 1, 27, 1, 27, 3, 27, 344, 8, 
+		    27, 1, 28, 1, 28, 1, 28, 3, 28, 349, 8, 28, 1, 29, 1, 29, 1, 29, 1, 
+		    29, 3, 29, 355, 8, 29, 1, 30, 1, 30, 1, 30, 1, 30, 1, 30, 1, 30, 1, 
+		    31, 1, 31, 5, 31, 365, 8, 31, 10, 31, 12, 31, 368, 9, 31, 1, 32, 1, 
+		    32, 1, 32, 1, 32, 5, 32, 374, 8, 32, 10, 32, 12, 32, 377, 9, 32, 1, 
+		    33, 1, 33, 1, 33, 5, 33, 382, 8, 33, 10, 33, 12, 33, 385, 9, 33, 1, 
+		    34, 1, 34, 1, 34, 1, 34, 5, 34, 391, 8, 34, 10, 34, 12, 34, 394, 9, 
+		    34, 3, 34, 396, 8, 34, 1, 35, 1, 35, 1, 36, 1, 36, 1, 36, 0, 0, 37, 
+		    0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 
+		    36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 62, 64, 66, 68, 
+		    70, 72, 0, 7, 2, 0, 28, 28, 64, 67, 1, 0, 40, 41, 1, 0, 34, 39, 1, 
+		    0, 29, 30, 1, 0, 31, 33, 3, 0, 1, 1, 30, 31, 42, 42, 2, 0, 18, 22, 
+		    60, 60, 446, 0, 77, 1, 0, 0, 0, 2, 103, 1, 0, 0, 0, 4, 105, 1, 0, 
+		    0, 0, 6, 113, 1, 0, 0, 0, 8, 116, 1, 0, 0, 0, 10, 136, 1, 0, 0, 0, 
+		    12, 138, 1, 0, 0, 0, 14, 183, 1, 0, 0, 0, 16, 185, 1, 0, 0, 0, 18, 
+		    192, 1, 0, 0, 0, 20, 198, 1, 0, 0, 0, 22, 202, 1, 0, 0, 0, 24, 210, 
+		    1, 0, 0, 0, 26, 219, 1, 0, 0, 0, 28, 229, 1, 0, 0, 0, 30, 231, 1, 
+		    0, 0, 0, 32, 233, 1, 0, 0, 0, 34, 241, 1, 0, 0, 0, 36, 249, 1, 0, 
+		    0, 0, 38, 257, 1, 0, 0, 0, 40, 266, 1, 0, 0, 0, 42, 298, 1, 0, 0, 
+		    0, 44, 300, 1, 0, 0, 0, 46, 307, 1, 0, 0, 0, 48, 315, 1, 0, 0, 0, 
+		    50, 325, 1, 0, 0, 0, 52, 332, 1, 0, 0, 0, 54, 335, 1, 0, 0, 0, 56, 
+		    348, 1, 0, 0, 0, 58, 354, 1, 0, 0, 0, 60, 356, 1, 0, 0, 0, 62, 366, 
+		    1, 0, 0, 0, 64, 369, 1, 0, 0, 0, 66, 378, 1, 0, 0, 0, 68, 386, 1, 
+		    0, 0, 0, 70, 397, 1, 0, 0, 0, 72, 399, 1, 0, 0, 0, 74, 76, 3, 2, 1, 
+		    0, 75, 74, 1, 0, 0, 0, 76, 79, 1, 0, 0, 0, 77, 75, 1, 0, 0, 0, 77, 
+		    78, 1, 0, 0, 0, 78, 80, 1, 0, 0, 0, 79, 77, 1, 0, 0, 0, 80, 81, 5, 
+		    0, 0, 1, 81, 1, 1, 0, 0, 0, 82, 83, 5, 4, 0, 0, 83, 84, 5, 60, 0, 
+		    0, 84, 86, 5, 45, 0, 0, 85, 87, 3, 4, 2, 0, 86, 85, 1, 0, 0, 0, 86, 
+		    87, 1, 0, 0, 0, 87, 88, 1, 0, 0, 0, 88, 95, 5, 46, 0, 0, 89, 96, 3, 
+		    10, 5, 0, 90, 92, 5, 45, 0, 0, 91, 93, 3, 8, 4, 0, 92, 91, 1, 0, 0, 
+		    0, 92, 93, 1, 0, 0, 0, 93, 94, 1, 0, 0, 0, 94, 96, 5, 46, 0, 0, 95, 
+		    89, 1, 0, 0, 0, 95, 90, 1, 0, 0, 0, 95, 96, 1, 0, 0, 0, 96, 97, 1, 
+		    0, 0, 0, 97, 104, 3, 12, 6, 0, 98, 99, 5, 4, 0, 0, 99, 100, 5, 5, 
+		    0, 0, 100, 101, 5, 45, 0, 0, 101, 102, 5, 46, 0, 0, 102, 104, 3, 12, 
+		    6, 0, 103, 82, 1, 0, 0, 0, 103, 98, 1, 0, 0, 0, 104, 3, 1, 0, 0, 0, 
+		    105, 110, 3, 6, 3, 0, 106, 107, 5, 51, 0, 0, 107, 109, 3, 6, 3, 0, 
+		    108, 106, 1, 0, 0, 0, 109, 112, 1, 0, 0, 0, 110, 108, 1, 0, 0, 0, 
+		    110, 111, 1, 0, 0, 0, 111, 5, 1, 0, 0, 0, 112, 110, 1, 0, 0, 0, 113, 
+		    114, 5, 60, 0, 0, 114, 115, 3, 10, 5, 0, 115, 7, 1, 0, 0, 0, 116, 
+		    121, 3, 10, 5, 0, 117, 118, 5, 51, 0, 0, 118, 120, 3, 10, 5, 0, 119, 
+		    117, 1, 0, 0, 0, 120, 123, 1, 0, 0, 0, 121, 119, 1, 0, 0, 0, 121, 
+		    122, 1, 0, 0, 0, 122, 9, 1, 0, 0, 0, 123, 121, 1, 0, 0, 0, 124, 137, 
+		    5, 23, 0, 0, 125, 137, 5, 24, 0, 0, 126, 137, 5, 25, 0, 0, 127, 137, 
 		    5, 26, 0, 0, 128, 137, 5, 27, 0, 0, 129, 130, 5, 49, 0, 0, 130, 131, 
 		    3, 30, 15, 0, 131, 132, 5, 50, 0, 0, 132, 133, 3, 10, 5, 0, 133, 137, 
 		    1, 0, 0, 0, 134, 135, 5, 31, 0, 0, 135, 137, 3, 10, 5, 0, 136, 124, 
@@ -237,61 +239,66 @@ namespace {
 		    1, 0, 0, 0, 261, 264, 1, 0, 0, 0, 262, 260, 1, 0, 0, 0, 262, 263, 
 		    1, 0, 0, 0, 263, 39, 1, 0, 0, 0, 264, 262, 1, 0, 0, 0, 265, 267, 7, 
 		    5, 0, 0, 266, 265, 1, 0, 0, 0, 266, 267, 1, 0, 0, 0, 267, 268, 1, 
-		    0, 0, 0, 268, 269, 3, 42, 21, 0, 269, 41, 1, 0, 0, 0, 270, 289, 5, 
-		    56, 0, 0, 271, 289, 5, 57, 0, 0, 272, 289, 5, 58, 0, 0, 273, 289, 
-		    5, 59, 0, 0, 274, 289, 5, 16, 0, 0, 275, 289, 5, 17, 0, 0, 276, 289, 
-		    5, 15, 0, 0, 277, 289, 5, 60, 0, 0, 278, 289, 3, 44, 22, 0, 279, 280, 
-		    5, 45, 0, 0, 280, 281, 3, 30, 15, 0, 281, 282, 5, 46, 0, 0, 282, 289, 
-		    1, 0, 0, 0, 283, 285, 5, 49, 0, 0, 284, 286, 3, 24, 12, 0, 285, 284, 
-		    1, 0, 0, 0, 285, 286, 1, 0, 0, 0, 286, 287, 1, 0, 0, 0, 287, 289, 
-		    5, 50, 0, 0, 288, 270, 1, 0, 0, 0, 288, 271, 1, 0, 0, 0, 288, 272, 
-		    1, 0, 0, 0, 288, 273, 1, 0, 0, 0, 288, 274, 1, 0, 0, 0, 288, 275, 
-		    1, 0, 0, 0, 288, 276, 1, 0, 0, 0, 288, 277, 1, 0, 0, 0, 288, 278, 
-		    1, 0, 0, 0, 288, 279, 1, 0, 0, 0, 288, 283, 1, 0, 0, 0, 289, 43, 1, 
-		    0, 0, 0, 290, 291, 7, 6, 0, 0, 291, 293, 5, 45, 0, 0, 292, 294, 3, 
-		    46, 23, 0, 293, 292, 1, 0, 0, 0, 293, 294, 1, 0, 0, 0, 294, 295, 1, 
-		    0, 0, 0, 295, 296, 5, 46, 0, 0, 296, 45, 1, 0, 0, 0, 297, 302, 3, 
-		    30, 15, 0, 298, 299, 5, 51, 0, 0, 299, 301, 3, 30, 15, 0, 300, 298, 
-		    1, 0, 0, 0, 301, 304, 1, 0, 0, 0, 302, 300, 1, 0, 0, 0, 302, 303, 
-		    1, 0, 0, 0, 303, 47, 1, 0, 0, 0, 304, 302, 1, 0, 0, 0, 305, 306, 5, 
-		    6, 0, 0, 306, 307, 3, 30, 15, 0, 307, 313, 3, 12, 6, 0, 308, 311, 
-		    5, 7, 0, 0, 309, 312, 3, 48, 24, 0, 310, 312, 3, 12, 6, 0, 311, 309, 
-		    1, 0, 0, 0, 311, 310, 1, 0, 0, 0, 312, 314, 1, 0, 0, 0, 313, 308, 
-		    1, 0, 0, 0, 313, 314, 1, 0, 0, 0, 314, 49, 1, 0, 0, 0, 315, 316, 5, 
-		    8, 0, 0, 316, 317, 3, 52, 26, 0, 317, 318, 3, 12, 6, 0, 318, 51, 1, 
-		    0, 0, 0, 319, 323, 3, 54, 27, 0, 320, 323, 3, 30, 15, 0, 321, 323, 
-		    1, 0, 0, 0, 322, 319, 1, 0, 0, 0, 322, 320, 1, 0, 0, 0, 322, 321, 
-		    1, 0, 0, 0, 323, 53, 1, 0, 0, 0, 324, 326, 3, 56, 28, 0, 325, 324, 
-		    1, 0, 0, 0, 325, 326, 1, 0, 0, 0, 326, 327, 1, 0, 0, 0, 327, 329, 
-		    5, 54, 0, 0, 328, 330, 3, 30, 15, 0, 329, 328, 1, 0, 0, 0, 329, 330, 
-		    1, 0, 0, 0, 330, 331, 1, 0, 0, 0, 331, 333, 5, 54, 0, 0, 332, 334, 
-		    3, 58, 29, 0, 333, 332, 1, 0, 0, 0, 333, 334, 1, 0, 0, 0, 334, 55, 
-		    1, 0, 0, 0, 335, 339, 3, 20, 10, 0, 336, 339, 3, 26, 13, 0, 337, 339, 
-		    3, 30, 15, 0, 338, 335, 1, 0, 0, 0, 338, 336, 1, 0, 0, 0, 338, 337, 
-		    1, 0, 0, 0, 339, 57, 1, 0, 0, 0, 340, 345, 3, 26, 13, 0, 341, 345, 
-		    3, 30, 15, 0, 342, 345, 5, 43, 0, 0, 343, 345, 5, 44, 0, 0, 344, 340, 
-		    1, 0, 0, 0, 344, 341, 1, 0, 0, 0, 344, 342, 1, 0, 0, 0, 344, 343, 
-		    1, 0, 0, 0, 345, 59, 1, 0, 0, 0, 346, 347, 5, 12, 0, 0, 347, 348, 
-		    3, 30, 15, 0, 348, 349, 5, 47, 0, 0, 349, 350, 3, 62, 31, 0, 350, 
-		    351, 5, 48, 0, 0, 351, 61, 1, 0, 0, 0, 352, 355, 3, 64, 32, 0, 353, 
-		    355, 3, 66, 33, 0, 354, 352, 1, 0, 0, 0, 354, 353, 1, 0, 0, 0, 355, 
-		    358, 1, 0, 0, 0, 356, 354, 1, 0, 0, 0, 356, 357, 1, 0, 0, 0, 357, 
-		    63, 1, 0, 0, 0, 358, 356, 1, 0, 0, 0, 359, 360, 5, 13, 0, 0, 360, 
-		    361, 3, 24, 12, 0, 361, 365, 5, 53, 0, 0, 362, 364, 3, 14, 7, 0, 363, 
-		    362, 1, 0, 0, 0, 364, 367, 1, 0, 0, 0, 365, 363, 1, 0, 0, 0, 365, 
-		    366, 1, 0, 0, 0, 366, 65, 1, 0, 0, 0, 367, 365, 1, 0, 0, 0, 368, 369, 
-		    5, 14, 0, 0, 369, 373, 5, 53, 0, 0, 370, 372, 3, 14, 7, 0, 371, 370, 
-		    1, 0, 0, 0, 372, 375, 1, 0, 0, 0, 373, 371, 1, 0, 0, 0, 373, 374, 
-		    1, 0, 0, 0, 374, 67, 1, 0, 0, 0, 375, 373, 1, 0, 0, 0, 376, 385, 5, 
-		    9, 0, 0, 377, 382, 3, 30, 15, 0, 378, 379, 5, 51, 0, 0, 379, 381, 
-		    3, 30, 15, 0, 380, 378, 1, 0, 0, 0, 381, 384, 1, 0, 0, 0, 382, 380, 
-		    1, 0, 0, 0, 382, 383, 1, 0, 0, 0, 383, 386, 1, 0, 0, 0, 384, 382, 
-		    1, 0, 0, 0, 385, 377, 1, 0, 0, 0, 385, 386, 1, 0, 0, 0, 386, 69, 1, 
-		    0, 0, 0, 387, 388, 5, 10, 0, 0, 388, 71, 1, 0, 0, 0, 389, 390, 5, 
-		    11, 0, 0, 390, 73, 1, 0, 0, 0, 46, 77, 86, 92, 95, 103, 110, 121, 
-		    136, 142, 149, 153, 157, 161, 165, 172, 176, 180, 183, 190, 207, 215, 
-		    219, 227, 238, 246, 254, 262, 266, 285, 288, 293, 302, 311, 313, 322, 
-		    325, 329, 333, 338, 344, 354, 356, 365, 373, 382, 385];
+		    0, 0, 0, 268, 269, 3, 42, 21, 0, 269, 41, 1, 0, 0, 0, 270, 299, 5, 
+		    56, 0, 0, 271, 299, 5, 57, 0, 0, 272, 299, 5, 58, 0, 0, 273, 299, 
+		    5, 59, 0, 0, 274, 299, 5, 16, 0, 0, 275, 299, 5, 17, 0, 0, 276, 299, 
+		    5, 15, 0, 0, 277, 299, 5, 60, 0, 0, 278, 299, 5, 18, 0, 0, 279, 299, 
+		    5, 19, 0, 0, 280, 299, 5, 20, 0, 0, 281, 299, 5, 21, 0, 0, 282, 299, 
+		    5, 22, 0, 0, 283, 284, 3, 10, 5, 0, 284, 285, 5, 45, 0, 0, 285, 286, 
+		    3, 30, 15, 0, 286, 287, 5, 46, 0, 0, 287, 299, 1, 0, 0, 0, 288, 299, 
+		    3, 44, 22, 0, 289, 290, 5, 45, 0, 0, 290, 291, 3, 30, 15, 0, 291, 
+		    292, 5, 46, 0, 0, 292, 299, 1, 0, 0, 0, 293, 295, 5, 49, 0, 0, 294, 
+		    296, 3, 24, 12, 0, 295, 294, 1, 0, 0, 0, 295, 296, 1, 0, 0, 0, 296, 
+		    297, 1, 0, 0, 0, 297, 299, 5, 50, 0, 0, 298, 270, 1, 0, 0, 0, 298, 
+		    271, 1, 0, 0, 0, 298, 272, 1, 0, 0, 0, 298, 273, 1, 0, 0, 0, 298, 
+		    274, 1, 0, 0, 0, 298, 275, 1, 0, 0, 0, 298, 276, 1, 0, 0, 0, 298, 
+		    277, 1, 0, 0, 0, 298, 278, 1, 0, 0, 0, 298, 279, 1, 0, 0, 0, 298, 
+		    280, 1, 0, 0, 0, 298, 281, 1, 0, 0, 0, 298, 282, 1, 0, 0, 0, 298, 
+		    283, 1, 0, 0, 0, 298, 288, 1, 0, 0, 0, 298, 289, 1, 0, 0, 0, 298, 
+		    293, 1, 0, 0, 0, 299, 43, 1, 0, 0, 0, 300, 301, 7, 6, 0, 0, 301, 303, 
+		    5, 45, 0, 0, 302, 304, 3, 46, 23, 0, 303, 302, 1, 0, 0, 0, 303, 304, 
+		    1, 0, 0, 0, 304, 305, 1, 0, 0, 0, 305, 306, 5, 46, 0, 0, 306, 45, 
+		    1, 0, 0, 0, 307, 312, 3, 30, 15, 0, 308, 309, 5, 51, 0, 0, 309, 311, 
+		    3, 30, 15, 0, 310, 308, 1, 0, 0, 0, 311, 314, 1, 0, 0, 0, 312, 310, 
+		    1, 0, 0, 0, 312, 313, 1, 0, 0, 0, 313, 47, 1, 0, 0, 0, 314, 312, 1, 
+		    0, 0, 0, 315, 316, 5, 6, 0, 0, 316, 317, 3, 30, 15, 0, 317, 323, 3, 
+		    12, 6, 0, 318, 321, 5, 7, 0, 0, 319, 322, 3, 48, 24, 0, 320, 322, 
+		    3, 12, 6, 0, 321, 319, 1, 0, 0, 0, 321, 320, 1, 0, 0, 0, 322, 324, 
+		    1, 0, 0, 0, 323, 318, 1, 0, 0, 0, 323, 324, 1, 0, 0, 0, 324, 49, 1, 
+		    0, 0, 0, 325, 326, 5, 8, 0, 0, 326, 327, 3, 52, 26, 0, 327, 328, 3, 
+		    12, 6, 0, 328, 51, 1, 0, 0, 0, 329, 333, 3, 54, 27, 0, 330, 333, 3, 
+		    30, 15, 0, 331, 333, 1, 0, 0, 0, 332, 329, 1, 0, 0, 0, 332, 330, 1, 
+		    0, 0, 0, 332, 331, 1, 0, 0, 0, 333, 53, 1, 0, 0, 0, 334, 336, 3, 56, 
+		    28, 0, 335, 334, 1, 0, 0, 0, 335, 336, 1, 0, 0, 0, 336, 337, 1, 0, 
+		    0, 0, 337, 339, 5, 54, 0, 0, 338, 340, 3, 30, 15, 0, 339, 338, 1, 
+		    0, 0, 0, 339, 340, 1, 0, 0, 0, 340, 341, 1, 0, 0, 0, 341, 343, 5, 
+		    54, 0, 0, 342, 344, 3, 58, 29, 0, 343, 342, 1, 0, 0, 0, 343, 344, 
+		    1, 0, 0, 0, 344, 55, 1, 0, 0, 0, 345, 349, 3, 20, 10, 0, 346, 349, 
+		    3, 26, 13, 0, 347, 349, 3, 30, 15, 0, 348, 345, 1, 0, 0, 0, 348, 346, 
+		    1, 0, 0, 0, 348, 347, 1, 0, 0, 0, 349, 57, 1, 0, 0, 0, 350, 355, 3, 
+		    26, 13, 0, 351, 355, 3, 30, 15, 0, 352, 355, 5, 43, 0, 0, 353, 355, 
+		    5, 44, 0, 0, 354, 350, 1, 0, 0, 0, 354, 351, 1, 0, 0, 0, 354, 352, 
+		    1, 0, 0, 0, 354, 353, 1, 0, 0, 0, 355, 59, 1, 0, 0, 0, 356, 357, 5, 
+		    12, 0, 0, 357, 358, 3, 30, 15, 0, 358, 359, 5, 47, 0, 0, 359, 360, 
+		    3, 62, 31, 0, 360, 361, 5, 48, 0, 0, 361, 61, 1, 0, 0, 0, 362, 365, 
+		    3, 64, 32, 0, 363, 365, 3, 66, 33, 0, 364, 362, 1, 0, 0, 0, 364, 363, 
+		    1, 0, 0, 0, 365, 368, 1, 0, 0, 0, 366, 364, 1, 0, 0, 0, 366, 367, 
+		    1, 0, 0, 0, 367, 63, 1, 0, 0, 0, 368, 366, 1, 0, 0, 0, 369, 370, 5, 
+		    13, 0, 0, 370, 371, 3, 24, 12, 0, 371, 375, 5, 53, 0, 0, 372, 374, 
+		    3, 14, 7, 0, 373, 372, 1, 0, 0, 0, 374, 377, 1, 0, 0, 0, 375, 373, 
+		    1, 0, 0, 0, 375, 376, 1, 0, 0, 0, 376, 65, 1, 0, 0, 0, 377, 375, 1, 
+		    0, 0, 0, 378, 379, 5, 14, 0, 0, 379, 383, 5, 53, 0, 0, 380, 382, 3, 
+		    14, 7, 0, 381, 380, 1, 0, 0, 0, 382, 385, 1, 0, 0, 0, 383, 381, 1, 
+		    0, 0, 0, 383, 384, 1, 0, 0, 0, 384, 67, 1, 0, 0, 0, 385, 383, 1, 0, 
+		    0, 0, 386, 395, 5, 9, 0, 0, 387, 392, 3, 30, 15, 0, 388, 389, 5, 51, 
+		    0, 0, 389, 391, 3, 30, 15, 0, 390, 388, 1, 0, 0, 0, 391, 394, 1, 0, 
+		    0, 0, 392, 390, 1, 0, 0, 0, 392, 393, 1, 0, 0, 0, 393, 396, 1, 0, 
+		    0, 0, 394, 392, 1, 0, 0, 0, 395, 387, 1, 0, 0, 0, 395, 396, 1, 0, 
+		    0, 0, 396, 69, 1, 0, 0, 0, 397, 398, 5, 10, 0, 0, 398, 71, 1, 0, 0, 
+		    0, 399, 400, 5, 11, 0, 0, 400, 73, 1, 0, 0, 0, 46, 77, 86, 92, 95, 
+		    103, 110, 121, 136, 142, 149, 153, 157, 161, 165, 172, 176, 180, 183, 
+		    190, 207, 215, 219, 227, 238, 246, 254, 262, 266, 295, 298, 303, 312, 
+		    321, 323, 332, 335, 339, 343, 348, 354, 364, 366, 375, 383, 392, 395];
 		protected static $atn;
 		protected static $decisionToDFA;
 		protected static $sharedContextCache;
@@ -679,7 +686,7 @@ namespace {
 		        $this->errorHandler->sync($this);
 
 		        $_la = $this->input->LA(1);
-		        while (((($_la) & ~0x3f) === 0 && ((1 << $_la) & 1153062244242956108) !== 0)) {
+		        while (((($_la) & ~0x3f) === 0 && ((1 << $_la) & 1153062244250820428) !== 0)) {
 		        	$this->setState(139);
 		        	$this->sentencia();
 		        	$this->setState(144);
@@ -1060,6 +1067,8 @@ namespace {
 		            case self::ASIGNACION:
 		            case self::MAS_ASIGNACION:
 		            case self::MENOS_ASIGNACION:
+		            case self::MULT_ASIGNACION:
+		            case self::DIV_ASIGNACION:
 		            	$this->setState(222);
 		            	$this->operadorAsignacion();
 		            	$this->setState(223);
@@ -1105,7 +1114,7 @@ namespace {
 
 		        $_la = $this->input->LA(1);
 
-		        if (!((((($_la - 28)) & ~0x3f) === 0 && ((1 << ($_la - 28)) & 206158430209) !== 0))) {
+		        if (!((((($_la - 28)) & ~0x3f) === 0 && ((1 << ($_la - 28)) & 1030792151041) !== 0))) {
 		        $this->errorHandler->recoverInline($this);
 		        } else {
 		        	if ($this->input->LA(1) === Token::EOF) {
@@ -1364,23 +1373,24 @@ namespace {
 		        $this->enterOuterAlt($localContext, 1);
 		        $this->setState(266);
 		        $this->errorHandler->sync($this);
-		        $_la = $this->input->LA(1);
 
-		        if (((($_la) & ~0x3f) === 0 && ((1 << $_la) & 4401267736578) !== 0)) {
-		        	$this->setState(265);
+		        switch ($this->getInterpreter()->adaptivePredict($this->input, 27, $this->ctx)) {
+		            case 1:
+		        	    $this->setState(265);
 
-		        	$_la = $this->input->LA(1);
+		        	    $_la = $this->input->LA(1);
 
-		        	if (!(((($_la) & ~0x3f) === 0 && ((1 << $_la) & 4401267736578) !== 0))) {
-		        	$this->errorHandler->recoverInline($this);
-		        	} else {
-		        		if ($this->input->LA(1) === Token::EOF) {
-		        		    $this->matchedEOF = true;
+		        	    if (!(((($_la) & ~0x3f) === 0 && ((1 << $_la) & 4401267736578) !== 0))) {
+		        	    $this->errorHandler->recoverInline($this);
+		        	    } else {
+		        	    	if ($this->input->LA(1) === Token::EOF) {
+		        	    	    $this->matchedEOF = true;
+		        	        }
+
+		        	    	$this->errorHandler->reportMatch($this);
+		        	    	$this->consume();
 		        	    }
-
-		        		$this->errorHandler->reportMatch($this);
-		        		$this->consume();
-		        	}
+		        	break;
 		        }
 		        $this->setState(268);
 		        $this->expresionPrimaria();
@@ -1405,7 +1415,7 @@ namespace {
 		    $this->enterRule($localContext, 42, self::RULE_expresionPrimaria);
 
 		    try {
-		        $this->setState(288);
+		        $this->setState(298);
 		        $this->errorHandler->sync($this);
 
 		        switch ($this->getInterpreter()->adaptivePredict($this->input, 29, $this->ctx)) {
@@ -1460,32 +1470,74 @@ namespace {
 		        	case 9:
 		        	    $this->enterOuterAlt($localContext, 9);
 		        	    $this->setState(278);
-		        	    $this->llamadaFuncion();
+		        	    $this->match(self::PRINTLN);
 		        	break;
 
 		        	case 10:
 		        	    $this->enterOuterAlt($localContext, 10);
 		        	    $this->setState(279);
-		        	    $this->match(self::PAREN_IZQ);
-		        	    $this->setState(280);
-		        	    $this->expresion();
-		        	    $this->setState(281);
-		        	    $this->match(self::PAREN_DER);
+		        	    $this->match(self::LEN);
 		        	break;
 
 		        	case 11:
 		        	    $this->enterOuterAlt($localContext, 11);
+		        	    $this->setState(280);
+		        	    $this->match(self::NOW);
+		        	break;
+
+		        	case 12:
+		        	    $this->enterOuterAlt($localContext, 12);
+		        	    $this->setState(281);
+		        	    $this->match(self::SUBSTR);
+		        	break;
+
+		        	case 13:
+		        	    $this->enterOuterAlt($localContext, 13);
+		        	    $this->setState(282);
+		        	    $this->match(self::TYPEOF);
+		        	break;
+
+		        	case 14:
+		        	    $this->enterOuterAlt($localContext, 14);
 		        	    $this->setState(283);
-		        	    $this->match(self::CORCHETE_IZQ);
+		        	    $this->tipo();
+		        	    $this->setState(284);
+		        	    $this->match(self::PAREN_IZQ);
 		        	    $this->setState(285);
+		        	    $this->expresion();
+		        	    $this->setState(286);
+		        	    $this->match(self::PAREN_DER);
+		        	break;
+
+		        	case 15:
+		        	    $this->enterOuterAlt($localContext, 15);
+		        	    $this->setState(288);
+		        	    $this->llamadaFuncion();
+		        	break;
+
+		        	case 16:
+		        	    $this->enterOuterAlt($localContext, 16);
+		        	    $this->setState(289);
+		        	    $this->match(self::PAREN_IZQ);
+		        	    $this->setState(290);
+		        	    $this->expresion();
+		        	    $this->setState(291);
+		        	    $this->match(self::PAREN_DER);
+		        	break;
+
+		        	case 17:
+		        	    $this->enterOuterAlt($localContext, 17);
+		        	    $this->setState(293);
+		        	    $this->match(self::CORCHETE_IZQ);
+		        	    $this->setState(295);
 		        	    $this->errorHandler->sync($this);
 		        	    $_la = $this->input->LA(1);
 
-		        	    if (((($_la) & ~0x3f) === 0 && ((1 << $_la) & 2234387950769504258) !== 0)) {
-		        	    	$this->setState(284);
+		        	    if (((($_la) & ~0x3f) === 0 && ((1 << $_la) & 2234387951037415426) !== 0)) {
+		        	    	$this->setState(294);
 		        	    	$this->listaExpresiones();
 		        	    }
-		        	    $this->setState(287);
+		        	    $this->setState(297);
 		        	    $this->match(self::CORCHETE_DER);
 		        	break;
 		        }
@@ -1511,11 +1563,11 @@ namespace {
 
 		    try {
 		        $this->enterOuterAlt($localContext, 1);
-		        $this->setState(290);
+		        $this->setState(300);
 
 		        $_la = $this->input->LA(1);
 
-		        if (!($_la === self::PRINTLN || $_la === self::IDENTIFICADOR)) {
+		        if (!(((($_la) & ~0x3f) === 0 && ((1 << $_la) & 1152921504614973440) !== 0))) {
 		        $this->errorHandler->recoverInline($this);
 		        } else {
 		        	if ($this->input->LA(1) === Token::EOF) {
@@ -1525,17 +1577,17 @@ namespace {
 		        	$this->errorHandler->reportMatch($this);
 		        	$this->consume();
 		        }
-		        $this->setState(291);
+		        $this->setState(301);
 		        $this->match(self::PAREN_IZQ);
-		        $this->setState(293);
+		        $this->setState(303);
 		        $this->errorHandler->sync($this);
 		        $_la = $this->input->LA(1);
 
-		        if (((($_la) & ~0x3f) === 0 && ((1 << $_la) & 2234387950769504258) !== 0)) {
-		        	$this->setState(292);
+		        if (((($_la) & ~0x3f) === 0 && ((1 << $_la) & 2234387951037415426) !== 0)) {
+		        	$this->setState(302);
 		        	$this->argumentos();
 		        }
-		        $this->setState(295);
+		        $this->setState(305);
 		        $this->match(self::PAREN_DER);
 		    } catch (RecognitionException $exception) {
 		        $localContext->exception = $exception;
@@ -1559,18 +1611,18 @@ namespace {
 
 		    try {
 		        $this->enterOuterAlt($localContext, 1);
-		        $this->setState(297);
+		        $this->setState(307);
 		        $this->expresion();
-		        $this->setState(302);
+		        $this->setState(312);
 		        $this->errorHandler->sync($this);
 
 		        $_la = $this->input->LA(1);
 		        while ($_la === self::COMA) {
-		        	$this->setState(298);
+		        	$this->setState(308);
 		        	$this->match(self::COMA);
-		        	$this->setState(299);
+		        	$this->setState(309);
 		        	$this->expresion();
-		        	$this->setState(304);
+		        	$this->setState(314);
 		        	$this->errorHandler->sync($this);
 		        	$_la = $this->input->LA(1);
 		        }
@@ -1596,30 +1648,30 @@ namespace {
 
 		    try {
 		        $this->enterOuterAlt($localContext, 1);
-		        $this->setState(305);
+		        $this->setState(315);
 		        $this->match(self::IF);
-		        $this->setState(306);
+		        $this->setState(316);
 		        $this->expresion();
-		        $this->setState(307);
+		        $this->setState(317);
 		        $this->bloque();
-		        $this->setState(313);
+		        $this->setState(323);
 		        $this->errorHandler->sync($this);
 		        $_la = $this->input->LA(1);
 
 		        if ($_la === self::ELSE) {
-		        	$this->setState(308);
+		        	$this->setState(318);
 		        	$this->match(self::ELSE);
-		        	$this->setState(311);
+		        	$this->setState(321);
 		        	$this->errorHandler->sync($this);
 
 		        	switch ($this->input->LA(1)) {
 		        	    case self::IF:
-		        	    	$this->setState(309);
+		        	    	$this->setState(319);
 		        	    	$this->ifStmt();
 		        	    	break;
 
 		        	    case self::LLAVE_IZQ:
-		        	    	$this->setState(310);
+		        	    	$this->setState(320);
 		        	    	$this->bloque();
 		        	    	break;
 
@@ -1649,11 +1701,11 @@ namespace {
 
 		    try {
 		        $this->enterOuterAlt($localContext, 1);
-		        $this->setState(315);
+		        $this->setState(325);
 		        $this->match(self::FOR);
-		        $this->setState(316);
+		        $this->setState(326);
 		        $this->forHeader();
-		        $this->setState(317);
+		        $this->setState(327);
 		        $this->bloque();
 		    } catch (RecognitionException $exception) {
 		        $localContext->exception = $exception;
@@ -1676,19 +1728,19 @@ namespace {
 		    $this->enterRule($localContext, 52, self::RULE_forHeader);
 
 		    try {
-		        $this->setState(322);
+		        $this->setState(332);
 		        $this->errorHandler->sync($this);
 
 		        switch ($this->getInterpreter()->adaptivePredict($this->input, 34, $this->ctx)) {
 		        	case 1:
 		        	    $this->enterOuterAlt($localContext, 1);
-		        	    $this->setState(319);
+		        	    $this->setState(329);
 		        	    $this->forClause();
 		        	break;
 
 		        	case 2:
 		        	    $this->enterOuterAlt($localContext, 2);
-		        	    $this->setState(320);
+		        	    $this->setState(330);
 		        	    $this->expresion();
 		        	break;
 
@@ -1719,32 +1771,32 @@ namespace {
 
 		    try {
 		        $this->enterOuterAlt($localContext, 1);
-		        $this->setState(325);
+		        $this->setState(335);
 		        $this->errorHandler->sync($this);
 		        $_la = $this->input->LA(1);
 
-		        if (((($_la) & ~0x3f) === 0 && ((1 << $_la) & 2234387950769504258) !== 0)) {
-		        	$this->setState(324);
+		        if (((($_la) & ~0x3f) === 0 && ((1 << $_la) & 2234387951037415426) !== 0)) {
+		        	$this->setState(334);
 		        	$this->initStmt();
 		        }
-		        $this->setState(327);
+		        $this->setState(337);
 		        $this->match(self::PUNTO_COMA);
-		        $this->setState(329);
+		        $this->setState(339);
 		        $this->errorHandler->sync($this);
 		        $_la = $this->input->LA(1);
 
-		        if (((($_la) & ~0x3f) === 0 && ((1 << $_la) & 2234387950769504258) !== 0)) {
-		        	$this->setState(328);
+		        if (((($_la) & ~0x3f) === 0 && ((1 << $_la) & 2234387951037415426) !== 0)) {
+		        	$this->setState(338);
 		        	$this->expresion();
 		        }
-		        $this->setState(331);
+		        $this->setState(341);
 		        $this->match(self::PUNTO_COMA);
-		        $this->setState(333);
+		        $this->setState(343);
 		        $this->errorHandler->sync($this);
 		        $_la = $this->input->LA(1);
 
-		        if (((($_la) & ~0x3f) === 0 && ((1 << $_la) & 2234414339048570882) !== 0)) {
-		        	$this->setState(332);
+		        if (((($_la) & ~0x3f) === 0 && ((1 << $_la) & 2234414339316482050) !== 0)) {
+		        	$this->setState(342);
 		        	$this->postStmt();
 		        }
 		    } catch (RecognitionException $exception) {
@@ -1768,25 +1820,25 @@ namespace {
 		    $this->enterRule($localContext, 56, self::RULE_initStmt);
 
 		    try {
-		        $this->setState(338);
+		        $this->setState(348);
 		        $this->errorHandler->sync($this);
 
 		        switch ($this->getInterpreter()->adaptivePredict($this->input, 38, $this->ctx)) {
 		        	case 1:
 		        	    $this->enterOuterAlt($localContext, 1);
-		        	    $this->setState(335);
+		        	    $this->setState(345);
 		        	    $this->declaracionCorta();
 		        	break;
 
 		        	case 2:
 		        	    $this->enterOuterAlt($localContext, 2);
-		        	    $this->setState(336);
+		        	    $this->setState(346);
 		        	    $this->asignacion();
 		        	break;
 
 		        	case 3:
 		        	    $this->enterOuterAlt($localContext, 3);
-		        	    $this->setState(337);
+		        	    $this->setState(347);
 		        	    $this->expresion();
 		        	break;
 		        }
@@ -1811,31 +1863,31 @@ namespace {
 		    $this->enterRule($localContext, 58, self::RULE_postStmt);
 
 		    try {
-		        $this->setState(344);
+		        $this->setState(354);
 		        $this->errorHandler->sync($this);
 
 		        switch ($this->getInterpreter()->adaptivePredict($this->input, 39, $this->ctx)) {
 		        	case 1:
 		        	    $this->enterOuterAlt($localContext, 1);
-		        	    $this->setState(340);
+		        	    $this->setState(350);
 		        	    $this->asignacion();
 		        	break;
 
 		        	case 2:
 		        	    $this->enterOuterAlt($localContext, 2);
-		        	    $this->setState(341);
+		        	    $this->setState(351);
 		        	    $this->expresion();
 		        	break;
 
 		        	case 3:
 		        	    $this->enterOuterAlt($localContext, 3);
-		        	    $this->setState(342);
+		        	    $this->setState(352);
 		        	    $this->match(self::INCREMENTO);
 		        	break;
 
 		        	case 4:
 		        	    $this->enterOuterAlt($localContext, 4);
-		        	    $this->setState(343);
+		        	    $this->setState(353);
 		        	    $this->match(self::DECREMENTO);
 		        	break;
 		        }
@@ -1861,15 +1913,15 @@ namespace {
 
 		    try {
 		        $this->enterOuterAlt($localContext, 1);
-		        $this->setState(346);
+		        $this->setState(356);
 		        $this->match(self::SWITCH);
-		        $this->setState(347);
+		        $this->setState(357);
 		        $this->expresion();
-		        $this->setState(348);
+		        $this->setState(358);
 		        $this->match(self::LLAVE_IZQ);
-		        $this->setState(349);
+		        $this->setState(359);
 		        $this->casoBloques();
-		        $this->setState(350);
+		        $this->setState(360);
 		        $this->match(self::LLAVE_DER);
 		    } catch (RecognitionException $exception) {
 		        $localContext->exception = $exception;
@@ -1893,29 +1945,29 @@ namespace {
 
 		    try {
 		        $this->enterOuterAlt($localContext, 1);
-		        $this->setState(356);
+		        $this->setState(366);
 		        $this->errorHandler->sync($this);
 
 		        $_la = $this->input->LA(1);
 		        while ($_la === self::CASE || $_la === self::DEFAULT) {
-		        	$this->setState(354);
+		        	$this->setState(364);
 		        	$this->errorHandler->sync($this);
 
 		        	switch ($this->input->LA(1)) {
 		        	    case self::CASE:
-		        	    	$this->setState(352);
+		        	    	$this->setState(362);
 		        	    	$this->caso();
 		        	    	break;
 
 		        	    case self::DEFAULT:
-		        	    	$this->setState(353);
+		        	    	$this->setState(363);
 		        	    	$this->defaultBloque();
 		        	    	break;
 
 		        	default:
 		        		throw new NoViableAltException($this);
 		        	}
-		        	$this->setState(358);
+		        	$this->setState(368);
 		        	$this->errorHandler->sync($this);
 		        	$_la = $this->input->LA(1);
 		        }
@@ -1941,20 +1993,20 @@ namespace {
 
 		    try {
 		        $this->enterOuterAlt($localContext, 1);
-		        $this->setState(359);
+		        $this->setState(369);
 		        $this->match(self::CASE);
-		        $this->setState(360);
+		        $this->setState(370);
 		        $this->listaExpresiones();
-		        $this->setState(361);
+		        $this->setState(371);
 		        $this->match(self::DOS_PUNTOS);
-		        $this->setState(365);
+		        $this->setState(375);
 		        $this->errorHandler->sync($this);
 
 		        $_la = $this->input->LA(1);
-		        while (((($_la) & ~0x3f) === 0 && ((1 << $_la) & 1153062244242956108) !== 0)) {
-		        	$this->setState(362);
+		        while (((($_la) & ~0x3f) === 0 && ((1 << $_la) & 1153062244250820428) !== 0)) {
+		        	$this->setState(372);
 		        	$this->sentencia();
-		        	$this->setState(367);
+		        	$this->setState(377);
 		        	$this->errorHandler->sync($this);
 		        	$_la = $this->input->LA(1);
 		        }
@@ -1980,18 +2032,18 @@ namespace {
 
 		    try {
 		        $this->enterOuterAlt($localContext, 1);
-		        $this->setState(368);
+		        $this->setState(378);
 		        $this->match(self::DEFAULT);
-		        $this->setState(369);
+		        $this->setState(379);
 		        $this->match(self::DOS_PUNTOS);
-		        $this->setState(373);
+		        $this->setState(383);
 		        $this->errorHandler->sync($this);
 
 		        $_la = $this->input->LA(1);
-		        while (((($_la) & ~0x3f) === 0 && ((1 << $_la) & 1153062244242956108) !== 0)) {
-		        	$this->setState(370);
+		        while (((($_la) & ~0x3f) === 0 && ((1 << $_la) & 1153062244250820428) !== 0)) {
+		        	$this->setState(380);
 		        	$this->sentencia();
-		        	$this->setState(375);
+		        	$this->setState(385);
 		        	$this->errorHandler->sync($this);
 		        	$_la = $this->input->LA(1);
 		        }
@@ -2017,25 +2069,25 @@ namespace {
 
 		    try {
 		        $this->enterOuterAlt($localContext, 1);
-		        $this->setState(376);
+		        $this->setState(386);
 		        $this->match(self::RETURN);
-		        $this->setState(385);
+		        $this->setState(395);
 		        $this->errorHandler->sync($this);
 
 		        switch ($this->getInterpreter()->adaptivePredict($this->input, 45, $this->ctx)) {
 		            case 1:
-		        	    $this->setState(377);
+		        	    $this->setState(387);
 		        	    $this->expresion();
-		        	    $this->setState(382);
+		        	    $this->setState(392);
 		        	    $this->errorHandler->sync($this);
 
 		        	    $_la = $this->input->LA(1);
 		        	    while ($_la === self::COMA) {
-		        	    	$this->setState(378);
+		        	    	$this->setState(388);
 		        	    	$this->match(self::COMA);
-		        	    	$this->setState(379);
+		        	    	$this->setState(389);
 		        	    	$this->expresion();
-		        	    	$this->setState(384);
+		        	    	$this->setState(394);
 		        	    	$this->errorHandler->sync($this);
 		        	    	$_la = $this->input->LA(1);
 		        	    }
@@ -2063,7 +2115,7 @@ namespace {
 
 		    try {
 		        $this->enterOuterAlt($localContext, 1);
-		        $this->setState(387);
+		        $this->setState(397);
 		        $this->match(self::BREAK);
 		    } catch (RecognitionException $exception) {
 		        $localContext->exception = $exception;
@@ -2087,7 +2139,7 @@ namespace {
 
 		    try {
 		        $this->enterOuterAlt($localContext, 1);
-		        $this->setState(389);
+		        $this->setState(399);
 		        $this->match(self::CONTINUE);
 		    } catch (RecognitionException $exception) {
 		        $localContext->exception = $exception;
@@ -3057,6 +3109,16 @@ namespace Context {
 	        return $this->getToken(GolampiParser::MENOS_ASIGNACION, 0);
 	    }
 
+	    public function MULT_ASIGNACION(): ?TerminalNode
+	    {
+	        return $this->getToken(GolampiParser::MULT_ASIGNACION, 0);
+	    }
+
+	    public function DIV_ASIGNACION(): ?TerminalNode
+	    {
+	        return $this->getToken(GolampiParser::DIV_ASIGNACION, 0);
+	    }
+
 		public function enterRule(ParseTreeListener $listener): void
 		{
 			if ($listener instanceof GolampiListener) {
@@ -3578,9 +3640,34 @@ namespace Context {
 	        return $this->getToken(GolampiParser::IDENTIFICADOR, 0);
 	    }
 
-	    public function llamadaFuncion(): ?LlamadaFuncionContext
+	    public function PRINTLN(): ?TerminalNode
 	    {
-	    	return $this->getTypedRuleContext(LlamadaFuncionContext::class, 0);
+	        return $this->getToken(GolampiParser::PRINTLN, 0);
+	    }
+
+	    public function LEN(): ?TerminalNode
+	    {
+	        return $this->getToken(GolampiParser::LEN, 0);
+	    }
+
+	    public function NOW(): ?TerminalNode
+	    {
+	        return $this->getToken(GolampiParser::NOW, 0);
+	    }
+
+	    public function SUBSTR(): ?TerminalNode
+	    {
+	        return $this->getToken(GolampiParser::SUBSTR, 0);
+	    }
+
+	    public function TYPEOF(): ?TerminalNode
+	    {
+	        return $this->getToken(GolampiParser::TYPEOF, 0);
+	    }
+
+	    public function tipo(): ?TipoContext
+	    {
+	    	return $this->getTypedRuleContext(TipoContext::class, 0);
 	    }
 
 	    public function PAREN_IZQ(): ?TerminalNode
@@ -3596,6 +3683,11 @@ namespace Context {
 	    public function PAREN_DER(): ?TerminalNode
 	    {
 	        return $this->getToken(GolampiParser::PAREN_DER, 0);
+	    }
+
+	    public function llamadaFuncion(): ?LlamadaFuncionContext
+	    {
+	    	return $this->getTypedRuleContext(LlamadaFuncionContext::class, 0);
 	    }
 
 	    public function CORCHETE_IZQ(): ?TerminalNode
@@ -3667,6 +3759,26 @@ namespace Context {
 	    public function PRINTLN(): ?TerminalNode
 	    {
 	        return $this->getToken(GolampiParser::PRINTLN, 0);
+	    }
+
+	    public function LEN(): ?TerminalNode
+	    {
+	        return $this->getToken(GolampiParser::LEN, 0);
+	    }
+
+	    public function NOW(): ?TerminalNode
+	    {
+	        return $this->getToken(GolampiParser::NOW, 0);
+	    }
+
+	    public function SUBSTR(): ?TerminalNode
+	    {
+	        return $this->getToken(GolampiParser::SUBSTR, 0);
+	    }
+
+	    public function TYPEOF(): ?TerminalNode
+	    {
+	        return $this->getToken(GolampiParser::TYPEOF, 0);
 	    }
 
 	    public function argumentos(): ?ArgumentosContext

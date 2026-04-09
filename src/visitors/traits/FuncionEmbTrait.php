@@ -1,17 +1,24 @@
 <?php
 trait FuncionEmbTrait
-
 {
 
 // ============================================================ FUNCIONES EMBEBIDAS ============================================================
-    // En Interpreter.php, dentro de la clase
 
     public function visitLlamadaFuncion($ctx)
     {
         // Obtener el nombre de la función
         $nombre = '';
+        
         if ($ctx->PRINTLN()) {
             $nombre = 'fmt.Println';
+        } else if ($ctx->LEN()) {
+            $nombre = 'len';
+        } else if ($ctx->NOW()) {
+            $nombre = 'now';
+        } else if ($ctx->SUBSTR()) {
+            $nombre = 'substr';
+        } else if ($ctx->TYPEOF()) {
+            $nombre = 'typeOf';
         } else if ($ctx->IDENTIFICADOR()) {
             $nombre = $ctx->IDENTIFICADOR()->getText();
         }
@@ -19,6 +26,8 @@ trait FuncionEmbTrait
         $argumentos = $ctx->argumentos() ? $ctx->argumentos()->expresion() : [];
         $linea = $ctx->getStart()->getLine();
         $columna = $ctx->getStart()->getCharPositionInLine();
+        
+        error_log("=== LLAMADA A FUNCIÓN: '$nombre' con " . count($argumentos) . " argumentos ===");
         
         // Mapeo de funciones embebidas
         switch ($nombre) {
@@ -38,7 +47,7 @@ trait FuncionEmbTrait
                 return $this->ejecutarTypeOf($argumentos, $linea, $columna);
                 
             default:
-                // Es una función definida por el usuario
+                error_log("  → Buscando función de usuario: '$nombre'");
                 return $this->ejecutarFuncionUsuario($nombre, $argumentos, $linea, $columna);
         }
     }
@@ -61,28 +70,26 @@ trait FuncionEmbTrait
     private function ejecutarLen($argumentos, $linea, $columna)
     {
         if (count($argumentos) != 1) {
-            $this->errores[] = [
-                'tipo' => 'Semántico',
-                'descripcion' => 'len() requiere exactamente 1 argumento',
-                'linea' => $linea,
-                'columna' => $columna
-            ];
+            $this->agregarErrorSemantico(
+                'len() requiere exactamente 1 argumento',
+                $linea,
+                $columna
+            );
             return 0;
         }
         
-        $valor = $this->visit($argumentos[0], $linea, $columna);
+        $valor = $this->visit($argumentos[0]);
         
         if (is_string($valor)) {
             return strlen($valor);
         } elseif (is_array($valor)) {
             return count($valor);
         } else {
-            $this->errores[] = [
-                'tipo' => 'Semántico',
-                'descripcion' => 'len() solo puede aplicarse a strings o arreglos',
-                'linea' => $linea,
-                'columna' => $columna
-            ];
+            $this->agregarErrorSemantico(
+                'len() solo puede aplicarse a strings o arreglos',
+                $linea,
+                $columna
+            );
             return 0;
         }
     }
@@ -90,12 +97,11 @@ trait FuncionEmbTrait
     private function ejecutarNow($argumentos, $linea, $columna)
     {
         if (count($argumentos) > 0) {
-            $this->errores[] = [
-                'tipo' => 'Semántico',
-                'descripcion' => 'now() no acepta argumentos',
-                'linea' => $linea,
-                'columna' => $columna
-            ];
+            $this->agregarErrorSemantico(
+                'now() no acepta argumentos',
+                $linea,
+                $columna
+            );
         }
         
         return date('Y-m-d H:i:s');
@@ -104,36 +110,33 @@ trait FuncionEmbTrait
     private function ejecutarSubstr($argumentos, $linea, $columna)
     {
         if (count($argumentos) != 3) {
-            $this->errores[] = [
-                'tipo' => 'Semántico',
-                'descripcion' => 'substr() requiere 3 argumentos: (string, inicio, longitud)',
-                'linea' => $linea,
-                'columna' => $columna
-            ];
+            $this->agregarErrorSemantico(
+                'substr() requiere 3 argumentos: (string, inicio, longitud)',
+                $linea,
+                $columna
+            );
             return "";
         }
         
-        $str = $this->visit($argumentos[0], $linea, $columna);
-        $inicio = $this->visit($argumentos[1], $linea, $columna);
-        $longitud = $this->visit($argumentos[2], $linea, $columna);
+        $str = $this->visit($argumentos[0]);
+        $inicio = $this->visit($argumentos[1]);
+        $longitud = $this->visit($argumentos[2]);
         
         if (!is_string($str)) {
-            $this->errores[] = [
-                'tipo' => 'Semántico',
-                'descripcion' => 'substr(): primer argumento debe ser string',
-                'linea' => $linea,
-                'columna' => $columna
-            ];
+            $this->agregarErrorSemantico(
+                'substr(): primer argumento debe ser string',
+                $linea,
+                $columna
+            );
             return "";
         }
         
         if (!is_int($inicio) || !is_int($longitud)) {
-            $this->errores[] = [
-                'tipo' => 'Semántico',
-                'descripcion' => 'substr(): inicio y longitud deben ser enteros',
-                'linea' => $linea,
-                'columna' => $columna
-            ];
+            $this->agregarErrorSemantico(
+                'substr(): inicio y longitud deben ser enteros',
+                $linea,
+                $columna
+            );
             return "";
         }
         
@@ -143,26 +146,28 @@ trait FuncionEmbTrait
     private function ejecutarTypeOf($argumentos, $linea, $columna)
     {
         if (count($argumentos) != 1) {
-            $this->errores[] = [
-                'tipo' => 'Semántico',
-                'descripcion' => 'typeOf() requiere exactamente 1 argumento',
-                'linea' => $linea,
-                'columna' => $columna
-            ];
+            $this->agregarErrorSemantico(
+                'typeOf() requiere exactamente 1 argumento',
+                $linea,
+                $columna
+            );
             return "unknown";
         }
         
-        $valor = $this->visit($argumentos[0], $linea, $columna);
+        $valor = $this->visit($argumentos[0]);
         
         if ($valor === null) return "nil";
         if (is_int($valor)) return "int32";
         if (is_float($valor)) return "float32";
-        if (is_string($valor)) return "string";
+        if (is_string($valor)) {
+            if (strlen($valor) === 1) {
+                return "rune";
+            }
+            return "string";
+        }
         if (is_bool($valor)) return "bool";
         if (is_array($valor)) return "array";
         
         return "unknown";
     }
-
-
 }

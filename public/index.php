@@ -130,282 +130,501 @@ function getErrorColor($tipo) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Golampi Interpreter - Reporte de Errores</title>
+    <title>Golampi Interpreter - Modern IDE</title>
     <style>
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            max-width: 1200px; 
-            margin: 0 auto; 
-            padding: 20px;
-            background: #f5f5f5;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .container {
-            background: white;
+
+        body {
+            font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #0f0c29 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            padding: 24px;
+        }
+
+        /* Scrollbar personalizada */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #2d2d44;
             border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-        h1 { 
-            color: #333;
-            border-bottom: 3px solid #4CAF50;
-            padding-bottom: 10px;
-            margin-top: 0;
+
+        ::-webkit-scrollbar-thumb {
+            background: #5a5a7a;
+            border-radius: 10px;
         }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6c6c8c;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 28px;
+            padding: 24px;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1);
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        h1::before {
+            content: "⚡";
+            background: none;
+            -webkit-text-fill-color: initial;
+            font-size: 32px;
+        }
+
+        .version-badge {
+            background: rgba(168, 237, 234, 0.2);
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #a8edea;
+            border: 1px solid rgba(168, 237, 234, 0.3);
+        }
+
+        /* Toolbar */
         .toolbar {
             display: flex;
-            gap: 10px;
-            margin: 15px 0;
+            gap: 12px;
+            margin: 0 0 24px 0;
             flex-wrap: wrap;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            border: 1px solid #e9ecef;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            backdrop-filter: blur(5px);
         }
+
         .btn {
             padding: 10px 20px;
             border: none;
-            border-radius: 5px;
+            border-radius: 14px;
             cursor: pointer;
             font-size: 14px;
             font-weight: 600;
-            transition: all 0.3s;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 8px;
+            font-family: inherit;
+            letter-spacing: 0.3px;
+            backdrop-filter: blur(5px);
         }
+
         .btn-primary {
-            background: #4CAF50;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         }
+
         .btn-primary:hover {
-            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
         }
+
         .btn-secondary {
-            background: #6c757d;
-            color: white;
+            background: rgba(255, 255, 255, 0.1);
+            color: #e0e0e0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
+
         .btn-secondary:hover {
-            background: #5a6268;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
         }
+
         .btn-warning {
-            background: #ffc107;
-            color: #212529;
+            background: rgba(255, 193, 7, 0.15);
+            color: #ffd54f;
+            border: 1px solid rgba(255, 193, 7, 0.3);
         }
+
         .btn-warning:hover {
-            background: #e0a800;
+            background: rgba(255, 193, 7, 0.25);
+            transform: translateY(-2px);
         }
+
         .btn-info {
-            background: #17a2b8;
-            color: white;
+            background: rgba(23, 162, 184, 0.15);
+            color: #4dd0e1;
+            border: 1px solid rgba(23, 162, 184, 0.3);
         }
+
         .btn-info:hover {
-            background: #138496;
+            background: rgba(23, 162, 184, 0.25);
+            transform: translateY(-2px);
         }
+
         .btn-danger {
-            background: #dc3545;
-            color: white;
+            background: rgba(220, 53, 69, 0.15);
+            color: #ff8a80;
+            border: 1px solid rgba(220, 53, 69, 0.3);
         }
+
         .btn-danger:hover {
-            background: #c82333;
+            background: rgba(220, 53, 69, 0.25);
+            transform: translateY(-2px);
         }
-        textarea { 
-            width: 100%; 
-            height: 300px; 
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            padding: 15px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            resize: vertical;
-            background: #fafafa;
-            box-sizing: border-box;
-        }
-        textarea:focus {
-            outline: none;
-            border-color: #4CAF50;
-            box-shadow: 0 0 5px rgba(76,175,80,0.3);
-        }
-        .consola { 
-            background: #1e1e1e; 
-            color: #00ff00; 
-            padding: 15px; 
-            border-radius: 5px; 
-            min-height: 150px;
-            max-height: 300px;
-            overflow-y: auto;
-            font-family: 'Courier New', monospace;
-            border: 1px solid #333;
-            margin-top: 15px;
-        }
-        .consola-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 20px;
-        }
-        .error-container { 
-            background: #fff3f3; 
-            border-radius: 8px;
-            border-left: 5px solid #f44336;
-            margin: 20px 0;
+
+        /* Editor de código */
+        .editor-wrapper {
+            position: relative;
+            margin-bottom: 24px;
+            border-radius: 20px;
             overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
         }
+
+        .editor-header {
+            background: #1e1e2e;
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .editor-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ff5f56;
+            margin-right: 4px;
+        }
+
+        .editor-dot:nth-child(2) {
+            background: #ffbd2e;
+        }
+
+        .editor-dot:nth-child(3) {
+            background: #27c93f;
+        }
+
+        .editor-label {
+            color: #888;
+            font-size: 12px;
+            margin-left: 12px;
+            font-family: monospace;
+        }
+
+        textarea {
+            width: 100%;
+            height: 350px;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            padding: 20px;
+            background: #1a1a2a;
+            color: #e4e4e7;
+            border: none;
+            resize: vertical;
+            outline: none;
+        }
+
+        textarea:focus {
+            background: #1f1f30;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 18px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04));
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, #aaa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: #9ca3af;
+            font-size: 13px;
+            font-weight: 500;
+            margin-top: 6px;
+            letter-spacing: 0.5px;
+        }
+
+        /* Error Container */
+        .error-container {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 20px;
+            margin: 24px 0;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(244, 67, 54, 0.3);
+        }
+
         .error-header {
-            background: #f44336;
-            color: white;
-            padding: 15px;
-            margin: 0;
+            background: linear-gradient(135deg, rgba(244, 67, 54, 0.9), rgba(229, 57, 53, 0.9));
+            padding: 16px 24px;
         }
+
         .error-header h3 {
             margin: 0;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            color: white;
+            font-weight: 600;
         }
+
         .error-table {
             width: 100%;
             border-collapse: collapse;
-            background: white;
         }
+
         .error-table th {
-            background: #f8f9fa;
-            color: #333;
-            font-weight: bold;
-            padding: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            color: #e0e0e0;
+            font-weight: 600;
+            padding: 14px 16px;
             text-align: left;
-            border-bottom: 2px solid #dee2e6;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
+
         .error-table td {
-            padding: 10px 12px;
-            border-bottom: 1px solid #dee2e6;
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: #d1d5db;
         }
-        .error-table tr:hover {
-            background: #f5f5f5;
+
+        .error-table tr:hover td {
+            background: rgba(255, 255, 255, 0.05);
         }
+
+        /* Badges */
         .badge {
             display: inline-block;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
-            color: white;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-        .badge-lexico { background: #ff9800; }
-        .badge-sintactico { background: #f44336; }
-        .badge-semantico { background: #9c27b0; }
-        .badge-sistema { background: #6c757d; }
-        
-        table { 
-            width: 100%; 
-            border-collapse: collapse; 
-            margin-top: 20px;
-            background: white;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        th, td { 
-            border: 1px solid #ddd; 
-            padding: 12px; 
-            text-align: left; 
-        }
-        th { 
-            background: #4CAF50; 
-            color: white;
-            font-weight: bold;
-        }
-        tr:nth-child(even) {
-            background: #f9f9f9;
-        }
-        tr:hover {
-            background: #f5f5f5;
-        }
-        .ejemplo {
-            background: #e3f2fd;
-            padding: 15px;
-            border-radius: 5px;
-            border-left: 5px solid #2196F3;
-            margin-top: 20px;
-        }
-        .ejemplo pre {
-            background: #1e1e1e;
-            color: #d4d4d4;
-            padding: 15px;
-            border-radius: 5px;
-            overflow-x: auto;
-            font-family: 'Courier New', monospace;
-        }
-        .badge {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 3px;
-            font-size: 12px;
-            font-weight: bold;
-        }
+
+        .badge-lexico { background: #ff9800; color: #1a1a1a; }
+        .badge-sintactico { background: #f44336; color: white; }
+        .badge-semantico { background: #9c27b0; color: white; }
+        .badge-sistema { background: #6c757d; color: white; }
         .badge-int32 { background: #2196F3; color: white; }
-        .badge-float32 { background: #FF9800; color: white; }
+        .badge-float32 { background: #FF9800; color: #1a1a1a; }
         .badge-string { background: #4CAF50; color: white; }
         .badge-bool { background: #9C27B0; color: white; }
-        .hidden {
-            display: none;
-        }
-        #fileInput {
-            display: none;
-        }
-        .stats {
+        .badge-rune { background: #00BCD4; color: #1a1a1a; }
+        .badge-puntero { background: #795548; color: white; }
+        .badge-array { background: #607D8B; color: white; }
+        .badge-funcion { background: #9E9E9E; color: white; }
+
+        /* Consola */
+        .console-header {
             display: flex;
-            gap: 20px;
-            margin: 15px 0;
+            justify-content: space-between;
+            align-items: center;
+            margin: 24px 0 12px 0;
         }
-        .stat-card {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 15px;
-            flex: 1;
-            text-align: center;
-            border: 1px solid #dee2e6;
+
+        .console-header h3 {
+            color: #e0e0e0;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-        .stat-number {
-            font-size: 24px;
-            font-weight: bold;
-            color: #4CAF50;
+
+        .consola {
+            background: #0d0d1a;
+            border-radius: 16px;
+            padding: 16px;
+            min-height: 160px;
+            max-height: 280px;
+            overflow-y: auto;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            border: 1px solid rgba(0, 255, 0, 0.2);
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
         }
-        .stat-label {
-            color: #6c757d;
-            font-size: 14px;
+
+        .consola div {
+            color: #4ade80;
+            padding: 4px 0;
+            border-bottom: 1px solid rgba(74, 222, 128, 0.1);
+            font-family: monospace;
+        }
+
+        /* Tabla de Símbolos */
+        .symbols-section {
+            margin-top: 32px;
+        }
+
+        .symbols-section h3 {
+            color: #e0e0e0;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .symbols-table-wrapper {
+            overflow-x: auto;
+            border-radius: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+        }
+
+        .symbols-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .symbols-table th {
+            background: rgba(102, 126, 234, 0.3);
+            color: #e0e0e0;
+            padding: 14px 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .symbols-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: #cbd5e1;
+        }
+
+        .symbols-table tr:hover td {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .symbols-table strong {
+            color: #a8edea;
+            font-family: monospace;
+        }
+
+        /* Placeholder text */
+        .placeholder-text {
+            color: #4b5563;
+            font-style: italic;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 12px;
+            }
+            
+            .container {
+                padding: 16px;
+            }
+            
+            .btn {
+                padding: 8px 14px;
+                font-size: 12px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .stat-number {
+                font-size: 24px;
+            }
+        }
+
+        /* Animación de carga sutil */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .container > * {
+            animation: fadeIn 0.4s ease-out forwards;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🧪 Golampi Interpreter - Reporte de Errores</h1>
+        <div class="header">
+            <h1>Golampi Studio</h1>
+            <span class="version-badge">v2.0 · Modern Runtime</span>
+        </div>
         
         <!-- Barra de acciones -->
         <div class="toolbar">
-            <button type="button" class="btn btn-warning" onclick="nuevoArchivo()" title="Limpiar editor y consola">
-                🆕 Nuevo / Limpiar
-            </button>
-            
-            <button type="button" class="btn btn-info" onclick="cargarArchivo()" title="Cargar código desde archivo">
-                📂 Cargar archivo
-            </button>
-            
-            <button type="button" class="btn btn-secondary" onclick="guardarCodigo()" title="Guardar código como archivo">
-                💾 Guardar código
-            </button>
-            
-            <button type="submit" form="codeForm" class="btn btn-primary" title="Ejecutar / Analizar código">
-                ▶ Ejecutar / Analizar
-            </button>
-            
-            <button type="button" class="btn btn-danger" onclick="limpiarConsola()" title="Limpiar consola de salida">
-                🧹 Limpiar consola
-            </button>
+            <button type="button" class="btn btn-warning" onclick="nuevoArchivo()">🆕 Nuevo</button>
+            <button type="button" class="btn btn-info" onclick="cargarArchivo()">📂 Cargar</button>
+            <button type="button" class="btn btn-secondary" onclick="guardarCodigo()">💾 Guardar</button>
+            <button type="submit" form="codeForm" class="btn btn-primary">▶ Ejecutar</button>
+            <button type="button" class="btn btn-danger" onclick="limpiarConsola()">🧹 Limpiar consola</button>
         </div>
         
         <form id="codeForm" method="POST">
-            <textarea id="codigoEditor" name="codigo" placeholder="Escribe tu código Golampi aquí..."><?php echo htmlspecialchars($codigo); ?></textarea>
+            <div class="editor-wrapper">
+                <div class="editor-header">
+                    <div class="editor-dot"></div>
+                    <div class="editor-dot"></div>
+                    <div class="editor-dot"></div>
+                    <span class="editor-label">main.golampi</span>
+                </div>
+                <textarea id="codigoEditor" name="codigo" placeholder="// Escribe tu código Golampi aquí...&#10;// Ejemplo:&#10;// fmt.println('¡Hola Mundo!')"><?php echo htmlspecialchars($codigo); ?></textarea>
+            </div>
         </form>
         
-        <!-- Input oculto para cargar archivos -->
         <input type="file" id="fileInput" accept=".txt,.go,.golampi" onchange="procesarArchivo(this)">
         
         <!-- Estadísticas -->
@@ -417,21 +636,21 @@ function getErrorColor($tipo) {
         ?>
         
         <?php if ($totalErrores > 0): ?>
-            <div class="stats">
+            <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-number"><?php echo $totalErrores; ?></div>
                     <div class="stat-label">Total Errores</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number" style="color: #ff9800;"><?php echo $erroresLexicos; ?></div>
+                    <div class="stat-number" style="background: linear-gradient(135deg, #ff9800, #ffb74d); -webkit-background-clip: text;"><?php echo $erroresLexicos; ?></div>
                     <div class="stat-label">Léxicos</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number" style="color: #f44336;"><?php echo $erroresSintacticos; ?></div>
+                    <div class="stat-number" style="background: linear-gradient(135deg, #f44336, #ef5350); -webkit-background-clip: text;"><?php echo $erroresSintacticos; ?></div>
                     <div class="stat-label">Sintácticos</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number" style="color: #9c27b0;"><?php echo $erroresSemanticos; ?></div>
+                    <div class="stat-number" style="background: linear-gradient(135deg, #9c27b0, #ab47bc); -webkit-background-clip: text;"><?php echo $erroresSemanticos; ?></div>
                     <div class="stat-label">Semánticos</div>
                 </div>
             </div>
@@ -442,8 +661,8 @@ function getErrorColor($tipo) {
             <div class="error-container">
                 <div class="error-header">
                     <h3>
-                        <span>❌ Reporte de Errores</span>
-                        <span style="font-size: 14px; background: rgba(255,255,255,0.2); padding: 3px 10px; border-radius: 20px;">
+                        <span>⚠️ Diagnóstico de Errores</span>
+                        <span style="font-size: 12px; background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 40px;">
                             Total: <?php echo count($errores); ?>
                         </span>
                     </h3>
@@ -468,7 +687,6 @@ function getErrorColor($tipo) {
                                         <?php 
                                         $tipo = $error['tipo'] ?? 'Sistema';
                                         $tipoLower = strtolower($tipo);
-                                        // Eliminar acentos para las clases CSS
                                         $tipoClass = str_replace(['é', 'á', 'í', 'ó', 'ú'], ['e', 'a', 'i', 'o', 'u'], $tipoLower);
                                         ?>
                                         <span class="badge badge-<?php echo $tipoClass; ?>">
@@ -487,64 +705,78 @@ function getErrorColor($tipo) {
         <?php endif; ?>
         
         <!-- Consola -->
-        <div class="consola-header">
-            <h3>📟 Consola:</h3>
+        <div class="console-header">
+            <h3>
+                <span>📟</span> Terminal de Salida
+            </h3>
         </div>
         <div id="consolaOutput" class="consola">
             <?php if (!empty($consola)): ?>
                 <?php foreach ($consola as $linea): ?>
-                    <div><?php echo htmlspecialchars($linea); ?></div>
+                    <div>› <?php echo htmlspecialchars($linea); ?></div>
                 <?php endforeach; ?>
             <?php else: ?>
-                <div style="color: #666;">--- No hay salida para mostrar ---</div>
+                <div style="color: #4b5563;">└─ No hay salida para mostrar ──</div>
             <?php endif; ?>
         </div>
         
         <!-- Tabla de Símbolos -->
         <?php if (!empty($tabla_simbolos)): ?>
-            <h3>📊 Tabla de Símbolos:</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Identificador</th>
-                        <th>Tipo</th>
-                        <th>Ámbito</th>
-                        <th>Valor</th>
-                        <th>Línea</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($tabla_simbolos as $id => $info): ?>
-                        <?php if (isset($info['tipo']) && $info['tipo'] !== 'funcion'): ?>
-                        <tr>
-                            <td><strong><?php echo htmlspecialchars($id); ?></strong></td>
-                            <td>
-                                <?php 
-                                $tipoMostrar = $info['tipo'];
-                                // Si es puntero, mostrar como tipo_base*
-                                if (isset($info['es_puntero']) && $info['es_puntero']) {
-                                    $tipoMostrar = $info['tipo_base'] . '*';
-                                }
-                                ?>
-                                <span class="badge badge-<?php echo htmlspecialchars($tipoMostrar); ?>">
-                                    <?php echo htmlspecialchars($tipoMostrar); ?>
-                                </span>
-                            </td>
-                            <td><?php echo htmlspecialchars($info['ambito'] ?? 'global'); ?></td>
-                            <td><?php echo htmlspecialchars(formatearValorParaTabla($info['valor'] ?? null)); ?></td>
-                            <td><?php echo htmlspecialchars($info['linea'] ?? '-'); ?></td>
-                        </tr>
-                        <?php endif; ?>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+            <div class="symbols-section">
+                <h3>
+                    <span>🗂️</span> Tabla de Símbolos
+                </h3>
+                <div class="symbols-table-wrapper">
+                    <table class="symbols-table">
+                        <thead>
+                            <tr>
+                                <th>Identificador</th>
+                                <th>Tipo</th>
+                                <th>Ámbito</th>
+                                <th>Valor</th>
+                                <th>Línea</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($tabla_simbolos as $id => $info): ?>
+                                <?php if (isset($info['tipo']) && $info['tipo'] !== 'funcion'): ?>
+                                    <tr>
+                                        <td><strong><?php echo htmlspecialchars($id); ?></strong></td>
+                                        <td>
+                                            <?php 
+                                            $tipoMostrar = $info['tipo'];
+                                            $claseBadge = $tipoMostrar;
+                                            
+                                            if (isset($info['es_puntero']) && $info['es_puntero']) {
+                                                $tipoMostrar = $info['tipo_base'] . '*';
+                                                $claseBadge = 'puntero';
+                                            }
+                                            
+                                            if ($tipoMostrar === 'rune') {
+                                                $claseBadge = 'rune';
+                                            }
+                                            ?>
+                                            <span class="badge badge-<?php echo htmlspecialchars($claseBadge); ?>">
+                                                <?php echo htmlspecialchars($tipoMostrar); ?>
+                                            </span>
+                                        </td>
+                                        <td><?php echo htmlspecialchars($info['ambito'] ?? 'global'); ?></td>
+                                        <td><?php echo htmlspecialchars(formatearValorParaTabla($info['valor'] ?? null)); ?></td>
+                                        <td><?php echo htmlspecialchars($info['linea'] ?? '-'); ?></td>
+                                    </tr>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         <?php endif; ?>
-
+    </div>
 
     <script>
         function nuevoArchivo() {
             document.getElementById('codigoEditor').value = '';
-            document.getElementById('consolaOutput').innerHTML = '<div style="color: #666;">--- No hay salida para mostrar ---</div>';
+            document.getElementById('consolaOutput').innerHTML = '<div style="color: #4b5563;">└─ No hay salida para mostrar ──</div>';
             window.location.href = window.location.pathname;
         }
 
@@ -569,7 +801,7 @@ function getErrorColor($tipo) {
         function guardarCodigo() {
             const codigo = document.getElementById('codigoEditor').value;
             if (!codigo.trim()) {
-                alert('No hay código para guardar');
+                alert('⚠️ No hay código para guardar');
                 return;
             }
             
@@ -585,7 +817,7 @@ function getErrorColor($tipo) {
         }
 
         function limpiarConsola() {
-            document.getElementById('consolaOutput').innerHTML = '<div style="color: #666;">--- No hay salida para mostrar ---</div>';
+            document.getElementById('consolaOutput').innerHTML = '<div style="color: #4b5563;">└─ No hay salida para mostrar ──</div>';
         }
     </script>
 </body>
