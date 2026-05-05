@@ -1,11 +1,9 @@
 # Manual de Usuario - Golampi Interpreter
 ## 1- Introducción
-El presente manual tiene como objetivo guiar al usuario en la instalación, configuración y uso del intérprete Golampi, una herramienta académica diseñada para ejecutar programas escritos en el lenguaje de programación Golampi, cuya sintaxis está inspirada en el lenguaje Go (Golang).
-
-A lo largo de este documento, el usuario encontrará instrucciones paso a paso, acompañadas de capturas de pantalla y ejemplos prácticos, que le permitirán aprovechar al máximo todas las funcionalidades del intérprete.
+Golampi Compiler es una herramienta que permite escribir, compilar y ejecutar programas en el lenguaje Golampi (inspirado en Go), generando código ensamblador ARM64 que puede ser ejecutado en arquitecturas ARM64 (nativa o mediante emulación con QEMU).
 
 ### 1.1- **¿Qué es Golampi?**
-Golampi es un lenguaje de programación académico creado como parte del curso de Organización de Lenguajes y Compiladores 2. Su sintaxis y semántica están inspiradas en Golang, pero con un alcance reducido que facilita el aprendizaje práctico de los conceptos fundamentales de los compiladores e intérpretes.
+Golampi es un lenguaje de interprete académico creado como parte del curso de Organización de Lenguajes y Compiladores 2. Su sintaxis y semántica están inspiradas en Golang, pero con un alcance reducido que facilita el aprendizaje práctico de los conceptos fundamentales de los  intérpretes.
 
 El lenguaje Golampi soporta características como:
 - Tipos estáticos: int32, float32, bool, rune y string
@@ -25,18 +23,42 @@ El Intérprete Golampi es una aplicación web que permite a los usuarios escribi
 1. **Análisis léxico:** Identifica los tokens válidos del lenguaje.
 2. **Análisis sintáctico:** Verifica que la estructura del código cumpla con la gramática definida.
 3. **Análisis semántico:** Valida tipos de datos, declaraciones, ámbitos y contextos.
-4. **Ejecución:** Interpreta y ejecuta el programa, comenzando desde la función main.
+4. **Generacion de codigo ARM64:** Interpreta y ejecuta el programa, comenzando desde la función main.
 
 Además, el intérprete genera reportes detallados que permiten al usuario comprender y depurar su código:
 
 - Reporte de errores: Lista los errores léxicos, sintácticos y semánticos encontrados.
 - Reporte de tabla de símbolos: Muestra todos los identificadores declarados, su tipo, ámbito, valor y ubicación en el código.
 
-## 2- Instalación paso a paso
-1. **Clonar:** En una carptea dentro del sistema clona el repositorio:
-2. **Terminal integrada:** Abrir una terminal integrada en la raiz del proyecto
-3. **Ejecutar:** En la terminal ejecutar el siguinete comando: **"php -S localhost:8080 -t public/"**
-4. **Navegador:** Abre tu navegador de confianza y ve a la siguiente direccion para poder usar el programa **http://localhost:8080/**
+## 2. Instalación
+
+### 2.1 Instalación en Linux (Ubuntu/Debian)
+
+```bash
+# 1. Instalar dependencias del sistema
+sudo apt update
+sudo apt install -y php8.1 php8.1-cli php8.1-mbstring composer
+sudo apt install -y gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu qemu-user
+```
+
+### 2.2. Clonar o descargar el proyecto
+- cd ~/Escritorio
+- unzip GolampiCompiler.zip
+- cd GolampiCompiler
+
+### 2.3. Instalar dependencias PHP con Composer
+composer install
+
+### 2.4. Generar analizador con ANTLR
+java -jar antlr-4.13.2-complete.jar -Dlanguage=PHP -visitor -o src/gramatica gramatica/Golampi.g4
+
+### 2.5. Configurar permisos
+- chmod -R 755 output/
+- chmod -R 755 public/
+
+### 2.6. Iniciar servidor web (PHP built-in server)
+- cd public
+- php -S localhost:8080
 
 
 ## 3- Descripción general de la interfaz
@@ -45,37 +67,42 @@ Además, el intérprete genera reportes detallados que permiten al usuario compr
 [def1]: Imagenes/interfas.png
 La interfaz grafica es bastante intuitiva, mas adelante describiremos a pronfundidad de cada una de ellas, pero de forma general la interfaz del programa consta principalmente de las siguientes partes:
 
-1. **Barra de acciones:** Acciones basicas para la carga o edicion de texto.
-2. **Contenedor de código:** Aqui el usuario puede ingresar el codigo que desee ejecutar.
-3. **Terminal de salida:** Aqui el usuario puede visualizar el resultado del codigo ingresado.
-3. **Reportes:** En este apartado se generan los reporte de Errores o el reporte de la tabla de Simbolos, segun sea el caso
+|Botón	|Función
+|-------|------
+|Nuevo	|Limpia el editor y la consola para comenzar un nuevo programa.
+|Cargar	|Permite seleccionar un archivo .golampi, .go o .txt y cargar su contenido en el editor.
+|Guardar |código	Descarga el contenido del editor como un archivo codigo.golampi.
+|Ejecutar	|Interpreta y ejecuta el código directamente (modo intérprete).
+|Generar ARM64	|Compila el código a ensamblador ARM64 y genera el archivo programa.s.
+|Limpiar consola	|Borra el contenido de la terminal de salida.
 
-## 4- Uso de la barra de acciones
-![Barra de acciones][def]
+### 3.2 Editor de Código
+Área donde escribes tu programa en lenguaje Golampi. Soporta:
 
-[def]: Imagenes/barra.png
-La " BARRA DE ACCIONES" consta de 6 botones, los cuales describiremos a continuacion:
+- Resaltado de sintaxis básico
+- Múltiples líneas
+- Atajos de teclado estándar (Ctrl+C, Ctrl+V, etc.)
 
-- **Nuevo / Limpiar**: Limpia el editor y la consola para iniciar una nueva prueba.
-- **Cargar archivo**: Permite seleccionar un archivo de código y cargar su contenido al editor.
-- **Guardar código**: Descarga el contenido actual del editor como archivo de texto.
-- **Ejecutar / Analizar**: Envía el código fuente al servidor PHP para su análisis o ejecución.
-- **Limpiar consola**: Borra el contenido de la consola de salida.
-- **Descargar reportes**: Genera y descarga los reportes de errores y tabla de símbolos.
+### 3.4 Terminal de Salida (Consola)
+Muestra:
 
-## 5- Edición de código Golampi
-### 5.1. El panel de edición
-El panel de edición de código es el área central de la interfaz donde el usuario puede escribir, modificar y visualizar el código fuente en lenguaje Golampi. Esta área funciona como un editor de texto multilínea que permite:
+- Resultados de la ejecución (cuando usas "Ejecutar")
+- Mensajes de éxito o error de compilación (cuando usas "Generar ARM64")
+- Instrucciones para ensamblar y ejecutar el código generado
 
-- Escribir código directamente desde el teclado
-- Pegar código copiado desde otras fuentes
-- Editar líneas existentes
-- Seleccionar y eliminar fragmentos de código
+### 3.5 Reportes Generados
+Después de una compilación exitosa, puedes descargar:
 
-### 5.2. Estructura básica de un programa Golampi
+|Reporte	|Formato	|Descripción
+|-----------|-----------|-----------
+|Reporte de Errores|	CSV	|Lista de errores léxicos, sintácticos y semánticos
+|Tabla de Símbolos|	CSV	|Variables, funciones y constantes con sus tipos, ámbitos y valores
+|Código ARM64|	.s	|Código ensamblador generado
+
+## 4 Estructura básica de un programa Golampi
 Todo programa válido en Golampi debe cumplir con las siguientes reglas fundamentales:
 
-#### 5.2.1. Función main obligatoria
+#### 4.2 Función main obligatoria
 El programa debe contener exactamente una función llamada main, que servirá como punto de entrada:
 
 ```go
@@ -91,7 +118,7 @@ Características de la función main:
 - No puede ser llamada explícitamente desde el código
 - Es ejecutada automáticamente al iniciar el programa
 
-### 5.3. Comentarios
+### 4.2. Comentarios
 Puedes agregar comentarios para documentar tu código. Los comentarios son ignorados por el intérprete:
 
 ```go
@@ -107,14 +134,14 @@ func main() {
 }
 ```
 
-### 5.4. Declaración de variables
-#### 5.4.1. Declaración explícita
+### 4.3. Declaración de variables
+#### 4.3.1. Declaración explícita
 ```go
 var x int32 = 10
 var y int32           // y vale 0 (valor por defecto)
 var a, b int32 = 5, 8 // Múltiples variables
 ```
-#### 5.4.2. Declaración corta con := (solo dentro de funciones)
+#### 4.3.2. Declaración corta con := (solo dentro de funciones)
 
 ```go
 func main() {
@@ -127,13 +154,13 @@ func main() {
     x, y := 10, 20
 }
 ```
-#### 5.4.3. Constantes
+#### 4.3.3. Constantes
 ```go
 const PI float32 = 3.14159
 const MAXIMO int32 = 100
 ```
 
-### 5.5. Tipos de datos soportados
+### 4.4. Tipos de datos soportados
 
 | Tipo	| Descripción	| Ejemplo	| Valor por defecto |
 |-------|---------------|-----------|-------------------|
@@ -143,8 +170,8 @@ const MAXIMO int32 = 100
 |rune|	Carácter Unicode|	var letra rune = 'A'|	'\u0000'|
 |string|	Cadena de texto|	var nombre string = "Ana"|	""|
 
-### 5.6. Estructuras de control
-#### 5.6.1. Sentencia if
+### 4.5. Estructuras de control
+#### 4.5.1. Sentencia if
 ```go
 func main() {
     x := 10
@@ -159,7 +186,7 @@ func main() {
 }
 ```
 
-#### 5.6.2. Sentencia switch
+#### 4.5.2. Sentencia switch
 ```go
 func main() {
     dia := 3
@@ -175,7 +202,7 @@ func main() {
 }
 ```
 
-#### 5.6.3. Sentencia for
+#### 4.5.3. Sentencia for
 Golampi utiliza for como la única estructura de iteración:
 
 ```go
@@ -210,15 +237,15 @@ func main() {
 }
 ```
 
-### 5.7. Sentencias de transferencia
+### 4.6. Sentencias de transferencia
 |Sentencia	|Función	|Ejemplo|
 |-----------|-----------|-------|
 |break	|Sale de un bucle o switch|	if i == 5 { break }|
 |continue|	Salta a la siguiente iteración|	if i == 2 { continue }|
 |return	|Finaliza una función y devuelve valor(s)	|return a + b|
 
-### 5.8. Funciones
-#### 5.8.1. Función con retorno simple
+### 4.7. Funciones
+#### 4.7.1. Función con retorno simple
 ```go
 func suma(a int32, b int32) int32 {
     return a + b
@@ -230,7 +257,7 @@ func main() {
 }
 ```
 
-#### 5.8.2. Función con múltiples retornos
+#### 4.7.2. Función con múltiples retornos
 ```go
 func dividir(a int32, b int32) (int32, bool) {
     if b == 0 {
@@ -246,7 +273,7 @@ func main() {
     }
 }
 ```
-#### 5.8.3. Parámetros por referencia (punteros)
+#### 4.7.3. Parámetros por referencia (punteros)
 ```go
 func duplicar(valor *int32) {
     *valor = *valor * 2
@@ -259,7 +286,7 @@ func main() {
 }
 ```
 
-### 5.9. Funciones embebidas (built-in)
+### 4.8. Funciones embebidas (built-in)
 
 |Función	|Descripción	|Ejemplo|
 |-----------|---------------|-------|
@@ -269,7 +296,7 @@ func main() {
 |substr()	|Extrae una subcadena	|substr("Golampi", 0, 3)|
 |typeOf()	|Retorna el tipo de una variable	|typeOf(x)|
 
-### 5.10. Hoisting de funciones
+### 4.9. Hoisting de funciones
 Golampi soporta hoisting, lo que significa que puedes llamar a una función antes de su definición en el código:
 
 ```go
@@ -281,45 +308,37 @@ func saludar() {
     fmt.Println("¡Hola!")
 }
 ```
-### 6.11. Buenas prácticas
-1. Nombra variables con sentido: Usa nombreUsuario en lugar de nu
-2. Indenta correctamente tu código: Usa tabulaciones o espacios consistentes
-3. Comenta secciones complejas: Ayuda a entender la lógica
-4. Declara las variables cerca de su uso: Mejora la legibilidad
-5. Una sola responsabilidad por función: Cada función debe hacer una cosa bien
+## 5. Ejecución del Código Generado
+### 5.1 Compilar Código ARM64
+```bash
+# Método 1: Usando gcc (recomendado)
+aarch64-linux-gnu-gcc -static -o programa output/programa.s
 
-### 6.12. Errores comunes al editar
+# Método 2: Usando as + ld
+aarch64-linux-gnu-as -o programa.o output/programa.s
+aarch64-linux-gnu-ld -o programa programa.o
+```
 
-|Error	|Ejemplo incorrecto	|Corrección|
-|-------|-------------------|----------|
-|Falta de llaves	|func main()	|func main() { }
-|Paréntesis en condición	|if (x > 0) { }	|if x > 0 { }
-|Tipo incorrecto	|var x int = 5	|var x int32 = 5
-|Comillas mixtas	|var s string = 'hola'	|var s string = "hola"
-|Main con parámetros	|func main(args []string)	|func main()
+### 5.2 Ejecutar en QEMU (emulación)
+```bash
+qemu-aarch64 ./programa
+```
 
 
-## 7- Reportes
-Una vez que el usuario ejecuta un programa Golampi haciendo clic en el botón "Ejecutar / Analizar", el intérprete procesa el código fuente y genera dos tipos de reportes que resultan fundamentales para comprender el comportamiento del programa y depurar posibles errores:
+## 6. Reporte de Errores
+Cuando el compilador encuentra errores, estos se muestran en una tabla con:
 
-|Reporte	|Descripción|
-|-----------|------------|
-|Reporte de errores	|Lista todos los errores encontrados durante las fases de análisis (léxico, sintáctico y semántico)
-|Reporte de tabla de símbolos	|Muestra todos los identificadores declarados en el programa con sus propiedades (tipo, ámbito, valor, ubicación)
+|Columna	|Descripción
+|------------|----------
+|#	|Número secuencial del error
+|Tipo	|Léxico, Sintáctico o Semántico
+|Línea	|Número de línea donde ocurre el error
+|Columna	|Posición del carácter
+|Descripción	|Mensaje explicativo del error
 
-### 7.1. Reporte de errores
-#### 7.1.1. Estructura del reporte
-El reporte de errores se presenta en formato tabular con las siguientes columnas:
+### 6.1. Reporte de errores
 
-|#	|Tipo	|Descripción	|Línea	|Columna|
-|---|-------|---------------|-------|-------|
-|1	|Léxico	|Símbolo no reconocido: @	|3	|8|
-|2	|Sintáctico	|Se esperaba ) después de la condición	|5	|12|
-|3	|Semántico	|Variable x no declarada en el ámbito actual	|7	|5|
-|4	|Semántico	|Identificador total ya ha sido declarado	|10	|1|
-|5	|Semántico	|Operación inválida entre int32 y string	|12	|15|
-
-#### 7.1.2. Tipos de errores
+#### 7.1.1. Tipos de errores
  **Error Léxico:**
 Ocurre cuando el analizador léxico encuentra un carácter o símbolo que no pertenece al lenguaje Golampi.
 
@@ -383,22 +402,18 @@ Columna 16: aquí se detectó el identificador no declarado
 ```
 **Importante:** En algunos casos, la ubicación reportada puede ser ligeramente posterior al error real, especialmente en errores sintácticos. Se recomienda revisar las líneas anteriores a la indicada.
 
-### 7.2. Reporte de tabla de símbolos
-#### 7.2.1. Estructura del reporte
-La tabla de símbolos representa el resultado del análisis semántico y contiene todos los identificadores declarados durante la ejecución del programa. Se presenta en formato tabular con las siguientes columnas:
+## 7. Tabla de Símbolos
+La tabla de símbolos muestra todas las variables, constantes y funciones declaradas:
 
-|Identificador	|Tipo	|Ámbito	|Valor	|Línea	|Columna|
-|---------------|-------|-------|-------|-------|-------|
-|bubbleSort	|función	|global	|—	|11	|1|
-|arr	|arreglo	|bubbleSort	|—	|18	|5|
-|n	|int32	|bubbleSort	|5	|23	|5|
-|i	|int32	|bubbleSort	|0	|29	|9|
-|j	|int32	|bubbleSort	|0	|29	|18|
-|temp	|int32	|bubbleSort	|—	|37	|9|
-|saludo	|string	|global	|"Hola"	|45	|1|
-|numeros	|arreglo	|global	|{5, 3, 8, 1, 2}	|48	|1|
+|Columna	|Descripción
+|-----------|-----------
+|Identificador	|Nombre del símbolo
+|Tipo	|int32, float32, bool, rune, string, puntero
+|Ámbito	|global, nombre_de_función, o bloque
+|Valor	|Valor actual (si es constante o conocido)
+|Línea	|Línea donde fue declarado
 
-#### 7.2.2. Significado de cada columna
+#### 7.1.1. Significado de cada columna
 |Columna	|Descripción|
 |-----------|-----------|
 |Identificador	|Nombre de la variable, constante, función o parámetro declarado
@@ -408,7 +423,7 @@ La tabla de símbolos representa el resultado del análisis semántico y contien
 |Línea	|Número de línea donde se declaró el identificador
 |Columna	|Número de columna donde se declaró el identificador
 
-#### 7.2.3. Tipos de ámbito (scope)
+#### 7.1.2. Tipos de ámbito (scope)
 El ámbito determina dónde es válido un identificador:
 
 |Ámbito	|Descripción	|Ejemplo|
@@ -418,7 +433,7 @@ El ámbito determina dónde es válido un identificador:
 |bloque	|Visible solo dentro de un bloque { } anidado	|Variables declaradas dentro de un if o else
 |ciclo	|Visible solo dentro de un bucle for	|Variables declaradas en la inicialización del for
 
-#### 7.2.4. Representación de valores especiales
+#### 7.1.3. Representación de valores especiales
 |Tipo de valor	|Representación en la tabla	|Ejemplo|
 |---------------|---------------------------|-------|
 |Arreglo	|{valor1, valor2, ...}	{|1, 2, 3}|
@@ -428,15 +443,6 @@ El ámbito determina dónde es válido un identificador:
 |Valor por defecto	|Valor correspondiente al tipo	|0, 0.0, false, "", '\u0000'
 |Función	|—	|No aplica valor|
 |Constante	|Valor fijo	|3.1416|
-
-#### 7.2.5. Cómo usar la tabla de símbolos para depurar
-La tabla de símbolos es una herramienta poderosa para:
-
-1. Verificar declaraciones: Confirma que todas las variables fueron declaradas correctamente
-2. Validar ámbitos: Identifica si una variable es accesible desde cierta parte del código
-3. Revisar tipos: Comprueba que cada identificador tenga el tipo esperado
-4. Inspeccionar valores: Observa los valores actuales de las variables después de la ejecución
-5. Detectar redeclaraciones: Encuentra identificadores duplicados en el mismo ámbito
 
 ### 7.3. Consejos para la interpretación de reportes
 |Consejo	|Explicación|
@@ -450,5 +456,5 @@ La tabla de símbolos es una herramienta poderosa para:
 
 
 ## Soporte y contacto
-- **Repositorio:**
-- **Correo de contacto:**
+- **https://github.com/JancarloSchwarz777/ReguardoGiovanni.git**
+- **3633937490101@ingenieria.usac.edu.gt**

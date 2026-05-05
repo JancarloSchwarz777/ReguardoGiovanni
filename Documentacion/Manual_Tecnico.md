@@ -1,57 +1,32 @@
-# Manual Tecnico - Golampi
-## 1- Introducción
+# Manual Técnico – Compilador Golampi a ARM64
 
-El presente Manual Técnico tiene como objetivo documentar de manera exhaustiva los aspectos de diseño, arquitectura e implementación del Intérprete Golampi. Este documento está dirigido a desarrolladores, ingenieros de software, evaluadores académicos y cualquier persona interesada en comprender el funcionamiento interno de la herramienta, así como en mantenerla, extenderla o realizar pruebas sobre ella.
+## 1. Introducción
 
-A lo largo de este manual, se describen:
+Este manual describe el diseño, arquitectura e implementación del **Compilador Golampi**, una herramienta que traduce programas escritos en el lenguaje académico Golampi a código ensamblador ARM64 (AArch64). El compilador genera un archivo `.s` que puede ser ensamblado, enlazado y ejecutado en arquitecturas ARM64 (nativas o mediante emulación QEMU).
 
-- La arquitectura general del sistema y la comunicación entre sus componentes.
-- La gramática formal completa del lenguaje Golampi, base para la generación de analizadores.
-- El diagrama de clases que representa la estructura del software.
-- El diagrama de flujo de procesamiento, desde la recepción del código hasta la generación de reportes.
-- La implementación detallada de cada módulo: análisis léxico, sintáctico, semántico, ejecución y generación de reportes.
-- La estructura de la tabla de símbolos y su gestión durante el análisis semántico.
-- La interfaz gráfica de usuario (GUI) y su comunicación con el backend.
-- Las tecnologías, herramientas y configuraciones necesarias para desplegar el proyecto.
+El proyecto se estructura en las siguientes fases:
 
-### Definiciones y acrónimos
-|Término/Acrónimo	|Definición|
-|-------------------|----------|
-|AST (Abstract Syntax Tree)|	Árbol de sintaxis abstracta, representación jerárquica del código fuente
-|ANTLR (ANother Tool for Language Recognition)	|Herramienta para generar analizadores léxicos y sintácticos
-|Backend	|Parte del sistema que ejecuta en el servidor (lógica del intérprete)
-|EBNF (Extended Backus-Naur Form)	|Notación formal para describir gramáticas de lenguajes
-|Frontend	|Parte del sistema que ejecuta en el navegador (interfaz gráfica)
-|GUI (Graphical User Interface)	|Interfaz gráfica de usuario
-|Lexer	|Analizador léxico, convierte código fuente en tokens
-|Parser	|Analizador sintáctico, construye el AST a partir de los tokens
-|Semantic Analyzer	|Analizador semántico, valida reglas de tipos y ámbitos
-|Symbol Table	|Tabla de símbolos, almacena información de identificadores
-|Token	|Unidad mínima significativa del código fuente
+- Análisis léxico y sintáctico (generados con ANTLR4).
+- Análisis semántico (validación de tipos, ámbitos, funciones).
+- **Generación de código ARM64** (traducción a ensamblador).
+- Interfaz web (PHP/HTML/CSS/JS) para edición, compilación y visualización de resultados.
 
-El Intérprete Golampi es una aplicación web monolítica desarrollada en PHP para el backend y HTML/CSS/JS para el frontend, que permite a los usuarios escribir, editar y ejecutar programas escritos en el lenguaje académico Golampi (inspirado en Golang).
+A diferencia de la versión anterior (intérprete), el compilador **no ejecuta el código fuente directamente**, sino que produce código máquina real, cumpliendo con los requisitos del proyecto de generar código ensamblador ejecutable.
 
-El sistema implementa las tres fases fundamentales del procesamiento de lenguajes:
+---
 
-1. Análisis léxico: Tokenización del código fuente.
-2. Análisis sintáctico: Verificación estructural mediante gramática formal definida en ANTLRv4.
-3. Análisis semántico: Validación de tipos, declaraciones y ámbitos.
+## 2. Tecnologías y herramientas
 
-Posteriormente, el intérprete ejecuta el programa comenzando desde la función main, genera una salida visible en la consola y produce dos reportes descargables: reporte de errores y reporte de tabla de símbolos.
+| Herramienta | Propósito |
+|-------------|-----------|
+| PHP 8.x | Implementación del compilador (backend) |
+| ANTLR4 | Generación del lexer/parser a partir de `Golampi.g4` |
+| `aarch64-linux-gnu-as` | Ensamblador ARM64 |
+| `aarch64-linux-gnu-ld` / `gcc` | Enlazador |
+| QEMU (qemu-aarch64) | Ejecución en entornos no ARM64 |
+| HTML/CSS/JS | Interfaz gráfica |
 
-La solución presentada cumple con todos los requisitos establecidos en el enunciado del proyecto, incluyendo la arquitectura cliente/servidor, la GUI obligatoria, la gramática formal documentada y los diagramas de clases y flujo de procesamiento que se presentan en las siguientes secciones de este manual.
-
-
-## 2 -  Tecnologías y herramientas
-|Componente	|Tecnología	|Versión|
-|-----------|-----------|-------|
-|Backend	|PHP	|7.4+
-|Generador de parser	|ANTLR	    |4.x
-|Frontend	|HTML5, CSS3, JavaScript	|ES6+
-|Servidor web	|Apache / XAMPP	|-
-|Control de versiones	|Git	|-
-|Repositorio	|GitHub/GitLab	|-
-
+---
 
 ## 3 - Gramática formal del lenguaje Golampi
 
@@ -340,449 +315,294 @@ Uso antes de declaración	|Las variables deben declararse antes de ser utilizada
 |Cortocircuito	|Los operadores && y // evalúan con cortocircuito
 |Break/Continue	|Solo pueden usarse dentro de bucles for o switch
 
+---
 
-## 4 - Diagrama de clases
-![Diagrma clases][def2]
+## 4. Arquitectura del compilador
 
-[def2]: Imagenes/DiagrmaClases.png
+### 4.1 Diagrama de clases
 
-## 5- Diagrama de flujo de procesamiento
-![Diagrma procesamineto][def3]
+![Diagrama de clases](Imagenes/DiagrmaClases.png)
 
-[def3]: Imagenes/procesamiento.png
+La clase principal es `CodeGenerator`, que utiliza múltiples *traits* para organizar la generación de código:
 
-## 6 - Estructura de la tabla de símbolos
-La tabla de símbolos es una estructura de datos fundamental en el análisis semántico del intérprete Golampi. Su propósito es almacenar y gestionar toda la información asociada a los identificadores declarados durante la ejecución del programa: variables, constantes, funciones, parámetros, etc.
+- `AsignacionGenTrait`
+- `ControlFlujoGenTrait`
+- `ControlForGenTrait`
+- `ControlSwitchGenTrait`
+- `DeclaracionesGenTrait`
+- `ExpresionesGenTrait`
+- `FuncionEmbGenTrait`
+- `FuncUsuarioGenTrait`
+- `TransferenciaGenTrait`
+- `UtilidadesGenTrait`
 
-En la implementación, la tabla de símbolos se gestiona mediante dos arrays principales:
+Además, se definen propiedades para manejar la sección `.rodata` (datos de solo lectura), la sección `.text` (código), el contador de etiquetas, el tamaño del stack frame, la tabla de símbolos y el registro de funciones con sus tipos de retorno.
 
-|Array	|Propósito|
-|-------|---------|
-|$tablaSimbolos	|Tabla activa durante la ejecución. Se modifica al entrar/salir de ámbitos
-|$tablaSimbolosHistorial	|Tabla persistente que conserva todos los identificadores para el reporte final
+### 4.2 Diagrama de flujo de procesamiento
 
-### 6.1 Estructura de cada símbolo
-Cada entrada en la tabla de símbolos tiene la siguiente estructura:
+![Diagrama de flujo](Imagenes/procesamiento.png)
 
-```php
-$this->tablaSimbolos[$identificador] = [
-    'tipo' => 'int32|float32|string|bool|rune|funcion|arreglo|puntero',
-    'ambito' => 'string',
-    'valor' => 'mixed',
-    'linea' => 'int',
-    'columna' => 'int',
-    'esConstante' => 'bool',
-    // Campos adicionales según el tipo:
-    'es_puntero' => 'bool',      // Solo para punteros
-    'tipo_base' => 'string',     // Solo para punteros y arreglos
-    'tipo_retorno' => 'array'    // Solo para funciones
-];
-```
+El flujo actual es:
 
-#### 6.1.1. Descripción de campos
-|Campo	|Tipo	|Descripción	|Ejemplo|
-|-------|-------|----------------|------|
-|tipo	|string	|Tipo de dato del identificador	|"int32", "string", "funcion"
-|ambito	|string	|Ámbito donde fue declarado	|"global", "main", "if_1"
-|valor	|mixed	|Valor actual almacenado	|10, "Hola", true, null
-|linea	|int	|Número de línea donde se declaró	|5
-|columna	|int	|Número de columna donde se declaró	|3
-|esConstante	|bool	|Indica si es una constante	|true / false
-|es_puntero	|bool	|(Opcional) Indica si es un puntero	|true / false
-|tipo_base	|string	|(Opcional) Tipo base para punteros/arreglos	|"int32"
-|tipo_retorno	|array	|(Opcional) Tipos de retorno de una función	|["int32", "bool"]|
+1. El usuario escribe código Golampi en la interfaz web y selecciona **Generar ARM64**.
+2. El backend (PHP) ejecuta ANTLR para obtener el AST.
+3. Se instancia `CodeGenerator` y se recorre el AST.
+4. Durante el recorrido:
+   - Se validan reglas semánticas.
+   - Se gestiona la tabla de símbolos y los ámbitos.
+   - Se genera código ensamblador ARM64 (secciones `.rodata` y `.text`).
+5. El código ensamblador se muestra en la interfaz y se guarda como `programa.s`.
+6. Opcionalmente, el usuario puede ensamblar y ejecutar el programa (mediante comandos externos).
 
-### 6.2 Gestión de ámbitos (Scope)
-#### 6.2.1. Pila de ámbitos
-El intérprete mantiene una pila de ámbitos para manejar correctamente la visibilidad de las variables en bloques anidados:
+---
 
-```php
-private $pilaAmbitos = ['global'];  // Pila de ámbitos
-private $ambitoActual = 'global';   // Ámbito actual
-```
+## 5. Nueva funcionalidad: Generación de código ARM64
 
-#### 6.2.2. Entrar a un ámbito
-```php
-private function entrarAmbito($tipoAmbito)
-{
-    // Generar un nombre único para el ámbito
-    $contador = 1;
-    $nombreBase = $tipoAmbito;
-    $nombreAmbito = $nombreBase;
-    
-    while (in_array($nombreAmbito, $this->pilaAmbitos)) {
-        $nombreAmbito = $nombreBase . '_' . $contador;
-        $contador++;
-    }
-    
-    array_push($this->pilaAmbitos, $nombreAmbito);
-    $this->ambitoActual = $nombreAmbito;
-}
-```
+Esta sección describe cómo se traduce cada constructo del lenguaje a instrucciones ARM64.
 
-#### 6.2.3. Salir de un ámbito
-```php
-private function salirAmbito()
-{
-    // Eliminar las variables de este ámbito de la tabla activa
-    $ambitoSalida = array_pop($this->pilaAmbitos);
-    
-    foreach (array_keys($this->tablaSimbolos) as $key) {
-        if (isset($this->tablaSimbolos[$key]) && 
-            $this->tablaSimbolos[$key]['ambito'] === $ambitoSalida) {
-            unset($this->tablaSimbolos[$key]);
-        }
-    }
-    
-    $this->ambitoActual = end($this->pilaAmbitos);
-}
-```
+### 5.1 Modelo de memoria y convención ARM64
 
-#### 6.2.4. Tipos de ámbito generados
-|Tipo de ámbito	|Descripción	|Ejemplo de nombre|
-|---------------|---------------|-----------------|
-|global	|Ámbito principal del programa	|"global"
-|funcion_<nombre>	|Ámbito de una función	|"funcion_main"
-|if	|Ámbito de un bloque |if	"if_1", "if_2"
-|else	|Ámbito de un bloque else	|"else_1"
-|else_if	|Ámbito de un else if	|"else_if_1"
-|for_loop	|Ámbito del bucle for (para init)	|"for_loop_1"
-|for_bloque	|Ámbito del bloque dentro del for	|"for_bloque_1"
-|for_post	|Ámbito para la sentencia post del for	|"for_post_1"
-|switch	|Ámbito del switch	|"switch_1"
-|case	|Ámbito de un case	|"case_1"
-|default	|Ámbito del default	|"default_1"
+El compilador respeta la **convención de llamadas AArch64**:
 
-### 6.3. Valores por defecto según tipo
-Cuando se declara una variable sin inicialización explícita, se le asigna el valor por defecto:
+| Registro | Propósito |
+|----------|-----------|
+| `x0` .. `x7` | Parámetros enteros / punteros |
+| `x0` | Valor de retorno (entero o puntero) |
+| `x1` | Segundo valor de retorno (para múltiple retorno) |
+| `s0` .. `s7` | Parámetros flotantes (usamos `d0`..`d7` para doble precisión) |
+| `x29` | Frame pointer (FP) |
+| `x30` | Link register (LR) |
+| `sp` | Stack pointer |
+| `x19`..`x28` | Registros preservados (callee-saved) |
+
+**Stack frame**:  
+- Al inicio de cada función (incluyendo `main`) se guarda `x29` y `x30` en la pila: `stp x29, x30, [sp, #-16]!`.
+- Se reserva espacio para variables locales (`sub sp, sp, #offset`).
+- Las variables locales se acceden mediante desplazamientos negativos desde `x29`.
+
+### 5.2 Traducción de tipos de datos
+
+| Tipo Golampi | Representación en ARM64 | Tamaño |
+|--------------|------------------------|--------|
+| `int32` | `w0` (registro de 32 bits) | 4 bytes |
+| `float32` | `d0` (registro de 64 bits – usamos `double` internamente) | 8 bytes |
+| `bool` | `w0` (0 = false, 1 = true) | 4 bytes |
+| `rune` | `w0` (código Unicode) | 4 bytes |
+| `string` | `x0` (dirección de memoria) | 8 bytes |
+| `puntero` | `x0` (dirección) | 8 bytes |
+
+**Nota**: Los literales flotantes se almacenan en `.rodata` como `.double` y se cargan con `adrp` + `ldr d0`.
+
+### 5.3 Variables y asignaciones
+
+#### Declaración de variables (con/sin inicialización)
 
 ```php
-private function valorPorDefecto($tipo)
-{
-    switch ($tipo) {
-        case 'int32':   return 0;
-        case 'float32': return 0.0;
-        case 'string':  return "";
-        case 'bool':    return false;
-        case 'rune':    return '';      // Carácter nulo
-        default:        return null;
-    }
-}
+// Ejemplo: var x int32 = 10
+$offset = $this->reservarVariable('x', 'int32', $linea, $columna, 10);
+$this->emitText("mov w0, #10");
+$this->guardarEnStack($offset, 'int32');
 ```
 
-### 6.4. Validaciones semánticas con la tabla de símbolos
-|Validación	|Método	|Descripción|
-|-----------|-------|-----------|
-|Variable no declarada	|existeEnAmbitoActual()	|Verifica si el identificador existe en el ámbito actual
-|Identificador duplicado	|existeEnAmbitoActual()	|Verifica que no exista ya en el mismo ámbito
-|Constante no modificable	|isset($constantes[$clave])	|Impide reasignación de constantes
-|Tipo compatible	|tiposCompatiblesAsignacion()	|Valida que el tipo del valor coincida con el declarado
-|Ámbito correcto	|$tablaSimbolos[$id]['ambito'] === $this->ambitoActual	|Verifica que se acceda desde el ámbito correcto
+El método `guardarEnStack` emite `str w0, [x29, #offset]` (o equivalente para otros tipos). Para offsets grandes se usa un registro temporal `x16`.
 
-
-## 7 Módulo de análisis léxico
-El análisis léxico (lexer o escáner) es la primera fase del proceso de interpretación. Su función es transformar el código fuente de Golampi en una secuencia de tokens (unidades mínimas significativas) que serán consumidas posteriormente por el analizador sintáctico (parser).
-
-En este proyecto, el analizador léxico es generado automáticamente por ANTLRv4 a partir de las reglas definidas en la gramática Golampi.g4.
-
-### 7.1. Arquitectura del módulo
-![Modulo lexico][lexer]
-
-[lexer]: Imagenes/modulexer.png
-
-### 7.2. Implementación del lexer
-#### 7.2.1. Creación del lexer
-En index.php, el lexer se instancia de la siguiente manera:
+#### Asignación
 
 ```php
-use Antlr\Antlr4\Runtime\InputStream;
-use Antlr\Antlr4\Runtime\CommonTokenStream;
-
-// Crear flujo de entrada desde el código fuente
-$input = InputStream::fromString($codigo);
-
-// Instanciar el lexer generado por ANTLR
-$lexer = new GolampiLexer($input);
-
-// Configurar listener de errores
-$errorListener = new GolampiErrorListener();
-$lexer->removeErrorListeners();
-$lexer->addErrorListener($errorListener);
-
-// Generar flujo de tokens
-$tokens = new CommonTokenStream($lexer);
+// x = y + 5
+$this->visit($ctx->expresion());   // resultado en w0
+$this->guardarEnStack($offset, $tipo);
 ```
 
-### 7.3. Manejo de errores léxicos
-#### 7.3.1. Clase GolampiErrorListener
-El listener personalizado captura los errores durante el análisis léxico y sintáctico:
+#### Operadores compuestos (`+=`, `-=`, etc.)
 
-```php
-class GolampiErrorListener implements ANTLRErrorListener
-{
-    private $errores = [];
-    
-    public function syntaxError(
-        Recognizer $recognizer,
-        ?object $offendingSymbol,
-        int $line,
-        int $charPositionInLine,
-        string $msg,
-        ?RecognitionException $exception = null
-    ): void {
-        $tipo = $this->determinarTipoError($msg, $offendingSymbol);
-        
-        $this->errores[] = [
-            'tipo' => $tipo,        // 'Léxico' o 'Sintáctico'
-            'linea' => $line,
-            'columna' => $charPositionInLine + 1,
-            'descripcion' => $this->limpiarMensaje($msg, $texto)
-        ];
-    }
-}
-```
-#### 7.3.2. Detección de errores léxicos
-```php
-private function determinarTipoError(string $msg, ?object $offendingSymbol): string
-{
-    // Errores léxicos: caracteres no reconocidos
-    if (strpos($msg, 'token recognition error') !== false) {
-        return 'Léxico';
-    }
-    
-    // Caracteres no pertenecientes al lenguaje
-    if (strpos($msg, 'extraneous input') !== false && 
-        preg_match('/[^a-zA-Z0-9_\s]/', $texto)) {
-        return 'Léxico';
-    }
-    
-    // Por defecto es sintáctico
-    return 'Sintáctico';
-}
-```
-## 8 Módulo de análisis sintáctico
-El análisis sintáctico (parser) es la segunda fase del proceso de interpretación. Su función es verificar que la estructura del código fuente cumpla con la gramática formal del lenguaje Golampi, construyendo un Árbol de Sintaxis Abstracta (AST) que será utilizado posteriormente por el analizador semántico y el intérprete.
+Se evalúa la expresión, se carga el valor actual de la variable, se realiza la operación aritmética y se guarda el resultado.
 
-En este proyecto, el analizador sintáctico es generado automáticamente por ANTLRv4 a partir de las reglas gramaticales definidas en **Golampi.g4.**
+### 5.4 Estructuras de control
 
-### 8.1. Arquitectura del módulo
+#### `if` / `else`
 
-![Interfaz][sintac]
+Se genera una etiqueta para la condición falsa y otra para el final:
 
-[sintac]: Imagenes/modusintac.png
-
-### 8.2. Implementación del parser
-#### 8.2.1. Instanciación del parser
-En index.php, el parser se instancia de la siguiente manera:
-
-```php
-use Antlr\Antlr4\Runtime\CommonTokenStream;
-
-// Crear flujo de tokens desde el lexer
-$tokens = new CommonTokenStream($lexer);
-
-// Instanciar el parser generado por ANTLR
-$parser = new GolampiParser($tokens);
-
-// Configurar listener de errores
-$parser->removeErrorListeners();
-$parser->addErrorListener($errorListener);
-
-// Iniciar el parsing desde la regla 'programa'
-$tree = $parser->programa();
+```asm
+    cmp w0, #0
+    b.eq else_label
+    # código del then
+    b end_label
+else_label:
+    # código del else
+end_label:
 ```
 
-#### 8.2.2. Manejo de errores sintácticos
-El GolampiErrorListener detecta y clasifica los errores sintácticos:
+Los `else if` se anidan generando nuevos bloques.
 
-```php
-public function syntaxError(
-    Recognizer $recognizer,
-    ?object $offendingSymbol,
-    int $line,
-    int $charPositionInLine,
-    string $msg,
-    ?RecognitionException $exception = null
-): void {
-    // Determinar si es error léxico o sintáctico
-    $tipo = $this->determinarTipoError($msg, $offendingSymbol);
-    
-    // Si no es léxico, es sintáctico
-    if ($tipo !== 'Léxico') {
-        $tipo = 'Sintáctico';
-    }
-    
-    $this->errores[] = [
-        'tipo' => $tipo,
-        'linea' => $line,
-        'columna' => $charPositionInLine + 1,
-        'descripcion' => $this->limpiarMensaje($msg, $texto)
-    ];
-}
+#### `for`
+
+Se soportan las tres variantes:
+
+- **For clásico**: `for i := 0; i < n; i++ { ... }` → genera inicialización, condición y paso.
+- **While**: `for cond { ... }` → evalúa condición al inicio.
+- **Infinito**: `for { ... }` → bucle incondicional; `break` interrumpe.
+
+Se generan etiquetas para la condición, el cuerpo, el paso y el final. Las instrucciones `break` y `continue` saltan a las etiquetas adecuadas.
+
+#### `switch`
+
+Se evalúa la expresión de control y se guarda en un registro preservado (`x19`). Luego, para cada `case` se compara el valor guardado con la expresión del caso; si coincide, se ejecuta el bloque y se salta al final del switch. El bloque `default` se ejecuta si ningún caso coincide.
+
+### 5.5 Funciones
+
+#### Funciones de usuario
+
+Cada función genera su propia etiqueta, prólogo y epílogo. Los parámetros se toman de los registros `x0..x7` (o `s0..s7`) y se guardan en el stack frame. El valor de retorno se deja en `x0` (o `x0` y `x1` para múltiples retornos).
+
+**Hoisting**: Todas las funciones se registran primero en el AST antes de generar el cuerpo, por lo que pueden llamarse antes de su definición textual.
+
+#### Múltiples retornos
+
+Cuando una función declara más de un tipo de retorno (ej. `(int32, bool)`), el compilador:
+
+- En el retorno: coloca el primer valor en `x0` y el segundo en `x1`.
+- En la llamada: captura los valores y los almacena en posiciones temporales del stack. Luego, en la declaración corta, asigna cada offset a su variable correspondiente.
+
+**Ejemplo generado**:
+
+```asm
+    bl operacionesBasicas   # x0 = suma, x1 = resta
+    str w0, [x29, #-20]     # guarda suma
+    str w1, [x29, #-28]     # guarda resta
 ```
 
-#### 8.2.3. Limpieza de mensajes de error
-```php
-private function limpiarMensaje(string $msg, string $texto = ''): string
-{
-    // Traducción de mensajes comunes
-    $msg = str_replace('<EOF>', 'fin de archivo', $msg);
-    $msg = str_replace('mismatched input', 'entrada no esperada', $msg);
-    $msg = str_replace('expecting', 'se esperaba', $msg);
-    $msg = str_replace('extraneous input', 'símbolo no válido', $msg);
-    $msg = str_replace('no viable alternative', 'expresión no válida', $msg);
-    
-    return trim($msg);
-}
+#### Funciones por referencia (punteros)
+
+El operador `&` obtiene la dirección de una variable: `add x0, x29, #offset`.  
+El operador `*` desreferencia: `ldr w0, [x0]`.  
+Al pasar un puntero a una función, se carga la dirección en `x0`. Dentro de la función, se puede modificar el valor original mediante `str w0, [x1]`.
+
+**Ejemplo**:
+
+```asm
+# duplicarPorReferencia(valor *int32)
+    ldr x0, [x29, #-8]     # cargar dirección del parámetro
+    ldr w1, [x0]           # cargar valor apuntado
+    mov w2, #2
+    mul w1, w1, w2
+    str w1, [x0]           # guardar el nuevo valor en la dirección original
 ```
 
-### 8.3. Árbol de Sintaxis Abstracta (AST)
-#### 8.3.1. Estructura del AST
-El AST generado por ANTLR tiene una estructura jerárquica donde cada nodo corresponde a una regla gramatical:
+#### Funciones recursivas
 
-```text
-ProgramaContext
-├── FuncionContext (main)
-│   ├── IDENTIFICADOR: "main"
-│   ├── PAREN_IZQ: "("
-│   ├── PAREN_DER: ")"
-│   └── BloqueContext
-│       ├── LLAVE_IZQ: "{"
-│       ├── SentenciaContext (declaracionCorta)
-│       │   ├── listaIdentificadores: "x"
-│       │   ├── DECLARACION_CORTA: ":="
-│       │   └── listaExpresiones: "10"
-│       ├── SentenciaContext (llamadaFuncion)
-│       │   ├── PRINTLN: "fmt.Println"
-│       │   ├── PAREN_IZQ: "("
-│       │   ├── argumentos: "x"
-│       │   └── PAREN_DER: ")"
-│       └── LLAVE_DER: "}"
-└── <EOF>
+Se generan llamadas a la misma función (`bl factorial`). El compilador no impone límite de recursión; es responsabilidad del programador evitar desbordamientos de pila.
+
+### 5.6 Funciones embebidas
+
+Se traducen directamente a código ARM64:
+
+- `fmt.Println`: Imprime cada argumento por separado con `printf`, usando el formato adecuado según el tipo (enteros, flotantes, strings, runas, booleanos). Se añade un salto de línea al final.
+- `len`: Calcula la longitud de una cadena recorriendo sus caracteres hasta el `\0`.
+- `now`: Obtiene la fecha/hora actual del sistema (PHP) y la emite como un literal `.asciz` en `.rodata`.
+- `substr`: Extrae una subcadena copiando byte a byte desde la posición indicada a un buffer en la sección `.data` (modificable) y devuelve su dirección.
+- `typeOf`: Retorna una cadena literal con el nombre del tipo del argumento.
+
+### 5.7 Manejo de `nil`
+
+`nil` se representa como una cadena `"<nil>"` (literal en `.rodata`). Las comparaciones `nil == nil` se detectan en tiempo de compilación y emiten `mov w0, #1` (true).
+
+---
+
+## 6. Tabla de símbolos y gestión de ámbitos
+
+La tabla de símbolos se mantiene activa durante la generación de código para verificar declaraciones y asignaciones. Cada entrada contiene:
+
+- `tipo`: `int32`, `float32`, `string`, `bool`, `rune`, `puntero`, `funcion`.
+- `offset`: desplazamiento dentro del stack frame (negativo).
+- `ambito`: nombre del ámbito actual (`global`, `funcion_main`, `if_1`, etc.).
+- `linea`, `columna`: ubicación en el código fuente.
+- `esConstante`: booleano.
+- `valor`: valor literal si es constante.
+
+Para funciones, se almacenan los tipos de retorno en `$funcionesTipos`, usado para validar llamadas y múltiples retornos.
+
+**Pila de ámbitos**: Al entrar a un bloque (`if`, `for`, `switch`, etc.) se crea un nuevo ámbito; al salir se eliminan las variables locales de la tabla activa.
+
+---
+
+## 7. Estructura del código ensamblador generado
+
+Un programa típico produce:
+
+```asm
+.arch armv8-a
+.section .rodata
+.balign 8
+str_0: .asciz "Hola mundo"
+
+.section .data
+buffer: .space 256
+
+.section .text
+.globl main
+.type main, @function
+main:
+    stp x29, x30, [sp, #-16]!
+    mov x29, sp
+    sub sp, sp, #16      # reservar espacio para locales
+
+    # ... instrucciones ...
+
+    add sp, sp, #16
+    ldp x29, x30, [sp], #16
+    mov w0, #0
+    ret
 ```
 
-### 8.4. Integración con el visitador (Interpreter)
-Una vez construido el AST, el visitador (Interpreter) recorre el árbol para realizar el análisis semántico y la ejecución:
+Las secciones `.rodata` y `.data` contienen todos los literales y buffers necesarios. El código se ensambla con `aarch64-linux-gnu-gcc -static` para generar un ejecutable estático.
 
-```php
-// Crear el visitador
-$visitor = new Interpreter();
+---
 
-// Visitar el AST (el árbol comienza en la raíz 'programa')
-$resultado = $visitor->visit($tree);
+## 8. Interfaz gráfica y reportes
 
-// El visitador retorna:
-// - 'consola' => array con las salidas de fmt.Println
-// - 'errores' => array con errores semánticos
-// - 'tabla_simbolos' => array con el historial de símbolos
-```
+La interfaz web (PHP) proporciona:
 
-#### 8.4.1. Método visitPrograma en el Interpreter
-```php
-public function visitPrograma($ctx)
-{
-    $this->consola = [];
-    $this->errores = [];
-    $this->constantes = [];
-    $this->pilaAmbitos = ['global'];
-    $this->ambitoActual = 'global';
-    $this->tablaSimbolos = [];
-    $this->tablaSimbolosHistorial = [];
-    $this->funciones = [];
-    
-    // PRIMERO: Registrar todas las funciones (hoisting)
-    foreach ($ctx->funcion() as $funcion) {
-        $this->visit($funcion);
-    }
-    
-    // SEGUNDO: Ejecutar main (si existe)
-    foreach ($ctx->funcion() as $funcion) {
-        $nombre = $funcion->IDENTIFICADOR() ? 
-                  $funcion->IDENTIFICADOR()->getText() : 'main';
-        if ($nombre === 'main') {
-            $this->entrarAmbito('main');
-            $this->visit($funcion->bloque());
-            $this->salirAmbito();
-            break;
-        }
-    }
-    
-    return [
-        'consola' => $this->consola,
-        'errores' => $this->errores,
-        'tabla_simbolos' => $this->tablaSimbolosHistorial
-    ];
-}
-```
+- Editor de código con resaltado básico.
+- Botones: Nuevo, Cargar, Guardar, **Generar ARM64** (principal), **Ejecutar** (modo intérprete – función heredada).
+- Consola de salida que muestra el código ensamblador generado o mensajes de error.
+- Tabla de símbolos (descargable en CSV).
+- Reporte de errores (descargable en CSV).
 
-## 9 Módulo de análisis semántico
-El análisis semántico es la tercera fase del proceso de interpretación. Su función es verificar que el código fuente, aunque sea sintácticamente correcto, cumpla con las reglas semánticas del lenguaje Golampi. Esto incluye:
+La generación del código ARM64 es la funcionalidad central; el modo "Ejecutar" se mantiene solo para comparación.
 
-- Validación de tipos de datos
-- Verificación de declaración de variables
-- Control de ámbitos (scopes)
-- Chequeo de constantes inmutables
-- Validación de funciones y sus retornos
-- Detección de usos incorrectos de break/continue
+---
 
-En este proyecto, el análisis semántico se implementa mediante un visitor que recorre el AST generado por ANTLR.
+## 9. Pruebas realizadas
 
-9.1. Validaciones semánticas implementadas
-9.1.1. Tabla de validaciones
-|#	|Validación	|Método	|Tipo de error|
-|---|-----------|-------|-------------|
-|1	|Variable declarada antes de usar	|existeEnAmbitoActual()	|Semántico
-|2	|Sin redeclaración en mismo ámbito	|existeEnAmbitoActual()	|Semántico
-|3	|Constantes no modificables	|isset($constantes[$clave])	Semántico
-|4	|Compatibilidad de tipos en asignación	|tiposCompatiblesAsignacion()	|Semántico
-|5	|Compatibilidad de tipos en operaciones	|tiposCompatibles()	|Semántico
-|6	|Condición de if debe ser booleana	|obtenerTipo($condicion) === 'bool'	|Semántico
-|7	|Condición de for debe ser booleana	|obtenerTipo($condicion) === 'bool'	|Semántico
-|8	|break solo dentro de bucle o switch	|$enBucle o $enSwitch	|Semántico
-|9	|continue solo dentro de bucle	|$enBucle	|Semántico
-|10	|Función main única	|$nombre === 'main'	|Semántico
-|11	|Tipos de retorno coinciden con declaración	|count($valoresRetorno) === count($tiposRetorno)	|Semántico
-|12	|Parámetros de función correctos	|count($argumentos) === count($listaParametros)	|Semántico
-|13	|Identificador no es palabra reservada	|esPalabraReservada()	|Semántico
-|14	|Constantes deben inicializarse	|Valor no puede ser nil	|Semántico
-|15	|Declaración corta requiere al menos una variable nueva	|$nuevasVariables > 0	|Semántico
+Se han probado exhaustivamente los siguientes casos:
 
-## 10 Interfaz gráfica (Frontend)
-La Interfaz Gráfica de Usuario (GUI) es el componente frontal del intérprete Golampi. Su función es proporcionar un entorno visual interactivo donde el usuario pueda:
+| Archivo | Funcionalidades cubiertas |
+|---------|---------------------------|
+| `basico.go` | Tipos, variables, constantes, nil, operadores aritméticos/relacionales/lógicos, asignación compuesta |
+| `intermedio.go` | `if/else`, `switch`, `for` (clásico, while, infinito), `break`, `continue` |
+| `embebida.go` | `fmt.Println`, `len`, `now`, `substr`, `typeOf` |
+| `funciones.go` | Funciones con/sin parámetros, retorno simple/múltiple, paso por referencia, recursividad, hoisting |
 
-- Escribir y editar código fuente en lenguaje Golampi
-- Cargar y guardar archivos de código
-- Ejecutar programas y visualizar la salida
-- Consultar y descargar reportes de errores y tabla de símbolos
+Todos los programas compilaron y ejecutaron correctamente bajo `qemu-aarch64`.
 
-##  11 Estructura de directorios del proyecto
+---
 
-```text
-proyecto/
-├── bootstrap.php              # Cargador inicial
-├── src/
-|    ├── ErrorListener.php  
-│   ├── gramatica/             # Archivos generados por ANTLR
-│   │   └── gramatica/
-│   │       ├── GolampiLexer.php
-│   │       ├── GolampiParser.php
-│   │       └── ...
-│   └── visitors/
-│       ├── Interpreter.php    # Visitor principal
-│       └── traits/            # Módulos funcionales
-│           ├── AsignacionTrait.php
-│           ├── ControlFlujoTrait.php
-│           ├── ControlForTrait.php
-│           ├── ControlSwitchTrait.php
-│           ├── DeclaracionesTrait.php
-│           ├── ExpresionesTrait.php
-│           ├── FuncionEmbTrait.php
-│           ├── FuncUsuarioTrait.php
-│           ├── TransferenciaTrait.php
-│           └── UtilidadesTrait.php
-├── gramatica/
-│   └── Golampi.g4           #Analizador lexico y sintactico
-├── public/
-│   └── index.php              # Interfaz gráfica
-└── vendor/                     # Dependencias (Composer)
-```
+## 10. Conclusiones
+
+El compilador Golampi a ARM64 cumple con todos los requisitos del proyecto: genera código ensamblador válido, maneja la complejidad de múltiples retornos, punteros y recursividad, y proporciona una interfaz gráfica funcional. Las fases de análisis léxico, sintáctico y semántico se mantienen robustas, mientras que la generación de código ha sido completamente rediseñada para aprovechar la arquitectura ARM64.
+
+**Trabajo futuro**: Soporte de arreglos, optimización de código, y generación de código flotante usando registros `d` en lugar de `s` (actualmente se usa `double` por compatibilidad con `printf`).
+
+---
+
+## 11. Referencias
+
+- [ANTLR4 Documentation](https://github.com/antlr/antlr4)
+- [ARM64 AArch64 Instruction Set](https://johannst.github.io/notes/arch/arm64.html)
+- [Procedure Call Standard for the Arm 64-bit Architecture](https://github.com/ARM-software/abi-aa/blob/main/aapcs64/aapcs64.rst)
+
+---
+
+Este manual técnico reemplaza la versión anterior centrada en el intérprete. Se han destacado las nuevas funcionalidades de generación ARM64, manejo de memoria y convenciones de llamada, dejando solo un resumen de las fases de análisis.
