@@ -119,21 +119,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['codigo'])) {
                             file_put_contents($archivoSalida, $codigoArm64);
                             
                             $consola = [
-                                "✅ Código ARM64 generado exitosamente",
-                                "📁 Archivo guardado en: output/programa.s",
+                                "¡VAMOS! Compilación exitosa!",
+                                "Código ARM64 generado en: output/programa.s",
+                                "Tabla de símbolos generada con " . count($tabla_simbolos) . " entradas",
+                                "Reporte de errores disponible (" . count($erroresSemanticos) . " errores semánticos, " . count($erroresLexicoSintactico) . " léxicos/sintácticos)",
                                 "",
-                                "🔧 Para ensamblar y ejecutar:",
-                                "   aarch64-linux-gnu-as -o programa.o output/programa.s",
-                                "   aarch64-linux-gnu-ld -o programa programa.o",
-                                "   qemu-aarch64 ./programa",
+                                "Para ensamblar y ejecutar el programa:",
+                                "   aarch64-linux-gnu-gcc -static -o output/prueba output/programa.s",
+                                "   qemu-aarch64 ./output/prueba ",
                                 "",
-                                "📝 O si tienes herramientas nativas ARM64:",
-                                "   as -o programa.o output/programa.s",
-                                "   ld -o programa programa.o",
-                                "   ./programa"
                             ];
                         } else {
-                            $consola = ["❌ Se encontraron errores semánticos. No se generó código ARM64."];
+                            $consola = ["Se encontraron errores semánticos. No se generó código ARM64."];
                         }
                         
                         error_log("Generación ARM64 completada. " . count($errores) . " errores.");
@@ -912,6 +909,33 @@ function getErrorColor($tipo) {
                 </div>
             </div>
         <?php endif; ?>
+                <!-- Panel de Reportes (Requerimiento del enunciado) -->
+        <?php if ($modoEjecucion === 'generar' && $_SERVER['REQUEST_METHOD'] === 'POST'): ?>
+        <div class="reportes-section" style="margin-top: 32px;">
+            <h3 style="color: #e0e0e0; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                <span>📋</span> Reportes de Compilación
+            </h3>
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                <?php if (!empty($errores)): ?>
+                <button onclick="descargarReporteErrores()" class="btn btn-secondary" style="background: rgba(244, 67, 54, 0.2); border-color: rgba(244, 67, 54, 0.5);">
+                    ⚠️ Descargar Reporte de Errores
+                </button>
+                <?php endif; ?>
+                
+                <?php if (!empty($tabla_simbolos)): ?>
+                <button onclick="descargarTablaSimbolos()" class="btn btn-secondary" style="background: rgba(33, 150, 243, 0.2); border-color: rgba(33, 150, 243, 0.5);">
+                    🗂️ Descargar Tabla de Símbolos
+                </button>
+                <?php endif; ?>
+                
+                <?php if (!empty($codigoArm64)): ?>
+                <button onclick="descargarARM64()" class="btn btn-secondary" style="background: rgba(76, 175, 80, 0.2); border-color: rgba(76, 175, 80, 0.5);">
+                    🔧 Descargar Código ARM64 (.s)
+                </button>
+                <?php endif; ?>
+            </div>
+        </div>
+        <?php endif; ?>
     </div>
 
     <script>
@@ -994,6 +1018,66 @@ function getErrorColor($tipo) {
                 }
             });
         });
+        
+        
+        function descargarReporteErrores() {
+            const errores = <?php echo json_encode($errores); ?>;
+            if (!errores || errores.length === 0) {
+                alert('No hay errores para descargar');
+                return;
+            }
+            
+            // Formatear como CSV o texto
+            let contenido = "Tipo,Línea,Columna,Descripción\n";
+            for (let i = 0; i < errores.length; i++) {
+                const e = errores[i];
+                contenido += `${e.tipo || 'Sistema'},${e.linea || 0},${e.columna || 0},"${e.descripcion || ''}"\n`;
+            }
+            
+            const blob = new Blob([contenido], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'reporte_errores.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+        
+        function descargarTablaSimbolos() {
+            const tablaSimbolos = <?php echo json_encode($tabla_simbolos); ?>;
+            if (!tablaSimbolos || Object.keys(tablaSimbolos).length === 0) {
+                alert('No hay tabla de símbolos para descargar');
+                return;
+            }
+            
+            // Formatear como CSV
+            let contenido = "Identificador,Tipo,Ámbito,Valor,Línea\n";
+            for (const [id, info] of Object.entries(tablaSimbolos)) {
+                if (info.tipo && info.tipo !== 'funcion') {
+                    let tipoMostrar = info.tipo;
+                    if (info.es_puntero) {
+                        tipoMostrar = (info.tipo_base || 'int32') + '*';
+                    }
+                    let valor = info.valor;
+                    if (valor === null) valor = 'nil';
+                    else if (typeof valor === 'boolean') valor = valor ? 'true' : 'false';
+                    else if (typeof valor === 'string') valor = '"' + valor + '"';
+                    contenido += `${id},${tipoMostrar},${info.ambito || 'global'},${valor},${info.linea || '-'}\n`;
+                }
+            }
+            
+            const blob = new Blob([contenido], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'tabla_simbolos.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
     </script>
 </body>
 </html>
