@@ -1,0 +1,1000 @@
+[04-May-2026 20:51:53 UTC] === NUEVA EJECUCIÓN ===
+[04-May-2026 20:51:53 UTC] Modo seleccionado: generar
+[04-May-2026 20:51:53 UTC] Código recibido:
+// ==========================================
+// 3.6 Función main()
+// ==========================================
+
+func main() { 
+    fmt.Println("=== INICIO DE CALIFICACION: FUNCIONES ===")
+
+    // ==========================================
+    // 3.7 Hoisting
+    // ==========================================
+    fmt.Println("\n--- 3.7 HOISTING ---")
+    funcionHoisting()
+
+    // ==========================================
+    // 3.1 Función no recursiva sin parámetros
+    // ==========================================
+    fmt.Println("\n--- 3.1 FUNCION SIN PARAMETROS ---")
+    mostrarBienvenida()
+
+    // ==========================================
+    // 3.2 Función con parámetros no recursiva
+    // ==========================================
+    fmt.Println("\n--- 3.2 FUNCION CON PARAMETROS ---")
+    resultado := sumarNumeros(15, 25)
+    fmt.Println("Resultado de sumarNumeros(15, 25):", resultado)
+
+    // ==========================================
+    // 3.3 Funciones por referencia
+    // ==========================================
+    fmt.Println("\n--- 3.3 FUNCIONES POR REFERENCIA ---")
+    var numeroBase int32 = 10
+    fmt.Println("Valor antes de la función por referencia:", numeroBase)
+    duplicarPorReferencia(&numeroBase)
+    fmt.Println("Valor después de la función por referencia (debe ser 20):", numeroBase)
+
+    // ==========================================
+    // 3.4 Función no recursiva múltiple retorno
+    // ==========================================
+    fmt.Println("\n--- 3.4 FUNCION MULTIPLE RETORNO ---")
+    sum, res := operacionesBasicas(50, 20)
+    fmt.Println("Operaciones 50 y 20 -> Suma:", sum, ", Resta:", res)
+
+    // ==========================================
+    // 3.5 Función recursiva con un retorno 
+    // ==========================================
+    fmt.Println("\n--- 3.5 FUNCION RECURSIVA (UN RETORNO) ---")
+    fact := factorial(5)
+    fmt.Println("Factorial de 5:", fact)
+
+    // ==========================================
+    // 3.6 Función recursiva con múltiple retorno
+    // ==========================================
+    fmt.Println("\n--- 3.6 FUNCION RECURSIVA (MULTIPLE RETORNO) ---")
+    fib, llamadas := fibonacciAvanzado(4)
+    fmt.Println("Fibonacci de 4:", fib, "| Llamadas recursivas totales:", llamadas)
+
+    fmt.Println("\n=== FIN DE CALIFICACION: FUNCIONES ===")
+}
+
+// 3.7 Función declarada debajo del main (Prueba de Hoisting)
+func funcionHoisting() {
+    fmt.Println(">>> Ejecutando funcionHoisting() declarada correctamente debajo del main.")
+}
+
+// 3.1 Función sin parámetros
+func mostrarBienvenida() {
+    fmt.Println("¡Bienvenido al sistema de evaluación de funciones Golampi!")
+}
+
+// 3.2 Función con parámetros
+func sumarNumeros(a int32, b int32) int32 {
+    return a + b
+}
+
+// 3.3 Función por referencia
+func duplicarPorReferencia(valor *int32) {
+    *valor = *valor * 2
+}
+
+// 3.4 Función múltiple retorno
+func operacionesBasicas(a int32, b int32) (int32, int32) {
+    suma := a + b
+    resta := a - b
+    return suma, resta
+}
+
+// 3.5 Función recursiva (1 retorno)
+func factorial(n int32) int32 {
+    if n <= 1 {
+        return 1
+    }
+    return n * factorial(n - 1)
+}
+
+// 3.6 Función recursiva (Múltiple retorno) - CORREGIDA
+func fibonacciAvanzado(n int32) (int32, int32) {
+    if n < 0 {
+        return 0, 0
+    }
+    if n <= 1 {
+        if n == 0 {
+            return 0, 1
+        }
+        return 1, 1
+    }
+    
+    val1, pasos1 := fibonacciAvanzado(n - 1)
+    val2, pasos2 := fibonacciAvanzado(n - 2)
+    
+    nuevoValor := val1 + val2
+    totalPasos := pasos1 + pasos2 + 1
+    
+    return nuevoValor, totalPasos
+}
+/*
+=== INICIO DE CALIFICACION: FUNCIONES ===
+
+--- 3.7 HOISTING ---
+>>> Ejecutando funcionHoisting() declarada correctamente debajo del main.
+
+--- 3.1 FUNCION SIN PARAMETROS ---
+¡Bienvenido al sistema de evaluación de funciones Golampi!
+
+--- 3.2 FUNCION CON PARAMETROS ---
+Resultado de sumarNumeros(15, 25): 40
+
+--- 3.3 FUNCIONES POR REFERENCIA ---
+Valor antes de la función por referencia: 10
+Valor después de la función por referencia (debe ser 20): 20
+
+--- 3.4 FUNCION MULTIPLE RETORNO ---
+Operaciones 50 y 20 -> Suma: 70 , Resta: 30
+
+--- 3.5 FUNCION RECURSIVA (UN RETORNO) ---
+Factorial de 5: 120
+
+--- 3.6 FUNCION RECURSIVA (MULTIPLE RETORNO) ---
+Fibonacci de 4: 3 | Llamadas recursivas totales: 9
+
+=== FIN DE CALIFICACION: FUNCIONES ===
+*/
+[04-May-2026 20:51:53 UTC] Árbol generado correctamente
+[04-May-2026 20:51:53 UTC] Tipo de árbol: Context\ProgramaContext
+[04-May-2026 20:51:53 UTC] === GENERANDO CÓDIGO ARM64 ===
+[04-May-2026 20:51:53 UTC] === CodeGenerator ARM64 Inicializado ===
+[04-May-2026 20:51:53 UTC] Registrada función: funcionHoisting
+[04-May-2026 20:51:53 UTC] Registrada función: mostrarBienvenida
+[04-May-2026 20:51:53 UTC] Registrada función: sumarNumeros
+[04-May-2026 20:51:53 UTC] Registrada función: duplicarPorReferencia
+[04-May-2026 20:51:53 UTC] Registrada función: operacionesBasicas
+[04-May-2026 20:51:53 UTC] Registrada función: factorial
+[04-May-2026 20:51:53 UTC] Registrada función: fibonacciAvanzado
+[04-May-2026 20:51:53 UTC] === GENERANDO FUNCIÓN USUARIO (ARM64): funcionHoisting ===
+[04-May-2026 20:51:53 UTC]   No se encontraron tipos de retorno para la función
+[04-May-2026 20:51:53 UTC]   Tipos de retorno de 'funcionHoisting': 
+[04-May-2026 20:51:53 UTC] Generando fmt.Println con 1 argumentos
+[04-May-2026 20:51:53 UTC] === GENERANDO FUNCIÓN USUARIO (ARM64): mostrarBienvenida ===
+[04-May-2026 20:51:53 UTC]   No se encontraron tipos de retorno para la función
+[04-May-2026 20:51:53 UTC]   Tipos de retorno de 'mostrarBienvenida': 
+[04-May-2026 20:51:53 UTC] Generando fmt.Println con 1 argumentos
+[04-May-2026 20:51:53 UTC] === GENERANDO FUNCIÓN USUARIO (ARM64): sumarNumeros ===
+[04-May-2026 20:51:53 UTC]   Tipo único desde ->tipo(): int32
+[04-May-2026 20:51:53 UTC]   Tipos de retorno de 'sumarNumeros': int32
+[04-May-2026 20:51:53 UTC]   Temporal reservado en offset -20
+[04-May-2026 20:51:53 UTC]   Temporal liberado en offset -20
+[04-May-2026 20:51:53 UTC] === GENERANDO FUNCIÓN USUARIO (ARM64): duplicarPorReferencia ===
+[04-May-2026 20:51:53 UTC]   No se encontraron tipos de retorno para la función
+[04-May-2026 20:51:53 UTC]   Tipos de retorno de 'duplicarPorReferencia': 
+[04-May-2026 20:51:53 UTC] === DESREFERENCIA (*) ===
+[04-May-2026 20:51:53 UTC]   Desreferenciando: cargando valor desde la dirección en x0
+[04-May-2026 20:51:53 UTC]   Temporal reservado en offset -16
+[04-May-2026 20:51:53 UTC]   Temporal liberado en offset -16
+[04-May-2026 20:51:53 UTC] === GENERANDO FUNCIÓN USUARIO (ARM64): operacionesBasicas ===
+[04-May-2026 20:51:53 UTC]   Tipos desde ->tipos(): int32,int32
+[04-May-2026 20:51:53 UTC]   Tipos de retorno de 'operacionesBasicas': int32,int32
+[04-May-2026 20:51:53 UTC] === DECLARACIÓN CORTA con 1 IDs y 1 expresiones ===
+[04-May-2026 20:51:53 UTC]   Temporal reservado en offset -20
+[04-May-2026 20:51:53 UTC]   Temporal liberado en offset -20
+[04-May-2026 20:51:53 UTC] === DECLARACIÓN CORTA con 1 IDs y 1 expresiones ===
+[04-May-2026 20:51:53 UTC]   Temporal reservado en offset -28
+[04-May-2026 20:51:53 UTC]   Temporal liberado en offset -28
+[04-May-2026 20:51:53 UTC]   Múltiples retornos: 2 valores
+[04-May-2026 20:51:53 UTC]   Temporal reservado en offset -36
+[04-May-2026 20:51:53 UTC]   Temporal reservado en offset -44
+[04-May-2026 20:51:53 UTC]   Temporal liberado en offset -44
+[04-May-2026 20:51:53 UTC]   Temporal liberado en offset -36
+[04-May-2026 20:51:53 UTC] === GENERANDO FUNCIÓN USUARIO (ARM64): factorial ===
+[04-May-2026 20:51:53 UTC]   Tipo único desde ->tipo(): int32
+[04-May-2026 20:51:53 UTC]   Tipos de retorno de 'factorial': int32
+[04-May-2026 20:51:53 UTC] === IF STATEMENT (ARM64) ===
+[04-May-2026 20:51:53 UTC]   Temporal reservado en offset -12
+[04-May-2026 20:51:53 UTC]   Temporal liberado en offset -12
+[04-May-2026 20:51:53 UTC] >>> ENTRANDO a ámbito: if_then
+[04-May-2026 20:51:53 UTC] >>> SALIENDO del ámbito: if_then
+[04-May-2026 20:51:53 UTC]   Temporal reservado en offset -12
+[04-May-2026 20:51:53 UTC]   → Buscando función de usuario: 'factorial'
+[04-May-2026 20:51:53 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): factorial ===
+[04-May-2026 20:51:53 UTC]   La función retorna 1 valor(es): int32
+[04-May-2026 20:51:53 UTC]   Temporal reservado en offset -20
+[04-May-2026 20:51:53 UTC]   Temporal liberado en offset -20
+[04-May-2026 20:51:53 UTC]   Temporal reservado en offset -20
+[04-May-2026 20:51:53 UTC]   Temporal liberado en offset -20
+[04-May-2026 20:51:53 UTC]   Temporal liberado en offset -12
+[04-May-2026 20:51:53 UTC] === GENERANDO FUNCIÓN USUARIO (ARM64): fibonacciAvanzado ===
+[04-May-2026 20:51:53 UTC]   Tipos desde ->tipos(): int32,int32
+[04-May-2026 20:51:53 UTC]   Tipos de retorno de 'fibonacciAvanzado': int32,int32
+[04-May-2026 20:51:53 UTC] === IF STATEMENT (ARM64) ===
+[04-May-2026 20:51:53 UTC]   Temporal reservado en offset -12
+[04-May-2026 20:51:53 UTC]   Temporal liberado en offset -12
+[04-May-2026 20:51:53 UTC] >>> ENTRANDO a ámbito: if_then
+[04-May-2026 20:51:53 UTC]   Múltiples retornos: 2 valores
+[04-May-2026 20:51:53 UTC]   Temporal reservado en offset -12
+[04-May-2026 20:51:53 UTC]   Temporal reservado en offset -20
+[04-May-2026 20:51:53 UTC]   Temporal liberado en offset -20
+[04-May-2026 20:51:53 UTC]   Temporal liberado en offset -12
+[04-May-2026 20:51:53 UTC] >>> SALIENDO del ámbito: if_then
+[04-May-2026 20:51:53 UTC] === IF STATEMENT (ARM64) ===
+[04-May-2026 20:51:53 UTC]   Temporal reservado en offset -12
+[04-May-2026 20:51:53 UTC]   Temporal liberado en offset -12
+[04-May-2026 20:51:53 UTC] >>> ENTRANDO a ámbito: if_then
+[04-May-2026 20:51:53 UTC] === IF STATEMENT (ARM64) ===
+[04-May-2026 20:51:53 UTC]   Temporal reservado en offset -12
+[04-May-2026 20:51:53 UTC]   Temporal liberado en offset -12
+[04-May-2026 20:51:53 UTC] >>> ENTRANDO a ámbito: if_then_1
+[04-May-2026 20:51:53 UTC]   Múltiples retornos: 2 valores
+[04-May-2026 20:51:53 UTC]   Temporal reservado en offset -12
+[04-May-2026 20:51:53 UTC]   Temporal reservado en offset -20
+[04-May-2026 20:51:53 UTC]   Temporal liberado en offset -20
+[04-May-2026 20:51:53 UTC]   Temporal liberado en offset -12
+[04-May-2026 20:51:53 UTC] >>> SALIENDO del ámbito: if_then_1
+[04-May-2026 20:51:53 UTC]   Múltiples retornos: 2 valores
+[04-May-2026 20:51:53 UTC]   Temporal reservado en offset -12
+[04-May-2026 20:51:53 UTC]   Temporal reservado en offset -20
+[04-May-2026 20:51:53 UTC]   Temporal liberado en offset -20
+[04-May-2026 20:51:53 UTC]   Temporal liberado en offset -12
+[04-May-2026 20:51:53 UTC] >>> SALIENDO del ámbito: if_then
+[04-May-2026 20:51:53 UTC] === DECLARACIÓN CORTA con 2 IDs y 1 expresiones ===
+[04-May-2026 20:51:53 UTC]   → Buscando función de usuario: 'fibonacciAvanzado'
+[04-May-2026 20:51:53 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): fibonacciAvanzado ===
+[04-May-2026 20:51:53 UTC]   La función retorna 2 valor(es): int32, int32
+[04-May-2026 20:51:53 UTC]   Temporal reservado en offset -12
+[04-May-2026 20:51:53 UTC]   Temporal liberado en offset -12
+[04-May-2026 20:51:53 UTC]   Temporal reservado en offset -12
+[04-May-2026 20:51:53 UTC]   Temporal liberado en offset -12
+[04-May-2026 20:51:53 UTC]   Temporal reservado en offset -12
+[04-May-2026 20:51:53 UTC]   Temporal reservado en offset -20
+[04-May-2026 20:51:53 UTC] === DECLARACIÓN CORTA con 2 IDs y 1 expresiones ===
+[04-May-2026 20:51:53 UTC]   → Buscando función de usuario: 'fibonacciAvanzado'
+[04-May-2026 20:51:53 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): fibonacciAvanzado ===
+[04-May-2026 20:51:53 UTC]   La función retorna 2 valor(es): int32, int32
+[04-May-2026 20:51:53 UTC]   Temporal reservado en offset -44
+[04-May-2026 20:51:53 UTC]   Temporal liberado en offset -44
+[04-May-2026 20:51:53 UTC]   Temporal reservado en offset -44
+[04-May-2026 20:51:53 UTC]   Temporal liberado en offset -44
+[04-May-2026 20:51:53 UTC]   Temporal reservado en offset -44
+[04-May-2026 20:51:53 UTC]   Temporal reservado en offset -52
+[04-May-2026 20:51:53 UTC] === DECLARACIÓN CORTA con 1 IDs y 1 expresiones ===
+[04-May-2026 20:51:53 UTC]   Temporal reservado en offset -76
+[04-May-2026 20:51:53 UTC]   Temporal liberado en offset -76
+[04-May-2026 20:51:53 UTC] === DECLARACIÓN CORTA con 1 IDs y 1 expresiones ===
+[04-May-2026 20:51:53 UTC]   Temporal reservado en offset -84
+[04-May-2026 20:51:53 UTC]   Temporal liberado en offset -84
+[04-May-2026 20:51:53 UTC]   Múltiples retornos: 2 valores
+[04-May-2026 20:51:53 UTC]   Temporal reservado en offset -92
+[04-May-2026 20:51:53 UTC]   Temporal reservado en offset -100
+[04-May-2026 20:51:53 UTC]   Temporal liberado en offset -100
+[04-May-2026 20:51:53 UTC]   Temporal liberado en offset -92
+[04-May-2026 20:51:53 UTC] Generando fmt.Println con 1 argumentos
+[04-May-2026 20:51:53 UTC] Generando fmt.Println con 1 argumentos
+[04-May-2026 20:51:53 UTC]   → Buscando función de usuario: 'funcionHoisting'
+[04-May-2026 20:51:53 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): funcionHoisting ===
+[04-May-2026 20:51:53 UTC]   La función retorna 0 valor(es): 
+[04-May-2026 20:51:53 UTC] Generando fmt.Println con 1 argumentos
+[04-May-2026 20:51:53 UTC]   → Buscando función de usuario: 'mostrarBienvenida'
+[04-May-2026 20:51:53 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): mostrarBienvenida ===
+[04-May-2026 20:51:53 UTC]   La función retorna 0 valor(es): 
+[04-May-2026 20:51:53 UTC] Generando fmt.Println con 1 argumentos
+[04-May-2026 20:51:53 UTC] === DECLARACIÓN CORTA con 1 IDs y 1 expresiones ===
+[04-May-2026 20:51:53 UTC]   → Buscando función de usuario: 'sumarNumeros'
+[04-May-2026 20:51:53 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): sumarNumeros ===
+[04-May-2026 20:51:53 UTC]   La función retorna 1 valor(es): int32
+[04-May-2026 20:51:53 UTC]   Temporal reservado en offset -8
+[04-May-2026 20:51:53 UTC]   Temporal reservado en offset -16
+[04-May-2026 20:51:53 UTC]   Temporal liberado en offset -8
+[04-May-2026 20:51:53 UTC]   Temporal liberado en offset -16
+[04-May-2026 20:51:53 UTC] Generando fmt.Println con 2 argumentos
+[04-May-2026 20:51:53 UTC] Generando fmt.Println con 1 argumentos
+[04-May-2026 20:51:53 UTC] Generando fmt.Println con 2 argumentos
+[04-May-2026 20:51:53 UTC]   → Buscando función de usuario: 'duplicarPorReferencia'
+[04-May-2026 20:51:53 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): duplicarPorReferencia ===
+[04-May-2026 20:51:53 UTC]   La función retorna 0 valor(es): 
+[04-May-2026 20:51:53 UTC] === REFERENCIA (&) ===
+[04-May-2026 20:51:53 UTC]   Tipo de contexto: Context\ExpresionPrimariaContext
+[04-May-2026 20:51:53 UTC]   Variable: numeroBase
+[04-May-2026 20:51:53 UTC]   Dirección de numeroBase: x29 + -12
+[04-May-2026 20:51:53 UTC]   Temporal reservado en offset -20
+[04-May-2026 20:51:53 UTC]   Temporal liberado en offset -20
+[04-May-2026 20:51:53 UTC] Generando fmt.Println con 2 argumentos
+[04-May-2026 20:51:53 UTC] Generando fmt.Println con 1 argumentos
+[04-May-2026 20:51:53 UTC] === DECLARACIÓN CORTA con 2 IDs y 1 expresiones ===
+[04-May-2026 20:51:53 UTC]   → Buscando función de usuario: 'operacionesBasicas'
+[04-May-2026 20:51:53 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): operacionesBasicas ===
+[04-May-2026 20:51:53 UTC]   La función retorna 2 valor(es): int32, int32
+[04-May-2026 20:51:53 UTC]   Temporal reservado en offset -20
+[04-May-2026 20:51:53 UTC]   Temporal reservado en offset -28
+[04-May-2026 20:51:53 UTC]   Temporal liberado en offset -20
+[04-May-2026 20:51:53 UTC]   Temporal liberado en offset -28
+[04-May-2026 20:51:53 UTC]   Temporal reservado en offset -20
+[04-May-2026 20:51:53 UTC]   Temporal reservado en offset -28
+[04-May-2026 20:51:53 UTC] Generando fmt.Println con 4 argumentos
+[04-May-2026 20:51:53 UTC] Generando fmt.Println con 1 argumentos
+[04-May-2026 20:51:53 UTC] === DECLARACIÓN CORTA con 1 IDs y 1 expresiones ===
+[04-May-2026 20:51:53 UTC]   → Buscando función de usuario: 'factorial'
+[04-May-2026 20:51:53 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): factorial ===
+[04-May-2026 20:51:53 UTC]   La función retorna 1 valor(es): int32
+[04-May-2026 20:51:53 UTC]   Temporal reservado en offset -52
+[04-May-2026 20:51:53 UTC]   Temporal liberado en offset -52
+[04-May-2026 20:51:53 UTC] Generando fmt.Println con 2 argumentos
+[04-May-2026 20:51:53 UTC] Generando fmt.Println con 1 argumentos
+[04-May-2026 20:51:53 UTC] === DECLARACIÓN CORTA con 2 IDs y 1 expresiones ===
+[04-May-2026 20:51:53 UTC]   → Buscando función de usuario: 'fibonacciAvanzado'
+[04-May-2026 20:51:53 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): fibonacciAvanzado ===
+[04-May-2026 20:51:53 UTC]   La función retorna 2 valor(es): int32, int32
+[04-May-2026 20:51:53 UTC]   Temporal reservado en offset -60
+[04-May-2026 20:51:53 UTC]   Temporal liberado en offset -60
+[04-May-2026 20:51:53 UTC]   Temporal reservado en offset -60
+[04-May-2026 20:51:53 UTC]   Temporal reservado en offset -68
+[04-May-2026 20:51:53 UTC] Generando fmt.Println con 4 argumentos
+[04-May-2026 20:51:53 UTC] Generando fmt.Println con 1 argumentos
+[04-May-2026 20:51:53 UTC] Generación ARM64 completada. 0 errores.
+[04-May-2026 21:27:03 UTC] === NUEVA EJECUCIÓN ===
+[04-May-2026 21:27:13 UTC] === NUEVA EJECUCIÓN ===
+[04-May-2026 21:27:13 UTC] Modo seleccionado: generar
+[04-May-2026 21:27:13 UTC] Código recibido:
+// ==========================================
+// 3.6 Función main()
+// ==========================================
+
+func main() { 
+    fmt.Println("=== INICIO DE CALIFICACION: FUNCIONES ===")
+
+    // ==========================================
+    // 3.7 Hoisting
+    // ==========================================
+    fmt.Println("\n--- 3.7 HOISTING ---")
+    funcionHoisting()
+
+    // ==========================================
+    // 3.1 Función no recursiva sin parámetros
+    // ==========================================
+    fmt.Println("\n--- 3.1 FUNCION SIN PARAMETROS ---")
+    mostrarBienvenida()
+
+    // ==========================================
+    // 3.2 Función con parámetros no recursiva
+    // ==========================================
+    fmt.Println("\n--- 3.2 FUNCION CON PARAMETROS ---")
+    resultado := sumarNumeros(15, 25)
+    fmt.Println("Resultado de sumarNumeros(15, 25):", resultado)
+
+    // ==========================================
+    // 3.3 Funciones por referencia
+    // ==========================================
+    fmt.Println("\n--- 3.3 FUNCIONES POR REFERENCIA ---")
+    var numeroBase int32 = 10
+    fmt.Println("Valor antes de la función por referencia:", numeroBase)
+    duplicarPorReferencia(&numeroBase)
+    fmt.Println("Valor después de la función por referencia (debe ser 20):", numeroBase)
+
+    // ==========================================
+    // 3.4 Función no recursiva múltiple retorno
+    // ==========================================
+    fmt.Println("\n--- 3.4 FUNCION MULTIPLE RETORNO ---")
+    sum, res := operacionesBasicas(50, 20)
+    fmt.Println("Operaciones 50 y 20 -> Suma:", sum, ", Resta:", res)
+
+    // ==========================================
+    // 3.5 Función recursiva con un retorno 
+    // ==========================================
+    fmt.Println("\n--- 3.5 FUNCION RECURSIVA (UN RETORNO) ---")
+    fact := factorial(5)
+    fmt.Println("Factorial de 5:", fact)
+
+    // ==========================================
+    // 3.6 Función recursiva con múltiple retorno
+    // ==========================================
+    fmt.Println("\n--- 3.6 FUNCION RECURSIVA (MULTIPLE RETORNO) ---")
+    fib, llamadas := fibonacciAvanzado(4)
+    fmt.Println("Fibonacci de 4:", fib, "| Llamadas recursivas totales:", llamadas)
+
+    fmt.Println("\n=== FIN DE CALIFICACION: FUNCIONES ===")
+}
+
+// 3.7 Función declarada debajo del main (Prueba de Hoisting)
+func funcionHoisting() {
+    fmt.Println(">>> Ejecutando funcionHoisting() declarada correctamente debajo del main.")
+}
+
+// 3.1 Función sin parámetros
+func mostrarBienvenida() {
+    fmt.Println("¡Bienvenido al sistema de evaluación de funciones Golampi!")
+}
+
+// 3.2 Función con parámetros
+func sumarNumeros(a int32, b int32) int32 {
+    return a + b
+}
+
+// 3.3 Función por referencia
+func duplicarPorReferencia(valor *int32) {
+    *valor = *valor * 2
+}
+
+// 3.4 Función múltiple retorno
+func operacionesBasicas(a int32, b int32) (int32, int32) {
+    suma := a + b
+    resta := a - b
+    return suma, resta
+}
+
+// 3.5 Función recursiva (1 retorno)
+func factorial(n int32) int32 {
+    if n <= 1 {
+        return 1
+    }
+    return n * factorial(n - 1)
+}
+
+// 3.6 Función recursiva (Múltiple retorno) - CORREGIDA
+func fibonacciAvanzado(n int32) (int32, int32) {
+    if n < 0 {
+        return 0, 0
+    }
+    if n <= 1 {
+        if n == 0 {
+            return 0, 1
+        }
+        return 1, 1
+    }
+    
+    val1, pasos1 := fibonacciAvanzado(n - 1)
+    val2, pasos2 := fibonacciAvanzado(n - 2)
+    
+    nuevoValor := val1 + val2
+    totalPasos := pasos1 + pasos2 + 1
+    
+    return nuevoValor, totalPasos
+}
+/*
+=== INICIO DE CALIFICACION: FUNCIONES ===
+
+--- 3.7 HOISTING ---
+>>> Ejecutando funcionHoisting() declarada correctamente debajo del main.
+
+--- 3.1 FUNCION SIN PARAMETROS ---
+¡Bienvenido al sistema de evaluación de funciones Golampi!
+
+--- 3.2 FUNCION CON PARAMETROS ---
+Resultado de sumarNumeros(15, 25): 40
+
+--- 3.3 FUNCIONES POR REFERENCIA ---
+Valor antes de la función por referencia: 10
+Valor después de la función por referencia (debe ser 20): 20
+
+--- 3.4 FUNCION MULTIPLE RETORNO ---
+Operaciones 50 y 20 -> Suma: 70 , Resta: 30
+
+--- 3.5 FUNCION RECURSIVA (UN RETORNO) ---
+Factorial de 5: 120
+
+--- 3.6 FUNCION RECURSIVA (MULTIPLE RETORNO) ---
+Fibonacci de 4: 3 | Llamadas recursivas totales: 9
+
+=== FIN DE CALIFICACION: FUNCIONES ===
+*/
+[04-May-2026 21:27:13 UTC] Árbol generado correctamente
+[04-May-2026 21:27:13 UTC] Tipo de árbol: Context\ProgramaContext
+[04-May-2026 21:27:13 UTC] === GENERANDO CÓDIGO ARM64 ===
+[04-May-2026 21:27:13 UTC] === CodeGenerator ARM64 Inicializado ===
+[04-May-2026 21:27:13 UTC] Registrada función: funcionHoisting
+[04-May-2026 21:27:13 UTC] Registrada función: mostrarBienvenida
+[04-May-2026 21:27:13 UTC] Registrada función: sumarNumeros
+[04-May-2026 21:27:13 UTC] Registrada función: duplicarPorReferencia
+[04-May-2026 21:27:13 UTC] Registrada función: operacionesBasicas
+[04-May-2026 21:27:13 UTC] Registrada función: factorial
+[04-May-2026 21:27:13 UTC] Registrada función: fibonacciAvanzado
+[04-May-2026 21:27:13 UTC] === GENERANDO FUNCIÓN USUARIO (ARM64): funcionHoisting ===
+[04-May-2026 21:27:13 UTC]   No se encontraron tipos de retorno para la función
+[04-May-2026 21:27:13 UTC]   Tipos de retorno de 'funcionHoisting': 
+[04-May-2026 21:27:13 UTC] Generando fmt.Println con 1 argumentos
+[04-May-2026 21:27:13 UTC] === GENERANDO FUNCIÓN USUARIO (ARM64): mostrarBienvenida ===
+[04-May-2026 21:27:13 UTC]   No se encontraron tipos de retorno para la función
+[04-May-2026 21:27:13 UTC]   Tipos de retorno de 'mostrarBienvenida': 
+[04-May-2026 21:27:13 UTC] Generando fmt.Println con 1 argumentos
+[04-May-2026 21:27:13 UTC] === GENERANDO FUNCIÓN USUARIO (ARM64): sumarNumeros ===
+[04-May-2026 21:27:13 UTC]   Tipo único desde ->tipo(): int32
+[04-May-2026 21:27:13 UTC]   Tipos de retorno de 'sumarNumeros': int32
+[04-May-2026 21:27:13 UTC]   Temporal reservado en offset -20
+[04-May-2026 21:27:13 UTC]   Temporal liberado en offset -20
+[04-May-2026 21:27:13 UTC] === GENERANDO FUNCIÓN USUARIO (ARM64): duplicarPorReferencia ===
+[04-May-2026 21:27:13 UTC]   No se encontraron tipos de retorno para la función
+[04-May-2026 21:27:13 UTC]   Tipos de retorno de 'duplicarPorReferencia': 
+[04-May-2026 21:27:13 UTC] === DESREFERENCIA (*) ===
+[04-May-2026 21:27:13 UTC]   Desreferenciando: cargando valor desde la dirección en x0
+[04-May-2026 21:27:13 UTC]   Temporal reservado en offset -16
+[04-May-2026 21:27:13 UTC]   Temporal liberado en offset -16
+[04-May-2026 21:27:13 UTC] === GENERANDO FUNCIÓN USUARIO (ARM64): operacionesBasicas ===
+[04-May-2026 21:27:13 UTC]   Tipos desde ->tipos(): int32,int32
+[04-May-2026 21:27:13 UTC]   Tipos de retorno de 'operacionesBasicas': int32,int32
+[04-May-2026 21:27:13 UTC] === DECLARACIÓN CORTA con 1 IDs y 1 expresiones ===
+[04-May-2026 21:27:13 UTC]   Temporal reservado en offset -20
+[04-May-2026 21:27:13 UTC]   Temporal liberado en offset -20
+[04-May-2026 21:27:13 UTC] === DECLARACIÓN CORTA con 1 IDs y 1 expresiones ===
+[04-May-2026 21:27:13 UTC]   Temporal reservado en offset -28
+[04-May-2026 21:27:13 UTC]   Temporal liberado en offset -28
+[04-May-2026 21:27:13 UTC]   Múltiples retornos: 2 valores
+[04-May-2026 21:27:13 UTC]   Temporal reservado en offset -36
+[04-May-2026 21:27:13 UTC]   Temporal reservado en offset -44
+[04-May-2026 21:27:13 UTC]   Temporal liberado en offset -44
+[04-May-2026 21:27:13 UTC]   Temporal liberado en offset -36
+[04-May-2026 21:27:13 UTC] === GENERANDO FUNCIÓN USUARIO (ARM64): factorial ===
+[04-May-2026 21:27:13 UTC]   Tipo único desde ->tipo(): int32
+[04-May-2026 21:27:13 UTC]   Tipos de retorno de 'factorial': int32
+[04-May-2026 21:27:13 UTC] === IF STATEMENT (ARM64) ===
+[04-May-2026 21:27:13 UTC]   Temporal reservado en offset -12
+[04-May-2026 21:27:13 UTC]   Temporal liberado en offset -12
+[04-May-2026 21:27:13 UTC] >>> ENTRANDO a ámbito: if_then
+[04-May-2026 21:27:13 UTC] >>> SALIENDO del ámbito: if_then
+[04-May-2026 21:27:13 UTC]   Temporal reservado en offset -12
+[04-May-2026 21:27:13 UTC]   → Buscando función de usuario: 'factorial'
+[04-May-2026 21:27:13 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): factorial ===
+[04-May-2026 21:27:13 UTC]   La función retorna 1 valor(es): int32
+[04-May-2026 21:27:13 UTC]   Temporal reservado en offset -20
+[04-May-2026 21:27:13 UTC]   Temporal liberado en offset -20
+[04-May-2026 21:27:13 UTC]   Temporal reservado en offset -20
+[04-May-2026 21:27:13 UTC]   Temporal liberado en offset -20
+[04-May-2026 21:27:13 UTC]   Temporal liberado en offset -12
+[04-May-2026 21:27:13 UTC] === GENERANDO FUNCIÓN USUARIO (ARM64): fibonacciAvanzado ===
+[04-May-2026 21:27:13 UTC]   Tipos desde ->tipos(): int32,int32
+[04-May-2026 21:27:13 UTC]   Tipos de retorno de 'fibonacciAvanzado': int32,int32
+[04-May-2026 21:27:13 UTC] === IF STATEMENT (ARM64) ===
+[04-May-2026 21:27:13 UTC]   Temporal reservado en offset -12
+[04-May-2026 21:27:13 UTC]   Temporal liberado en offset -12
+[04-May-2026 21:27:13 UTC] >>> ENTRANDO a ámbito: if_then
+[04-May-2026 21:27:13 UTC]   Múltiples retornos: 2 valores
+[04-May-2026 21:27:13 UTC]   Temporal reservado en offset -12
+[04-May-2026 21:27:13 UTC]   Temporal reservado en offset -20
+[04-May-2026 21:27:13 UTC]   Temporal liberado en offset -20
+[04-May-2026 21:27:13 UTC]   Temporal liberado en offset -12
+[04-May-2026 21:27:13 UTC] >>> SALIENDO del ámbito: if_then
+[04-May-2026 21:27:13 UTC] === IF STATEMENT (ARM64) ===
+[04-May-2026 21:27:13 UTC]   Temporal reservado en offset -12
+[04-May-2026 21:27:13 UTC]   Temporal liberado en offset -12
+[04-May-2026 21:27:13 UTC] >>> ENTRANDO a ámbito: if_then
+[04-May-2026 21:27:13 UTC] === IF STATEMENT (ARM64) ===
+[04-May-2026 21:27:13 UTC]   Temporal reservado en offset -12
+[04-May-2026 21:27:13 UTC]   Temporal liberado en offset -12
+[04-May-2026 21:27:13 UTC] >>> ENTRANDO a ámbito: if_then_1
+[04-May-2026 21:27:13 UTC]   Múltiples retornos: 2 valores
+[04-May-2026 21:27:13 UTC]   Temporal reservado en offset -12
+[04-May-2026 21:27:13 UTC]   Temporal reservado en offset -20
+[04-May-2026 21:27:13 UTC]   Temporal liberado en offset -20
+[04-May-2026 21:27:13 UTC]   Temporal liberado en offset -12
+[04-May-2026 21:27:13 UTC] >>> SALIENDO del ámbito: if_then_1
+[04-May-2026 21:27:13 UTC]   Múltiples retornos: 2 valores
+[04-May-2026 21:27:13 UTC]   Temporal reservado en offset -12
+[04-May-2026 21:27:13 UTC]   Temporal reservado en offset -20
+[04-May-2026 21:27:13 UTC]   Temporal liberado en offset -20
+[04-May-2026 21:27:13 UTC]   Temporal liberado en offset -12
+[04-May-2026 21:27:13 UTC] >>> SALIENDO del ámbito: if_then
+[04-May-2026 21:27:13 UTC] === DECLARACIÓN CORTA con 2 IDs y 1 expresiones ===
+[04-May-2026 21:27:13 UTC]   → Buscando función de usuario: 'fibonacciAvanzado'
+[04-May-2026 21:27:13 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): fibonacciAvanzado ===
+[04-May-2026 21:27:13 UTC]   La función retorna 2 valor(es): int32, int32
+[04-May-2026 21:27:13 UTC]   Temporal reservado en offset -12
+[04-May-2026 21:27:13 UTC]   Temporal liberado en offset -12
+[04-May-2026 21:27:13 UTC]   Temporal reservado en offset -12
+[04-May-2026 21:27:13 UTC]   Temporal liberado en offset -12
+[04-May-2026 21:27:13 UTC]   Temporal reservado en offset -12
+[04-May-2026 21:27:13 UTC]   Temporal reservado en offset -20
+[04-May-2026 21:27:13 UTC] === DECLARACIÓN CORTA con 2 IDs y 1 expresiones ===
+[04-May-2026 21:27:13 UTC]   → Buscando función de usuario: 'fibonacciAvanzado'
+[04-May-2026 21:27:13 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): fibonacciAvanzado ===
+[04-May-2026 21:27:13 UTC]   La función retorna 2 valor(es): int32, int32
+[04-May-2026 21:27:13 UTC]   Temporal reservado en offset -44
+[04-May-2026 21:27:13 UTC]   Temporal liberado en offset -44
+[04-May-2026 21:27:13 UTC]   Temporal reservado en offset -44
+[04-May-2026 21:27:13 UTC]   Temporal liberado en offset -44
+[04-May-2026 21:27:13 UTC]   Temporal reservado en offset -44
+[04-May-2026 21:27:13 UTC]   Temporal reservado en offset -52
+[04-May-2026 21:27:13 UTC] === DECLARACIÓN CORTA con 1 IDs y 1 expresiones ===
+[04-May-2026 21:27:13 UTC]   Temporal reservado en offset -76
+[04-May-2026 21:27:13 UTC]   Temporal liberado en offset -76
+[04-May-2026 21:27:13 UTC] === DECLARACIÓN CORTA con 1 IDs y 1 expresiones ===
+[04-May-2026 21:27:13 UTC]   Temporal reservado en offset -84
+[04-May-2026 21:27:13 UTC]   Temporal liberado en offset -84
+[04-May-2026 21:27:13 UTC]   Múltiples retornos: 2 valores
+[04-May-2026 21:27:13 UTC]   Temporal reservado en offset -92
+[04-May-2026 21:27:13 UTC]   Temporal reservado en offset -100
+[04-May-2026 21:27:13 UTC]   Temporal liberado en offset -100
+[04-May-2026 21:27:13 UTC]   Temporal liberado en offset -92
+[04-May-2026 21:27:13 UTC] Generando fmt.Println con 1 argumentos
+[04-May-2026 21:27:13 UTC] Generando fmt.Println con 1 argumentos
+[04-May-2026 21:27:13 UTC]   → Buscando función de usuario: 'funcionHoisting'
+[04-May-2026 21:27:13 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): funcionHoisting ===
+[04-May-2026 21:27:13 UTC]   La función retorna 0 valor(es): 
+[04-May-2026 21:27:13 UTC] Generando fmt.Println con 1 argumentos
+[04-May-2026 21:27:13 UTC]   → Buscando función de usuario: 'mostrarBienvenida'
+[04-May-2026 21:27:13 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): mostrarBienvenida ===
+[04-May-2026 21:27:13 UTC]   La función retorna 0 valor(es): 
+[04-May-2026 21:27:13 UTC] Generando fmt.Println con 1 argumentos
+[04-May-2026 21:27:13 UTC] === DECLARACIÓN CORTA con 1 IDs y 1 expresiones ===
+[04-May-2026 21:27:13 UTC]   → Buscando función de usuario: 'sumarNumeros'
+[04-May-2026 21:27:13 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): sumarNumeros ===
+[04-May-2026 21:27:13 UTC]   La función retorna 1 valor(es): int32
+[04-May-2026 21:27:13 UTC]   Temporal reservado en offset -8
+[04-May-2026 21:27:13 UTC]   Temporal reservado en offset -16
+[04-May-2026 21:27:13 UTC]   Temporal liberado en offset -16
+[04-May-2026 21:27:13 UTC]   Temporal liberado en offset -8
+[04-May-2026 21:27:13 UTC] Generando fmt.Println con 2 argumentos
+[04-May-2026 21:27:13 UTC] Generando fmt.Println con 1 argumentos
+[04-May-2026 21:27:13 UTC] Generando fmt.Println con 2 argumentos
+[04-May-2026 21:27:13 UTC]   → Buscando función de usuario: 'duplicarPorReferencia'
+[04-May-2026 21:27:13 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): duplicarPorReferencia ===
+[04-May-2026 21:27:13 UTC]   La función retorna 0 valor(es): 
+[04-May-2026 21:27:13 UTC] === REFERENCIA (&) ===
+[04-May-2026 21:27:13 UTC]   Tipo de contexto: Context\ExpresionPrimariaContext
+[04-May-2026 21:27:13 UTC]   Variable: numeroBase
+[04-May-2026 21:27:13 UTC]   Dirección de numeroBase: x29 + -12
+[04-May-2026 21:27:13 UTC]   Temporal reservado en offset -20
+[04-May-2026 21:27:13 UTC]   Temporal liberado en offset -20
+[04-May-2026 21:27:13 UTC] Generando fmt.Println con 2 argumentos
+[04-May-2026 21:27:13 UTC] Generando fmt.Println con 1 argumentos
+[04-May-2026 21:27:13 UTC] === DECLARACIÓN CORTA con 2 IDs y 1 expresiones ===
+[04-May-2026 21:27:13 UTC]   → Buscando función de usuario: 'operacionesBasicas'
+[04-May-2026 21:27:13 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): operacionesBasicas ===
+[04-May-2026 21:27:13 UTC]   La función retorna 2 valor(es): int32, int32
+[04-May-2026 21:27:13 UTC]   Temporal reservado en offset -20
+[04-May-2026 21:27:13 UTC]   Temporal reservado en offset -28
+[04-May-2026 21:27:13 UTC]   Temporal liberado en offset -28
+[04-May-2026 21:27:13 UTC]   Temporal liberado en offset -20
+[04-May-2026 21:27:13 UTC]   Temporal reservado en offset -20
+[04-May-2026 21:27:13 UTC]   Temporal reservado en offset -28
+[04-May-2026 21:27:13 UTC] Generando fmt.Println con 4 argumentos
+[04-May-2026 21:27:13 UTC] Generando fmt.Println con 1 argumentos
+[04-May-2026 21:27:13 UTC] === DECLARACIÓN CORTA con 1 IDs y 1 expresiones ===
+[04-May-2026 21:27:13 UTC]   → Buscando función de usuario: 'factorial'
+[04-May-2026 21:27:13 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): factorial ===
+[04-May-2026 21:27:13 UTC]   La función retorna 1 valor(es): int32
+[04-May-2026 21:27:13 UTC]   Temporal reservado en offset -52
+[04-May-2026 21:27:13 UTC]   Temporal liberado en offset -52
+[04-May-2026 21:27:13 UTC] Generando fmt.Println con 2 argumentos
+[04-May-2026 21:27:13 UTC] Generando fmt.Println con 1 argumentos
+[04-May-2026 21:27:13 UTC] === DECLARACIÓN CORTA con 2 IDs y 1 expresiones ===
+[04-May-2026 21:27:13 UTC]   → Buscando función de usuario: 'fibonacciAvanzado'
+[04-May-2026 21:27:13 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): fibonacciAvanzado ===
+[04-May-2026 21:27:13 UTC]   La función retorna 2 valor(es): int32, int32
+[04-May-2026 21:27:13 UTC]   Temporal reservado en offset -60
+[04-May-2026 21:27:13 UTC]   Temporal liberado en offset -60
+[04-May-2026 21:27:13 UTC]   Temporal reservado en offset -60
+[04-May-2026 21:27:13 UTC]   Temporal reservado en offset -68
+[04-May-2026 21:27:13 UTC] Generando fmt.Println con 4 argumentos
+[04-May-2026 21:27:13 UTC] Generando fmt.Println con 1 argumentos
+[04-May-2026 21:27:13 UTC] Generación ARM64 completada. 0 errores.
+[04-May-2026 21:27:30 UTC] === NUEVA EJECUCIÓN ===
+[04-May-2026 21:27:30 UTC] Modo seleccionado: generar
+[04-May-2026 21:27:30 UTC] Código recibido:
+// ==========================================
+// 3.6 Función main()
+// ==========================================
+
+func main() { 
+    fmt.Println("=== INICIO DE CALIFICACION: FUNCIONES ===")
+
+    // ==========================================
+    // 3.7 Hoisting
+    // ==========================================
+    fmt.Println("\n--- 3.7 HOISTING ---")
+    funcionHoisting()
+
+    // ==========================================
+    // 3.1 Función no recursiva sin parámetros
+    // ==========================================
+    fmt.Println("\n--- 3.1 FUNCION SIN PARAMETROS ---")
+    mostrarBienvenida()
+
+    // ==========================================
+    // 3.2 Función con parámetros no recursiva
+    // ==========================================
+    fmt.Println("\n--- 3.2 FUNCION CON PARAMETROS ---")
+    resultado := sumarNumeros(15, 25)
+    fmt.Println("Resultado de sumarNumeros(15, 25):", resultado)
+
+    // ==========================================
+    // 3.3 Funciones por referencia
+    // ==========================================
+    fmt.Println("\n--- 3.3 FUNCIONES POR REFERENCIA ---")
+    var numeroBase int32 = 10
+    fmt.Println("Valor antes de la función por referencia:", numeroBase)
+    duplicarPorReferencia(&numeroBase)
+    fmt.Println("Valor después de la función por referencia (debe ser 20):", numeroBase)
+
+    // ==========================================
+    // 3.4 Función no recursiva múltiple retorno
+    // ==========================================
+    fmt.Println("\n--- 3.4 FUNCION MULTIPLE RETORNO ---")
+    sum, res := operacionesBasicas(50, 20)
+    fmt.Println("Operaciones 50 y 20 -> Suma:", sum, ", Resta:", res)
+
+    // ==========================================
+    // 3.5 Función recursiva con un retorno 
+    // ==========================================
+    fmt.Println("\n--- 3.5 FUNCION RECURSIVA (UN RETORNO) ---")
+    fact := factorial(5)
+    fmt.Println("Factorial de 5:", fact)
+
+    // ==========================================
+    // 3.6 Función recursiva con múltiple retorno
+    // ==========================================
+    fmt.Println("\n--- 3.6 FUNCION RECURSIVA (MULTIPLE RETORNO) ---")
+    fib, llamadas := fibonacciAvanzado(4)
+    fmt.Println("Fibonacci de 4:", fib, "| Llamadas recursivas totales:", llamadas)
+
+    fmt.Println("\n=== FIN DE CALIFICACION: FUNCIONES ===")
+}
+
+// 3.7 Función declarada debajo del main (Prueba de Hoisting)
+func funcionHoisting() {
+    fmt.Println(">>> Ejecutando funcionHoisting() declarada correctamente debajo del main.")
+}
+
+// 3.1 Función sin parámetros
+func mostrarBienvenida() {
+    fmt.Println("¡Bienvenido al sistema de evaluación de funciones Golampi!")
+}
+
+// 3.2 Función con parámetros
+func sumarNumeros(a int32, b int32) int32 {
+    return a + b
+}
+
+// 3.3 Función por referencia
+func duplicarPorReferencia(valor *int32) {
+    *valor = *valor * 2
+}
+
+// 3.4 Función múltiple retorno
+func operacionesBasicas(a int32, b int32) (int32, int32) {
+    suma := a + b
+    resta := a - b
+    return suma, resta
+}
+
+// 3.5 Función recursiva (1 retorno)
+func factorial(n int32) int32 {
+    if n <= 1 {
+        return 1
+    }
+    return n * factorial(n - 1)
+}
+
+// 3.6 Función recursiva (Múltiple retorno) - CORREGIDA
+func fibonacciAvanzado(n int32) (int32, int32) {
+    if n < 0 {
+        return 0, 0
+    }
+    if n <= 1 {
+        if n == 0 {
+            return 0, 1
+        }
+        return 1, 1
+    }
+    
+    val1, pasos1 := fibonacciAvanzado(n - 1)
+    val2, pasos2 := fibonacciAvanzado(n - 2)
+    
+    nuevoValor := val1 + val2
+    totalPasos := pasos1 + pasos2 + 1
+    
+    return nuevoValor, totalPasos
+}
+/*
+=== INICIO DE CALIFICACION: FUNCIONES ===
+
+--- 3.7 HOISTING ---
+>>> Ejecutando funcionHoisting() declarada correctamente debajo del main.
+
+--- 3.1 FUNCION SIN PARAMETROS ---
+¡Bienvenido al sistema de evaluación de funciones Golampi!
+
+--- 3.2 FUNCION CON PARAMETROS ---
+Resultado de sumarNumeros(15, 25): 40
+
+--- 3.3 FUNCIONES POR REFERENCIA ---
+Valor antes de la función por referencia: 10
+Valor después de la función por referencia (debe ser 20): 20
+
+--- 3.4 FUNCION MULTIPLE RETORNO ---
+Operaciones 50 y 20 -> Suma: 70 , Resta: 30
+
+--- 3.5 FUNCION RECURSIVA (UN RETORNO) ---
+Factorial de 5: 120
+
+--- 3.6 FUNCION RECURSIVA (MULTIPLE RETORNO) ---
+Fibonacci de 4: 3 | Llamadas recursivas totales: 9
+
+=== FIN DE CALIFICACION: FUNCIONES ===
+*/
+[04-May-2026 21:27:31 UTC] Árbol generado correctamente
+[04-May-2026 21:27:31 UTC] Tipo de árbol: Context\ProgramaContext
+[04-May-2026 21:27:31 UTC] === GENERANDO CÓDIGO ARM64 ===
+[04-May-2026 21:27:31 UTC] === CodeGenerator ARM64 Inicializado ===
+[04-May-2026 21:27:31 UTC] Registrada función: funcionHoisting
+[04-May-2026 21:27:31 UTC] Registrada función: mostrarBienvenida
+[04-May-2026 21:27:31 UTC] Registrada función: sumarNumeros
+[04-May-2026 21:27:31 UTC] Registrada función: duplicarPorReferencia
+[04-May-2026 21:27:31 UTC] Registrada función: operacionesBasicas
+[04-May-2026 21:27:31 UTC] Registrada función: factorial
+[04-May-2026 21:27:31 UTC] Registrada función: fibonacciAvanzado
+[04-May-2026 21:27:31 UTC] === GENERANDO FUNCIÓN USUARIO (ARM64): funcionHoisting ===
+[04-May-2026 21:27:31 UTC]   No se encontraron tipos de retorno para la función
+[04-May-2026 21:27:31 UTC]   Tipos de retorno de 'funcionHoisting': 
+[04-May-2026 21:27:31 UTC] Generando fmt.Println con 1 argumentos
+[04-May-2026 21:27:31 UTC] === GENERANDO FUNCIÓN USUARIO (ARM64): mostrarBienvenida ===
+[04-May-2026 21:27:31 UTC]   No se encontraron tipos de retorno para la función
+[04-May-2026 21:27:31 UTC]   Tipos de retorno de 'mostrarBienvenida': 
+[04-May-2026 21:27:31 UTC] Generando fmt.Println con 1 argumentos
+[04-May-2026 21:27:31 UTC] === GENERANDO FUNCIÓN USUARIO (ARM64): sumarNumeros ===
+[04-May-2026 21:27:31 UTC]   Tipo único desde ->tipo(): int32
+[04-May-2026 21:27:31 UTC]   Tipos de retorno de 'sumarNumeros': int32
+[04-May-2026 21:27:31 UTC]   Temporal reservado en offset -20
+[04-May-2026 21:27:31 UTC]   Temporal liberado en offset -20
+[04-May-2026 21:27:31 UTC] === GENERANDO FUNCIÓN USUARIO (ARM64): duplicarPorReferencia ===
+[04-May-2026 21:27:31 UTC]   No se encontraron tipos de retorno para la función
+[04-May-2026 21:27:31 UTC]   Tipos de retorno de 'duplicarPorReferencia': 
+[04-May-2026 21:27:31 UTC] === DESREFERENCIA (*) ===
+[04-May-2026 21:27:31 UTC]   Desreferenciando: cargando valor desde la dirección en x0
+[04-May-2026 21:27:31 UTC]   Temporal reservado en offset -16
+[04-May-2026 21:27:31 UTC]   Temporal liberado en offset -16
+[04-May-2026 21:27:31 UTC] === GENERANDO FUNCIÓN USUARIO (ARM64): operacionesBasicas ===
+[04-May-2026 21:27:31 UTC]   Tipos desde ->tipos(): int32,int32
+[04-May-2026 21:27:31 UTC]   Tipos de retorno de 'operacionesBasicas': int32,int32
+[04-May-2026 21:27:31 UTC] === DECLARACIÓN CORTA con 1 IDs y 1 expresiones ===
+[04-May-2026 21:27:31 UTC]   Temporal reservado en offset -20
+[04-May-2026 21:27:31 UTC]   Temporal liberado en offset -20
+[04-May-2026 21:27:31 UTC] === DECLARACIÓN CORTA con 1 IDs y 1 expresiones ===
+[04-May-2026 21:27:31 UTC]   Temporal reservado en offset -28
+[04-May-2026 21:27:31 UTC]   Temporal liberado en offset -28
+[04-May-2026 21:27:31 UTC]   Múltiples retornos: 2 valores
+[04-May-2026 21:27:31 UTC]   Temporal reservado en offset -36
+[04-May-2026 21:27:31 UTC]   Temporal reservado en offset -44
+[04-May-2026 21:27:31 UTC]   Temporal liberado en offset -44
+[04-May-2026 21:27:31 UTC]   Temporal liberado en offset -36
+[04-May-2026 21:27:31 UTC] === GENERANDO FUNCIÓN USUARIO (ARM64): factorial ===
+[04-May-2026 21:27:31 UTC]   Tipo único desde ->tipo(): int32
+[04-May-2026 21:27:31 UTC]   Tipos de retorno de 'factorial': int32
+[04-May-2026 21:27:31 UTC] === IF STATEMENT (ARM64) ===
+[04-May-2026 21:27:31 UTC]   Temporal reservado en offset -12
+[04-May-2026 21:27:31 UTC]   Temporal liberado en offset -12
+[04-May-2026 21:27:31 UTC] >>> ENTRANDO a ámbito: if_then
+[04-May-2026 21:27:31 UTC] >>> SALIENDO del ámbito: if_then
+[04-May-2026 21:27:31 UTC]   Temporal reservado en offset -12
+[04-May-2026 21:27:31 UTC]   → Buscando función de usuario: 'factorial'
+[04-May-2026 21:27:31 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): factorial ===
+[04-May-2026 21:27:31 UTC]   La función retorna 1 valor(es): int32
+[04-May-2026 21:27:31 UTC]   Temporal reservado en offset -20
+[04-May-2026 21:27:31 UTC]   Temporal liberado en offset -20
+[04-May-2026 21:27:31 UTC]   Temporal reservado en offset -20
+[04-May-2026 21:27:31 UTC]   Temporal liberado en offset -20
+[04-May-2026 21:27:31 UTC]   Temporal liberado en offset -12
+[04-May-2026 21:27:31 UTC] === GENERANDO FUNCIÓN USUARIO (ARM64): fibonacciAvanzado ===
+[04-May-2026 21:27:31 UTC]   Tipos desde ->tipos(): int32,int32
+[04-May-2026 21:27:31 UTC]   Tipos de retorno de 'fibonacciAvanzado': int32,int32
+[04-May-2026 21:27:31 UTC] === IF STATEMENT (ARM64) ===
+[04-May-2026 21:27:31 UTC]   Temporal reservado en offset -12
+[04-May-2026 21:27:31 UTC]   Temporal liberado en offset -12
+[04-May-2026 21:27:31 UTC] >>> ENTRANDO a ámbito: if_then
+[04-May-2026 21:27:31 UTC]   Múltiples retornos: 2 valores
+[04-May-2026 21:27:31 UTC]   Temporal reservado en offset -12
+[04-May-2026 21:27:31 UTC]   Temporal reservado en offset -20
+[04-May-2026 21:27:31 UTC]   Temporal liberado en offset -20
+[04-May-2026 21:27:31 UTC]   Temporal liberado en offset -12
+[04-May-2026 21:27:31 UTC] >>> SALIENDO del ámbito: if_then
+[04-May-2026 21:27:31 UTC] === IF STATEMENT (ARM64) ===
+[04-May-2026 21:27:31 UTC]   Temporal reservado en offset -12
+[04-May-2026 21:27:31 UTC]   Temporal liberado en offset -12
+[04-May-2026 21:27:31 UTC] >>> ENTRANDO a ámbito: if_then
+[04-May-2026 21:27:31 UTC] === IF STATEMENT (ARM64) ===
+[04-May-2026 21:27:31 UTC]   Temporal reservado en offset -12
+[04-May-2026 21:27:31 UTC]   Temporal liberado en offset -12
+[04-May-2026 21:27:31 UTC] >>> ENTRANDO a ámbito: if_then_1
+[04-May-2026 21:27:31 UTC]   Múltiples retornos: 2 valores
+[04-May-2026 21:27:31 UTC]   Temporal reservado en offset -12
+[04-May-2026 21:27:31 UTC]   Temporal reservado en offset -20
+[04-May-2026 21:27:31 UTC]   Temporal liberado en offset -20
+[04-May-2026 21:27:31 UTC]   Temporal liberado en offset -12
+[04-May-2026 21:27:31 UTC] >>> SALIENDO del ámbito: if_then_1
+[04-May-2026 21:27:31 UTC]   Múltiples retornos: 2 valores
+[04-May-2026 21:27:31 UTC]   Temporal reservado en offset -12
+[04-May-2026 21:27:31 UTC]   Temporal reservado en offset -20
+[04-May-2026 21:27:31 UTC]   Temporal liberado en offset -20
+[04-May-2026 21:27:31 UTC]   Temporal liberado en offset -12
+[04-May-2026 21:27:31 UTC] >>> SALIENDO del ámbito: if_then
+[04-May-2026 21:27:31 UTC] === DECLARACIÓN CORTA con 2 IDs y 1 expresiones ===
+[04-May-2026 21:27:31 UTC]   → Buscando función de usuario: 'fibonacciAvanzado'
+[04-May-2026 21:27:31 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): fibonacciAvanzado ===
+[04-May-2026 21:27:31 UTC]   La función retorna 2 valor(es): int32, int32
+[04-May-2026 21:27:31 UTC]   Temporal reservado en offset -12
+[04-May-2026 21:27:31 UTC]   Temporal liberado en offset -12
+[04-May-2026 21:27:31 UTC]   Temporal reservado en offset -12
+[04-May-2026 21:27:31 UTC]   Temporal liberado en offset -12
+[04-May-2026 21:27:31 UTC]   Temporal reservado en offset -12
+[04-May-2026 21:27:31 UTC]   Temporal reservado en offset -20
+[04-May-2026 21:27:31 UTC] === DECLARACIÓN CORTA con 2 IDs y 1 expresiones ===
+[04-May-2026 21:27:31 UTC]   → Buscando función de usuario: 'fibonacciAvanzado'
+[04-May-2026 21:27:31 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): fibonacciAvanzado ===
+[04-May-2026 21:27:31 UTC]   La función retorna 2 valor(es): int32, int32
+[04-May-2026 21:27:31 UTC]   Temporal reservado en offset -44
+[04-May-2026 21:27:31 UTC]   Temporal liberado en offset -44
+[04-May-2026 21:27:31 UTC]   Temporal reservado en offset -44
+[04-May-2026 21:27:31 UTC]   Temporal liberado en offset -44
+[04-May-2026 21:27:31 UTC]   Temporal reservado en offset -44
+[04-May-2026 21:27:31 UTC]   Temporal reservado en offset -52
+[04-May-2026 21:27:31 UTC] === DECLARACIÓN CORTA con 1 IDs y 1 expresiones ===
+[04-May-2026 21:27:31 UTC]   Temporal reservado en offset -76
+[04-May-2026 21:27:31 UTC]   Temporal liberado en offset -76
+[04-May-2026 21:27:31 UTC] === DECLARACIÓN CORTA con 1 IDs y 1 expresiones ===
+[04-May-2026 21:27:31 UTC]   Temporal reservado en offset -84
+[04-May-2026 21:27:31 UTC]   Temporal liberado en offset -84
+[04-May-2026 21:27:31 UTC]   Múltiples retornos: 2 valores
+[04-May-2026 21:27:31 UTC]   Temporal reservado en offset -92
+[04-May-2026 21:27:31 UTC]   Temporal reservado en offset -100
+[04-May-2026 21:27:31 UTC]   Temporal liberado en offset -100
+[04-May-2026 21:27:31 UTC]   Temporal liberado en offset -92
+[04-May-2026 21:27:31 UTC] Generando fmt.Println con 1 argumentos
+[04-May-2026 21:27:31 UTC] Generando fmt.Println con 1 argumentos
+[04-May-2026 21:27:31 UTC]   → Buscando función de usuario: 'funcionHoisting'
+[04-May-2026 21:27:31 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): funcionHoisting ===
+[04-May-2026 21:27:31 UTC]   La función retorna 0 valor(es): 
+[04-May-2026 21:27:31 UTC] Generando fmt.Println con 1 argumentos
+[04-May-2026 21:27:31 UTC]   → Buscando función de usuario: 'mostrarBienvenida'
+[04-May-2026 21:27:31 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): mostrarBienvenida ===
+[04-May-2026 21:27:31 UTC]   La función retorna 0 valor(es): 
+[04-May-2026 21:27:31 UTC] Generando fmt.Println con 1 argumentos
+[04-May-2026 21:27:31 UTC] === DECLARACIÓN CORTA con 1 IDs y 1 expresiones ===
+[04-May-2026 21:27:31 UTC]   → Buscando función de usuario: 'sumarNumeros'
+[04-May-2026 21:27:31 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): sumarNumeros ===
+[04-May-2026 21:27:31 UTC]   La función retorna 1 valor(es): int32
+[04-May-2026 21:27:31 UTC]   Temporal reservado en offset -8
+[04-May-2026 21:27:31 UTC]   Temporal reservado en offset -16
+[04-May-2026 21:27:31 UTC]   Temporal liberado en offset -16
+[04-May-2026 21:27:31 UTC]   Temporal liberado en offset -8
+[04-May-2026 21:27:31 UTC] Generando fmt.Println con 2 argumentos
+[04-May-2026 21:27:31 UTC] Generando fmt.Println con 1 argumentos
+[04-May-2026 21:27:31 UTC] Generando fmt.Println con 2 argumentos
+[04-May-2026 21:27:31 UTC]   → Buscando función de usuario: 'duplicarPorReferencia'
+[04-May-2026 21:27:31 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): duplicarPorReferencia ===
+[04-May-2026 21:27:31 UTC]   La función retorna 0 valor(es): 
+[04-May-2026 21:27:31 UTC] === REFERENCIA (&) ===
+[04-May-2026 21:27:31 UTC]   Tipo de contexto: Context\ExpresionPrimariaContext
+[04-May-2026 21:27:31 UTC]   Variable: numeroBase
+[04-May-2026 21:27:31 UTC]   Dirección de numeroBase: x29 + -12
+[04-May-2026 21:27:31 UTC]   Temporal reservado en offset -20
+[04-May-2026 21:27:31 UTC]   Temporal liberado en offset -20
+[04-May-2026 21:27:31 UTC] Generando fmt.Println con 2 argumentos
+[04-May-2026 21:27:31 UTC] Generando fmt.Println con 1 argumentos
+[04-May-2026 21:27:31 UTC] === DECLARACIÓN CORTA con 2 IDs y 1 expresiones ===
+[04-May-2026 21:27:31 UTC]   → Buscando función de usuario: 'operacionesBasicas'
+[04-May-2026 21:27:31 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): operacionesBasicas ===
+[04-May-2026 21:27:31 UTC]   La función retorna 2 valor(es): int32, int32
+[04-May-2026 21:27:31 UTC]   Temporal reservado en offset -20
+[04-May-2026 21:27:31 UTC]   Temporal reservado en offset -28
+[04-May-2026 21:27:31 UTC]   Temporal liberado en offset -28
+[04-May-2026 21:27:31 UTC]   Temporal liberado en offset -20
+[04-May-2026 21:27:31 UTC]   Temporal reservado en offset -20
+[04-May-2026 21:27:31 UTC]   Temporal reservado en offset -28
+[04-May-2026 21:27:31 UTC] Generando fmt.Println con 4 argumentos
+[04-May-2026 21:27:31 UTC] Generando fmt.Println con 1 argumentos
+[04-May-2026 21:27:31 UTC] === DECLARACIÓN CORTA con 1 IDs y 1 expresiones ===
+[04-May-2026 21:27:31 UTC]   → Buscando función de usuario: 'factorial'
+[04-May-2026 21:27:31 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): factorial ===
+[04-May-2026 21:27:31 UTC]   La función retorna 1 valor(es): int32
+[04-May-2026 21:27:31 UTC]   Temporal reservado en offset -52
+[04-May-2026 21:27:31 UTC]   Temporal liberado en offset -52
+[04-May-2026 21:27:31 UTC] Generando fmt.Println con 2 argumentos
+[04-May-2026 21:27:31 UTC] Generando fmt.Println con 1 argumentos
+[04-May-2026 21:27:31 UTC] === DECLARACIÓN CORTA con 2 IDs y 1 expresiones ===
+[04-May-2026 21:27:31 UTC]   → Buscando función de usuario: 'fibonacciAvanzado'
+[04-May-2026 21:27:31 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): fibonacciAvanzado ===
+[04-May-2026 21:27:31 UTC]   La función retorna 2 valor(es): int32, int32
+[04-May-2026 21:27:31 UTC]   Temporal reservado en offset -60
+[04-May-2026 21:27:31 UTC]   Temporal liberado en offset -60
+[04-May-2026 21:27:31 UTC]   Temporal reservado en offset -60
+[04-May-2026 21:27:31 UTC]   Temporal reservado en offset -68
+[04-May-2026 21:27:31 UTC] Generando fmt.Println con 4 argumentos
+[04-May-2026 21:27:31 UTC] Generando fmt.Println con 1 argumentos
+[04-May-2026 21:27:31 UTC] Generación ARM64 completada. 0 errores.

@@ -1,0 +1,63 @@
+ // ============ MÉTODOS AUXILIARES ============
+    
+    /**
+     * Guarda un valor en un registro temporal (para operaciones)
+     */
+    private function guardarTemporal($registro, $tipo)
+    {
+        // Por ahora, no necesitamos hacer nada especial
+        // Los temporales se manejan con stack
+    }
+    
+    /**
+     * Verifica compatibilidad de tipos para operaciones multiplicativas
+     */
+    private function tiposCompatiblesMultiplicativa($tipo1, $tipo2, $op)
+    {
+        if ($op === '%') {
+            return ($tipo1 === 'int32' && $tipo2 === 'int32') ? 'int32' : null;
+        }
+        
+        if ($tipo1 === 'float32' || $tipo2 === 'float32') {
+            return 'float32';
+        }
+        
+        if ($tipo1 === 'int32' && $tipo2 === 'int32') {
+            return 'int32';
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Verifica compatibilidad de tipos para operaciones aditivas
+     */
+    private function tiposCompatiblesAditiva($tipo1, $tipo2, $op)
+    {
+        // Concatenación de strings
+        if ($op === '+' && ($tipo1 === 'string' || $tipo2 === 'string')) {
+            return 'string';
+        }
+        
+        // Operaciones numéricas
+        if ($tipo1 === 'float32' || $tipo2 === 'float32') {
+            return 'float32';
+        }
+        
+        if ($tipo1 === 'int32' && $tipo2 === 'int32') {
+            return 'int32';
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Verifica si dos tipos son comparables
+     */
+    private function tiposComparables($tipo1, $tipo2)
+    {
+        if ($tipo1 === $tipo2) return true;
+        if ($tipo1 === 'int32' && $tipo2 === 'float32') return true;
+        if ($tipo1 === 'float32' && $tipo2 === 'int32') return true;
+        return false;
+    }

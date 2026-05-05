@@ -1,0 +1,167 @@
+func main() {
+    fmt.Println("=== For completo ===")
+    for i := 0; i < 5; i++ {
+        fmt.Println(i)
+    }
+    
+    fmt.Println("=== For como while ===")
+    var x int32 = 0
+    for x < 3 {
+        fmt.Println(x)
+        x++
+    }
+    
+    fmt.Println("=== For con break ===")
+    for i := 0; i < 10; i++ {
+        if i == 3 {
+            break
+        }
+        fmt.Println(i)
+    }
+    
+    fmt.Println("=== For con continue ===")
+    for i := 0; i < 5; i++ {
+        if i == 2 {
+            continue
+        }
+        fmt.Println(i)
+    }
+    
+    // fmt.Println("=== For infinito con break ===")
+    // var y int32 = 0
+    // for {
+    //     if y >= 3 {
+    //         break
+    //     }
+    //     fmt.Println(y)
+    //     y++
+    // }
+}
+
+####################################################################################################################################################
+####################################################################################################################################################
+
+func main() {
+    // Switch simple
+    dia := 3
+    switch dia {
+        case 1:
+            fmt.Println("Lunes")
+        case 2:
+            fmt.Println("Martes")
+        case 3:
+            fmt.Println("Miércoles")
+        case 4:
+            fmt.Println("Jueves")
+        case 5:
+            fmt.Println("Viernes")
+        default:
+            fmt.Println("Fin de semana")
+    }
+    
+    // Switch con múltiples valores por caso
+    valor := 2
+    switch valor {
+        case 1, 2, 3:
+            fmt.Println("Uno, dos o tres")
+        case 4, 5:
+            fmt.Println("Cuatro o cinco")
+        default:
+            fmt.Println("Otro valor")
+    }
+    
+    // Switch con strings
+    lenguaje := "Go"
+    switch lenguaje {
+        case "Go", "golang":
+            fmt.Println("¡Golampi!")
+        case "PHP":
+            fmt.Println("¡PHP!")
+        default:
+            fmt.Println("Otro lenguaje")
+    }
+    
+    // Switch con break
+    x := 5
+    switch x {
+        case 1:
+            fmt.Println("Uno")
+        case 5:
+            fmt.Println("Cinco")
+            break
+            fmt.Println("Esto no se ejecuta")
+        default:
+            fmt.Println("Default")
+    }
+}
+
+####################################################################################################################################################
+####################################################################################################################################################
+
+func suma(a int32, b int32) int32 {
+    return a + b
+}
+
+func dividir(a int32, b int32) (int32, bool) {
+    if b == 0 {
+        return 0, false
+    }
+    return a / b, true
+}
+
+func main() {
+    // Función con un retorno
+    resultado := suma(5, 3)
+    fmt.Println("5 + 3 =", resultado)
+    
+    // Función con múltiples retornos
+    cociente, ok := dividir(10, 2)
+    if ok {
+        fmt.Println("10 / 2 =", cociente)
+    }
+    
+    // Función que puede fallar
+    cociente2, ok2 := dividir(10, 0)
+    if !ok2 {
+        fmt.Println("Error: división por cero")
+    }
+}
+
+
+func duplicar(valor *int32) {
+    // Desreferenciar y modificar
+    *valor = *valor * 2
+}
+
+func intercambiar(a *int32, b *int32) {
+    temp := *a
+    *a = *b
+    *b = temp
+}
+
+####################################################################################################################################################
+####################################################################################################################################################
+
+func main() {
+    fmt.Println("=== PRUEBA DE PUNTEROS ===")
+    
+    x := 10
+    y := 20
+    
+    fmt.Println("Antes - x:", x, "y:", y)
+    
+    // Pasar por referencia
+    duplicar(&x)
+    fmt.Println("Después de duplicar x:", x)  // Debería ser 20
+    
+    intercambiar(&x, &y)
+    fmt.Println("Después de intercambiar - x:", x, "y:", y)
+    
+    // Declaración explícita de puntero
+    var ptr *int32
+    ptr = &x
+    fmt.Println("ptr apunta a x, valor:", *ptr)  // Debería ser 20
+    
+    *ptr = 100
+    fmt.Println("x modificado vía ptr:", x)  // Debería ser 100
+}

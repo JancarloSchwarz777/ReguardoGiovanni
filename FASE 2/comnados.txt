@@ -1,0 +1,38 @@
+-para correr el host de php:
+php -S localhost:8080 -t .
+php -S localhost:8080 -t public/
+
+-comando ejecutable en la raiz del proyecto:
+composer require antlr/antlr4-php-runtime
+
+-comando para el compilado:
+antlr4 -Dlanguage=PHP "nombre del archivo con la gramatica" -visitor (-O "para especificar la ruta de guardado")
+antlr4 -Dlanguage=PHP gramatica/Golampi.g4 -visitor -o src/gramatica/
+
+
+
+
+jancarlo@jancarlo-Latitude-5430:~/Escritorio/P1_OLC2$ antlr4 -Dlanguage=PHP gramatica/Golampi.g4 -visitor -o src/gramatica/
+Could not get latest version number, attempting to fall back to latest downloaded version...
+Found version '4.13.2', this version may be out of date
+jancarlo@jancarlo-Latitude-5430:~/Escritorio/P1_OLC2$ 
+
+
+
+
+################################################################ QUEMU ################################################################
+
+# 1. Regenerar el código con tu interfaz web
+# 2. Compilar
+aarch64-linux-gnu-gcc -static -o output/prueba output/programa.s
+
+# 3. Ejecutar con QEMU
+qemu-aarch64 ./output/prueba
+
+# 4. Si aún hay error, ejecutar con strace para más detalles
+qemu-aarch64 -strace ./output/prueba
+
+# Verificar código de retorno (0 = éxito)
+echo "Código de salida: $?"
+
+
