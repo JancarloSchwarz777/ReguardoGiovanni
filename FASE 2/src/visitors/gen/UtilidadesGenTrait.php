@@ -344,9 +344,9 @@ trait UtilidadesGenTrait
         }
         
         if ($tipoDestino === 'float32' && $tipoOrigen === 'int32') {
-            $this->emitText("scvtf s0, w0");  // int a float
+            $this->emitText("scvtf d0, w0");  // int a float
         } elseif ($tipoDestino === 'int32' && $tipoOrigen === 'float32') {
-            $this->emitText("fcvtzs w0, s0");  // float a int
+            $this->emitText("fcvtzs w0, d0");  // float a int
         } elseif ($tipoDestino === 'rune' && $tipoOrigen === 'int32') {
             // int32 a rune (carácter) - no necesita conversión, solo almacenar
             $this->emitText("// int32 a rune, sin conversión");

@@ -26,6 +26,9 @@ trait ControlForGenTrait
         $this->breakLabel = $labelEnd;
         $this->continueLabel = $labelStep;
         
+        // Crear un ámbito exclusivo para este bucle
+        $this->entrarAmbito('for_loop');
+        
         // Verificar qué tipo de for es
         if (method_exists($ctx, 'forHeader')) {
             $forHeader = $ctx->forHeader();
@@ -41,6 +44,9 @@ trait ControlForGenTrait
             $this->generarForLegacy($ctx, $labelCond, $labelBody, $labelStep, $labelEnd);
         }
         
+        // Salir del ámbito del bucle (elimina variables como 'i')
+        $this->salirAmbito();
+        
         $this->breakLabel = $oldBreakLabel;
         $this->continueLabel = $oldContinueLabel;
         $this->loopDepth--;
@@ -50,7 +56,7 @@ trait ControlForGenTrait
     
     private function generarForCompleto($ctx, $forClause, $labelCond, $labelBody, $labelStep, $labelEnd)
     {
-        // Inicialización
+        // Inicialización (dentro del ámbito del for)
         $initStmt = $forClause->initStmt();
         if ($initStmt) {
             $this->visit($initStmt);
@@ -61,9 +67,7 @@ trait ControlForGenTrait
         
         // Cuerpo del bucle
         $this->emitText("$labelBody:");
-        $this->entrarAmbito('for_body');
         $this->visit($ctx->bloque());
-        $this->salirAmbito();
         
         // Paso (post)
         $this->emitText("$labelStep:");
@@ -98,9 +102,7 @@ trait ControlForGenTrait
         $this->emitText("b $labelCond");
         
         $this->emitText("$labelBody:");
-        $this->entrarAmbito('for_body');
         $this->visit($ctx->bloque());
-        $this->salirAmbito();
         
         $this->emitText("$labelCond:");
         $tipoCond = $this->visit($condExpr);
@@ -120,9 +122,7 @@ trait ControlForGenTrait
     private function generarForInfinito($ctx, $labelBody, $labelEnd)
     {
         $this->emitText("$labelBody:");
-        $this->entrarAmbito('for_body');
         $this->visit($ctx->bloque());
-        $this->salirAmbito();
         $this->emitText("b $labelBody");
         $this->emitText("$labelEnd:");
     }

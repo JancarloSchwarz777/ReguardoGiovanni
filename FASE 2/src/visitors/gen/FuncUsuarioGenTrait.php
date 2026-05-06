@@ -213,12 +213,14 @@ trait FuncUsuarioGenTrait
         for ($i = count($tempOffsets) - 1; $i >= 0; $i--) {
             $tempInfo = $tempOffsets[$i];
             $this->cargarDeStack($tempInfo['offset'], $tempInfo['tipo']);
+            
             if ($i == 0) {
-                // El primer argumento ya está en x0, no mover
+                // primer parámetro ya está en el registro adecuado
             } else {
-                // Mover a x$i (x1, x2, ...)
                 if ($tempInfo['tipo'] === 'float32') {
                     $this->emitText("fmov s$i, s0");
+                } elseif ($tempInfo['tipo'] === 'puntero') {
+                    $this->emitText("mov x$i, x0");   
                 } else {
                     $this->emitText("mov w$i, w0");
                 }

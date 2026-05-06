@@ -1,0 +1,730 @@
+[05-May-2026 23:52:10 UTC] === NUEVA EJECUCIÓN ===
+[05-May-2026 23:52:15 UTC] === NUEVA EJECUCIÓN ===
+[05-May-2026 23:52:15 UTC] Modo seleccionado: generar
+[05-May-2026 23:52:15 UTC] Código recibido:
+// ====================================================
+// ARCHIVO 5 - FUNCIONES
+// Grading: Punto 3 (3.1 - 3.7) y Punto 4 (4.1 - 4.5)
+// Cobertura: Funciones requeridas y funciones embebidas
+// ====================================================
+
+func main() {
+	fmt.Println("=== INICIO DE CALIFICACION: FUNCIONES ===")
+
+	// ==========================================
+	// 3.1 Funcion no recursiva sin parametros
+	// ==========================================
+	fmt.Println("\n--- 3.1 IMPRIMIR ARBOL ---")
+	imprimirArbol()
+
+	// ==========================================
+	// 3.2 Funcion con parametros no recursiva
+	// ==========================================
+	fmt.Println("\n--- 3.2 CALCULAR VOLUMEN PIRAMIDE ---")
+	fmt.Println("Volumen:", calcularVolumenPiramide(10, 15))
+
+	// ==========================================
+	// 3.3 Funciones por referencia
+	// ==========================================
+	fmt.Println("\n--- 3.3 REFERENCIA: ORDENAMIENTO E INTERCAMBIO ---")
+	var a int32 = 100
+	var b int32 = 200
+	intercambioValores(&a, &b)
+	fmt.Println("Intercambio:", a, b)
+
+	// ==========================================
+	// 3.4 Funcion recursiva con un retorno
+	// ==========================================
+	fmt.Println("\n--- 3.4 POTENCIA RECURSIVA ---")
+	fmt.Println("2^8:", potencia(2, 8))
+
+	// ==========================================
+	// 3.5 Funciones por referencia (nivel intermedio)
+	// ==========================================
+	fmt.Println("\n--- 3.5 REFERENCIA AVANZADA: INTERCAMBIO VALIDADO E INTERCALACION ---")
+	var x int32 = 50
+	var y int32 = 30
+	intercambioValoresValidado(&x, &y)
+	fmt.Println("Intercambio validado:", x, y)
+
+	// ==========================================
+	// 3.6 Funcion recursiva con multiple retorno (Euclides)
+	// ==========================================
+	fmt.Println("\n--- 3.6 EUCLIDES RECURSIVO ---")
+	mcd, pasos := euclides(48, 18)
+	fmt.Println("MCD:", mcd, "Pasos:", pasos)
+
+	// ==========================================
+	// 4.1 fmt.Println()
+	// ==========================================
+	fmt.Println("\n--- 4.1 FMT.PRINTLN ---")
+	fmt.Println("Impresion directa de texto")
+
+	// ==========================================
+	// 4.2 len()
+	// ==========================================
+	fmt.Println("\n--- 4.2 LEN ---")
+	texto := "Golampi"
+	fmt.Println("len(texto):", len(texto))
+
+
+	// ==========================================
+	// 4.3 now()
+	// ==========================================
+	fmt.Println("\n--- 4.3 NOW ---")
+	fmt.Println("Fecha actual:", now())
+
+	// ==========================================
+	// 4.4 substr()
+	// ==========================================
+	fmt.Println("\n--- 4.4 SUBSTR ---")
+	fmt.Println("substr:", substr("Organizacion de Lenguajes", 0, 12))
+
+	// ==========================================
+	// 4.5 typeOf()
+	// ==========================================
+	fmt.Println("\n--- 4.5 TYPEOF ---")
+	fmt.Println("int32:", typeOf(42))
+	fmt.Println("float32:", typeOf(3.14))
+	fmt.Println("bool:", typeOf(true))
+	fmt.Println("string:", typeOf("texto"))
+
+	fmt.Println("\n=== FIN DE CALIFICACION: FUNCIONES ===")
+}
+
+func imprimirArbol() {
+	fmt.Println("  *")
+	fmt.Println(" ***")
+	fmt.Println("*****")
+}
+
+func calcularVolumenPiramide(base float32, altura float32) float32 {
+	return (base * base * altura) / 3.0
+}
+
+
+func intercambioValores(x *int32, y *int32) {
+    temp := *x
+    *x = *y
+    *y = temp
+}
+
+
+
+func potencia(base int32, exponente int32) int32 {
+	if exponente == 0 {
+		return 1
+	}
+	return base * potencia(base, exponente-1)
+}
+
+func euclides(a int32, b int32) (int32, int32) {
+	if b == 0 {
+		return a, 1
+	}
+	resultado, pasos := euclides(b, a%b)
+	return resultado, pasos + 1
+}
+
+func intercambioValoresValidado(x *int32, y *int32) {
+    if x != nil && y != nil {
+        temp := *x
+        *x = *y
+        *y = temp
+    }
+}
+
+
+/*
+=== INICIO DE CALIFICACION: FUNCIONES ===
+
+--- 3.1 IMPRIMIR ARBOL ---
+  *
+ ***
+*****
+
+--- 3.2 CALCULAR VOLUMEN PIRAMIDE ---
+Volumen: 500
+
+--- 3.3 REFERENCIA: ORDENAMIENTO E INTERCAMBIO ---
+Intercambio: 200 100
+Ordenado: 11 12 22 25 64
+
+--- 3.4 POTENCIA RECURSIVA ---
+2^8: 256
+
+--- 3.6 EUCLIDES RECURSIVO ---
+MCD: 6 Pasos: 4
+
+--- 3.5 REFERENCIA AVANZADA: INTERCAMBIO VALIDADO E INTERCALACION ---
+Intercambio validado: 30 50
+Intercalación: 11 12 22 25 34 64
+
+--- 4.1 FMT.PRINTLN ---
+Impresion directa de texto
+
+--- 4.2 LEN ---
+len(texto): 7
+len(arrLen): 4
+
+--- 4.3 NOW ---
+Fecha actual: <NOW>
+
+--- 4.4 SUBSTR ---
+substr: Organizacion
+
+--- 4.5 TYPEOF ---
+int32: int32
+float32: float32
+bool: bool
+string: string
+
+=== FIN DE CALIFICACION: FUNCIONES ===
+*/
+[05-May-2026 23:52:15 UTC] Árbol generado correctamente
+[05-May-2026 23:52:15 UTC] Tipo de árbol: Context\ProgramaContext
+[05-May-2026 23:52:15 UTC] === GENERANDO CÓDIGO ARM64 ===
+[05-May-2026 23:52:15 UTC] === CodeGenerator ARM64 Inicializado ===
+[05-May-2026 23:52:15 UTC] Registrada función: imprimirArbol
+[05-May-2026 23:52:15 UTC] Registrada función: calcularVolumenPiramide
+[05-May-2026 23:52:15 UTC] Registrada función: intercambioValores
+[05-May-2026 23:52:15 UTC] Registrada función: potencia
+[05-May-2026 23:52:15 UTC] Registrada función: euclides
+[05-May-2026 23:52:15 UTC] Registrada función: intercambioValoresValidado
+[05-May-2026 23:52:15 UTC] === GENERANDO FUNCIÓN USUARIO (ARM64): imprimirArbol ===
+[05-May-2026 23:52:15 UTC]   No se encontraron tipos de retorno para la función
+[05-May-2026 23:52:15 UTC]   Tipos de retorno de 'imprimirArbol': 
+[05-May-2026 23:52:15 UTC] Generando fmt.Println con 1 argumentos
+[05-May-2026 23:52:15 UTC] Generando fmt.Println con 1 argumentos
+[05-May-2026 23:52:15 UTC] Generando fmt.Println con 1 argumentos
+[05-May-2026 23:52:15 UTC] === GENERANDO FUNCIÓN USUARIO (ARM64): calcularVolumenPiramide ===
+[05-May-2026 23:52:15 UTC]   Tipo único desde ->tipo(): float32
+[05-May-2026 23:52:15 UTC]   Tipos de retorno de 'calcularVolumenPiramide': float32
+[05-May-2026 23:52:15 UTC]   Temporal reservado en offset -24
+[05-May-2026 23:52:15 UTC]   Temporal liberado en offset -24
+[05-May-2026 23:52:15 UTC]   Temporal reservado en offset -24
+[05-May-2026 23:52:15 UTC]   Temporal liberado en offset -24
+[05-May-2026 23:52:15 UTC] === GENERANDO FUNCIÓN USUARIO (ARM64): intercambioValores ===
+[05-May-2026 23:52:15 UTC]   No se encontraron tipos de retorno para la función
+[05-May-2026 23:52:15 UTC]   Tipos de retorno de 'intercambioValores': 
+[05-May-2026 23:52:15 UTC] === DECLARACIÓN CORTA con 1 IDs y 1 expresiones ===
+[05-May-2026 23:52:15 UTC] === DESREFERENCIA (*) ===
+[05-May-2026 23:52:15 UTC]   Desreferenciando: cargando valor desde la dirección en x0
+[05-May-2026 23:52:15 UTC] === DESREFERENCIA (*) ===
+[05-May-2026 23:52:15 UTC]   Desreferenciando: cargando valor desde la dirección en x0
+[05-May-2026 23:52:15 UTC] === GENERANDO FUNCIÓN USUARIO (ARM64): potencia ===
+[05-May-2026 23:52:15 UTC]   Tipo único desde ->tipo(): int32
+[05-May-2026 23:52:15 UTC]   Tipos de retorno de 'potencia': int32
+[05-May-2026 23:52:15 UTC] === IF STATEMENT (ARM64) ===
+[05-May-2026 23:52:15 UTC]   Temporal reservado en offset -20
+[05-May-2026 23:52:15 UTC]   Temporal liberado en offset -20
+[05-May-2026 23:52:15 UTC] >>> ENTRANDO a ámbito: if_then
+[05-May-2026 23:52:15 UTC] >>> SALIENDO del ámbito: if_then
+[05-May-2026 23:52:15 UTC]   Temporal reservado en offset -20
+[05-May-2026 23:52:15 UTC]   → Buscando función de usuario: 'potencia'
+[05-May-2026 23:52:15 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): potencia ===
+[05-May-2026 23:52:15 UTC]   La función retorna 1 valor(es): int32
+[05-May-2026 23:52:15 UTC]   Temporal reservado en offset -28
+[05-May-2026 23:52:15 UTC]   Temporal reservado en offset -36
+[05-May-2026 23:52:15 UTC]   Temporal liberado en offset -36
+[05-May-2026 23:52:15 UTC]   Temporal reservado en offset -36
+[05-May-2026 23:52:15 UTC]   Temporal liberado en offset -36
+[05-May-2026 23:52:15 UTC]   Temporal liberado en offset -28
+[05-May-2026 23:52:15 UTC]   Temporal liberado en offset -20
+[05-May-2026 23:52:15 UTC] === GENERANDO FUNCIÓN USUARIO (ARM64): euclides ===
+[05-May-2026 23:52:15 UTC]   Tipos desde ->tipos(): int32,int32
+[05-May-2026 23:52:15 UTC]   Tipos de retorno de 'euclides': int32,int32
+[05-May-2026 23:52:15 UTC] === IF STATEMENT (ARM64) ===
+[05-May-2026 23:52:15 UTC]   Temporal reservado en offset -20
+[05-May-2026 23:52:15 UTC]   Temporal liberado en offset -20
+[05-May-2026 23:52:15 UTC] >>> ENTRANDO a ámbito: if_then
+[05-May-2026 23:52:15 UTC]   Múltiples retornos: 2 valores
+[05-May-2026 23:52:15 UTC]   Temporal reservado en offset -20
+[05-May-2026 23:52:15 UTC]   Temporal reservado en offset -28
+[05-May-2026 23:52:15 UTC]   Temporal liberado en offset -28
+[05-May-2026 23:52:15 UTC]   Temporal liberado en offset -20
+[05-May-2026 23:52:15 UTC] >>> SALIENDO del ámbito: if_then
+[05-May-2026 23:52:15 UTC] === DECLARACIÓN CORTA con 2 IDs y 1 expresiones ===
+[05-May-2026 23:52:15 UTC]   → Buscando función de usuario: 'euclides'
+[05-May-2026 23:52:15 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): euclides ===
+[05-May-2026 23:52:15 UTC]   La función retorna 2 valor(es): int32, int32
+[05-May-2026 23:52:15 UTC]   Temporal reservado en offset -20
+[05-May-2026 23:52:15 UTC]   Temporal reservado en offset -28
+[05-May-2026 23:52:15 UTC]   Temporal liberado en offset -28
+[05-May-2026 23:52:15 UTC]   Temporal reservado en offset -28
+[05-May-2026 23:52:15 UTC]   Temporal liberado en offset -28
+[05-May-2026 23:52:15 UTC]   Temporal liberado en offset -20
+[05-May-2026 23:52:15 UTC]   Temporal reservado en offset -20
+[05-May-2026 23:52:15 UTC]   Temporal reservado en offset -28
+[05-May-2026 23:52:15 UTC]   Múltiples retornos: 2 valores
+[05-May-2026 23:52:15 UTC]   Temporal reservado en offset -52
+[05-May-2026 23:52:15 UTC]   Temporal reservado en offset -60
+[05-May-2026 23:52:15 UTC]   Temporal liberado en offset -60
+[05-May-2026 23:52:15 UTC]   Temporal reservado en offset -60
+[05-May-2026 23:52:15 UTC]   Temporal liberado en offset -60
+[05-May-2026 23:52:15 UTC]   Temporal liberado en offset -52
+[05-May-2026 23:52:15 UTC] === GENERANDO FUNCIÓN USUARIO (ARM64): intercambioValoresValidado ===
+[05-May-2026 23:52:15 UTC]   No se encontraron tipos de retorno para la función
+[05-May-2026 23:52:15 UTC]   Tipos de retorno de 'intercambioValoresValidado': 
+[05-May-2026 23:52:15 UTC] === IF STATEMENT (ARM64) ===
+[05-May-2026 23:52:15 UTC]   Temporal reservado en offset -24
+[05-May-2026 23:52:15 UTC]   Temporal liberado en offset -24
+[05-May-2026 23:52:15 UTC]   Temporal reservado en offset -24
+[05-May-2026 23:52:15 UTC]   Temporal liberado en offset -24
+[05-May-2026 23:52:15 UTC] >>> ENTRANDO a ámbito: if_then
+[05-May-2026 23:52:15 UTC] === DECLARACIÓN CORTA con 1 IDs y 1 expresiones ===
+[05-May-2026 23:52:15 UTC] === DESREFERENCIA (*) ===
+[05-May-2026 23:52:15 UTC]   Desreferenciando: cargando valor desde la dirección en x0
+[05-May-2026 23:52:15 UTC] === DESREFERENCIA (*) ===
+[05-May-2026 23:52:15 UTC]   Desreferenciando: cargando valor desde la dirección en x0
+[05-May-2026 23:52:15 UTC] >>> SALIENDO del ámbito: if_then
+[05-May-2026 23:52:15 UTC] Generando fmt.Println con 1 argumentos
+[05-May-2026 23:52:15 UTC] Generando fmt.Println con 1 argumentos
+[05-May-2026 23:52:15 UTC]   → Buscando función de usuario: 'imprimirArbol'
+[05-May-2026 23:52:15 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): imprimirArbol ===
+[05-May-2026 23:52:15 UTC]   La función retorna 0 valor(es): 
+[05-May-2026 23:52:15 UTC] Generando fmt.Println con 1 argumentos
+[05-May-2026 23:52:15 UTC] Generando fmt.Println con 2 argumentos
+[05-May-2026 23:52:15 UTC]   → Buscando función de usuario: 'calcularVolumenPiramide'
+[05-May-2026 23:52:15 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): calcularVolumenPiramide ===
+[05-May-2026 23:52:15 UTC]   La función retorna 1 valor(es): float32
+[05-May-2026 23:52:15 UTC]   Temporal reservado en offset -8
+[05-May-2026 23:52:15 UTC]   Temporal reservado en offset -16
+[05-May-2026 23:52:15 UTC]   Temporal liberado en offset -16
+[05-May-2026 23:52:15 UTC]   Temporal liberado en offset -8
+[05-May-2026 23:52:15 UTC] Generando fmt.Println con 1 argumentos
+[05-May-2026 23:52:15 UTC]   → Buscando función de usuario: 'intercambioValores'
+[05-May-2026 23:52:15 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): intercambioValores ===
+[05-May-2026 23:52:15 UTC]   La función retorna 0 valor(es): 
+[05-May-2026 23:52:15 UTC] === REFERENCIA (&) ===
+[05-May-2026 23:52:15 UTC]   Tipo de contexto: Context\ExpresionPrimariaContext
+[05-May-2026 23:52:15 UTC]   Variable: a
+[05-May-2026 23:52:15 UTC]   Dirección de a: x29 + -4
+[05-May-2026 23:52:15 UTC]   Temporal reservado en offset -20
+[05-May-2026 23:52:15 UTC] === REFERENCIA (&) ===
+[05-May-2026 23:52:15 UTC]   Tipo de contexto: Context\ExpresionPrimariaContext
+[05-May-2026 23:52:15 UTC]   Variable: b
+[05-May-2026 23:52:15 UTC]   Dirección de b: x29 + -12
+[05-May-2026 23:52:15 UTC]   Temporal reservado en offset -28
+[05-May-2026 23:52:15 UTC]   Temporal liberado en offset -28
+[05-May-2026 23:52:15 UTC]   Temporal liberado en offset -20
+[05-May-2026 23:52:15 UTC] Generando fmt.Println con 3 argumentos
+[05-May-2026 23:52:15 UTC] Generando fmt.Println con 1 argumentos
+[05-May-2026 23:52:15 UTC] Generando fmt.Println con 2 argumentos
+[05-May-2026 23:52:15 UTC]   → Buscando función de usuario: 'potencia'
+[05-May-2026 23:52:15 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): potencia ===
+[05-May-2026 23:52:15 UTC]   La función retorna 1 valor(es): int32
+[05-May-2026 23:52:15 UTC]   Temporal reservado en offset -20
+[05-May-2026 23:52:15 UTC]   Temporal reservado en offset -28
+[05-May-2026 23:52:15 UTC]   Temporal liberado en offset -28
+[05-May-2026 23:52:15 UTC]   Temporal liberado en offset -20
+[05-May-2026 23:52:15 UTC] Generando fmt.Println con 1 argumentos
+[05-May-2026 23:52:15 UTC]   → Buscando función de usuario: 'intercambioValoresValidado'
+[05-May-2026 23:52:15 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): intercambioValoresValidado ===
+[05-May-2026 23:52:15 UTC]   La función retorna 0 valor(es): 
+[05-May-2026 23:52:15 UTC] === REFERENCIA (&) ===
+[05-May-2026 23:52:15 UTC]   Tipo de contexto: Context\ExpresionPrimariaContext
+[05-May-2026 23:52:15 UTC]   Variable: x
+[05-May-2026 23:52:15 UTC]   Dirección de x: x29 + -20
+[05-May-2026 23:52:15 UTC]   Temporal reservado en offset -36
+[05-May-2026 23:52:15 UTC] === REFERENCIA (&) ===
+[05-May-2026 23:52:15 UTC]   Tipo de contexto: Context\ExpresionPrimariaContext
+[05-May-2026 23:52:15 UTC]   Variable: y
+[05-May-2026 23:52:15 UTC]   Dirección de y: x29 + -28
+[05-May-2026 23:52:15 UTC]   Temporal reservado en offset -44
+[05-May-2026 23:52:15 UTC]   Temporal liberado en offset -44
+[05-May-2026 23:52:15 UTC]   Temporal liberado en offset -36
+[05-May-2026 23:52:15 UTC] Generando fmt.Println con 3 argumentos
+[05-May-2026 23:52:15 UTC] Generando fmt.Println con 1 argumentos
+[05-May-2026 23:52:15 UTC] === DECLARACIÓN CORTA con 2 IDs y 1 expresiones ===
+[05-May-2026 23:52:15 UTC]   → Buscando función de usuario: 'euclides'
+[05-May-2026 23:52:15 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): euclides ===
+[05-May-2026 23:52:15 UTC]   La función retorna 2 valor(es): int32, int32
+[05-May-2026 23:52:15 UTC]   Temporal reservado en offset -36
+[05-May-2026 23:52:15 UTC]   Temporal reservado en offset -44
+[05-May-2026 23:52:15 UTC]   Temporal liberado en offset -44
+[05-May-2026 23:52:15 UTC]   Temporal liberado en offset -36
+[05-May-2026 23:52:15 UTC]   Temporal reservado en offset -36
+[05-May-2026 23:52:15 UTC]   Temporal reservado en offset -44
+[05-May-2026 23:52:15 UTC] Generando fmt.Println con 4 argumentos
+[05-May-2026 23:52:15 UTC] Generando fmt.Println con 1 argumentos
+[05-May-2026 23:52:15 UTC] Generando fmt.Println con 1 argumentos
+[05-May-2026 23:52:15 UTC] Generando fmt.Println con 1 argumentos
+[05-May-2026 23:52:15 UTC] === DECLARACIÓN CORTA con 1 IDs y 1 expresiones ===
+[05-May-2026 23:52:15 UTC] Generando fmt.Println con 2 argumentos
+[05-May-2026 23:52:15 UTC] Generando fmt.Println con 1 argumentos
+[05-May-2026 23:52:15 UTC] Generando fmt.Println con 2 argumentos
+[05-May-2026 23:52:15 UTC] Generando fmt.Println con 1 argumentos
+[05-May-2026 23:52:15 UTC] Generando fmt.Println con 2 argumentos
+[05-May-2026 23:52:15 UTC] Generando fmt.Println con 1 argumentos
+[05-May-2026 23:52:15 UTC] Generando fmt.Println con 2 argumentos
+[05-May-2026 23:52:15 UTC] Generando fmt.Println con 2 argumentos
+[05-May-2026 23:52:15 UTC] Generando fmt.Println con 2 argumentos
+[05-May-2026 23:52:15 UTC] Generando fmt.Println con 2 argumentos
+[05-May-2026 23:52:15 UTC] Generando fmt.Println con 1 argumentos
+[05-May-2026 23:52:15 UTC] Generación ARM64 completada. 0 errores.
+[05-May-2026 23:55:20 UTC] === NUEVA EJECUCIÓN ===
+[05-May-2026 23:55:25 UTC] === NUEVA EJECUCIÓN ===
+[05-May-2026 23:55:25 UTC] Modo seleccionado: generar
+[05-May-2026 23:55:25 UTC] Código recibido:
+// ====================================================
+// ARCHIVO 5 - FUNCIONES
+// Grading: Punto 3 (3.1 - 3.7) y Punto 4 (4.1 - 4.5)
+// Cobertura: Funciones requeridas y funciones embebidas
+// ====================================================
+
+func main() {
+	fmt.Println("=== INICIO DE CALIFICACION: FUNCIONES ===")
+
+	// ==========================================
+	// 3.1 Funcion no recursiva sin parametros
+	// ==========================================
+	fmt.Println("\n--- 3.1 IMPRIMIR ARBOL ---")
+	imprimirArbol()
+
+	// ==========================================
+	// 3.2 Funcion con parametros no recursiva
+	// ==========================================
+	fmt.Println("\n--- 3.2 CALCULAR VOLUMEN PIRAMIDE ---")
+	fmt.Println("Volumen:", calcularVolumenPiramide(10, 15))
+
+	// ==========================================
+	// 3.3 Funciones por referencia
+	// ==========================================
+	fmt.Println("\n--- 3.3 REFERENCIA: ORDENAMIENTO E INTERCAMBIO ---")
+	var a int32 = 100
+	var b int32 = 200
+	intercambioValores(&a, &b)
+	fmt.Println("Intercambio:", a, b)
+
+	// ==========================================
+	// 3.4 Funcion recursiva con un retorno
+	// ==========================================
+	fmt.Println("\n--- 3.4 POTENCIA RECURSIVA ---")
+	fmt.Println("2^8:", potencia(2, 8))
+
+	// ==========================================
+	// 3.5 Funciones por referencia (nivel intermedio)
+	// ==========================================
+	fmt.Println("\n--- 3.5 REFERENCIA AVANZADA: INTERCAMBIO VALIDADO E INTERCALACION ---")
+	var x int32 = 50
+	var y int32 = 30
+	intercambioValoresValidado(&x, &y)
+	fmt.Println("Intercambio validado:", x, y)
+
+	// ==========================================
+	// 3.6 Funcion recursiva con multiple retorno (Euclides)
+	// ==========================================
+	fmt.Println("\n--- 3.6 EUCLIDES RECURSIVO ---")
+	mcd, pasos := euclides(48, 18)
+	fmt.Println("MCD:", mcd, "Pasos:", pasos)
+
+	// ==========================================
+	// 4.1 fmt.Println()
+	// ==========================================
+	fmt.Println("\n--- 4.1 FMT.PRINTLN ---")
+	fmt.Println("Impresion directa de texto")
+
+	// ==========================================
+	// 4.2 len()
+	// ==========================================
+	fmt.Println("\n--- 4.2 LEN ---")
+	texto := "Golampi"
+	fmt.Println("len(texto):", len(texto))
+
+
+	// ==========================================
+	// 4.3 now()
+	// ==========================================
+	fmt.Println("\n--- 4.3 NOW ---")
+	fmt.Println("Fecha actual:", now())
+
+	// ==========================================
+	// 4.4 substr()
+	// ==========================================
+	fmt.Println("\n--- 4.4 SUBSTR ---")
+	fmt.Println("substr:", substr("Organizacion de Lenguajes", 0, 12))
+
+	// ==========================================
+	// 4.5 typeOf()
+	// ==========================================
+	fmt.Println("\n--- 4.5 TYPEOF ---")
+	fmt.Println("int32:", typeOf(42))
+	fmt.Println("float32:", typeOf(3.14))
+	fmt.Println("bool:", typeOf(true))
+	fmt.Println("string:", typeOf("texto"))
+
+	fmt.Println("\n=== FIN DE CALIFICACION: FUNCIONES ===")
+}
+
+func imprimirArbol() {
+	fmt.Println("  *")
+	fmt.Println(" ***")
+	fmt.Println("*****")
+}
+
+func calcularVolumenPiramide(base float32, altura float32) float32 {
+	return (base * base * altura) / 3.0
+}
+
+
+func intercambioValores(x *int32, y *int32) {
+    temp := *x
+    *x = *y
+    *y = temp
+}
+
+
+
+func potencia(base int32, exponente int32) int32 {
+	if exponente == 0 {
+		return 1
+	}
+	return base * potencia(base, exponente-1)
+}
+
+func euclides(a int32, b int32) (int32, int32) {
+	if b == 0 {
+		return a, 1
+	}
+	resultado, pasos := euclides(b, a%b)
+	return resultado, pasos + 1
+}
+
+func intercambioValoresValidado(x *int32, y *int32) {
+    if x != nil && y != nil {
+        temp := *x
+        *x = *y
+        *y = temp
+    }
+}
+
+
+/*
+=== INICIO DE CALIFICACION: FUNCIONES ===
+
+--- 3.1 IMPRIMIR ARBOL ---
+  *
+ ***
+*****
+
+--- 3.2 CALCULAR VOLUMEN PIRAMIDE ---
+Volumen: 500
+
+--- 3.3 REFERENCIA: ORDENAMIENTO E INTERCAMBIO ---
+Intercambio: 200 100
+Ordenado: 11 12 22 25 64
+
+--- 3.4 POTENCIA RECURSIVA ---
+2^8: 256
+
+--- 3.6 EUCLIDES RECURSIVO ---
+MCD: 6 Pasos: 4
+
+--- 3.5 REFERENCIA AVANZADA: INTERCAMBIO VALIDADO E INTERCALACION ---
+Intercambio validado: 30 50
+Intercalación: 11 12 22 25 34 64
+
+--- 4.1 FMT.PRINTLN ---
+Impresion directa de texto
+
+--- 4.2 LEN ---
+len(texto): 7
+len(arrLen): 4
+
+--- 4.3 NOW ---
+Fecha actual: <NOW>
+
+--- 4.4 SUBSTR ---
+substr: Organizacion
+
+--- 4.5 TYPEOF ---
+int32: int32
+float32: float32
+bool: bool
+string: string
+
+=== FIN DE CALIFICACION: FUNCIONES ===
+*/
+[05-May-2026 23:55:25 UTC] Árbol generado correctamente
+[05-May-2026 23:55:25 UTC] Tipo de árbol: Context\ProgramaContext
+[05-May-2026 23:55:25 UTC] === GENERANDO CÓDIGO ARM64 ===
+[05-May-2026 23:55:25 UTC] === CodeGenerator ARM64 Inicializado ===
+[05-May-2026 23:55:25 UTC] Registrada función: imprimirArbol
+[05-May-2026 23:55:25 UTC] Registrada función: calcularVolumenPiramide
+[05-May-2026 23:55:25 UTC] Registrada función: intercambioValores
+[05-May-2026 23:55:25 UTC] Registrada función: potencia
+[05-May-2026 23:55:25 UTC] Registrada función: euclides
+[05-May-2026 23:55:25 UTC] Registrada función: intercambioValoresValidado
+[05-May-2026 23:55:25 UTC] === GENERANDO FUNCIÓN USUARIO (ARM64): imprimirArbol ===
+[05-May-2026 23:55:25 UTC]   No se encontraron tipos de retorno para la función
+[05-May-2026 23:55:25 UTC]   Tipos de retorno de 'imprimirArbol': 
+[05-May-2026 23:55:25 UTC] Generando fmt.Println con 1 argumentos
+[05-May-2026 23:55:25 UTC] Generando fmt.Println con 1 argumentos
+[05-May-2026 23:55:25 UTC] Generando fmt.Println con 1 argumentos
+[05-May-2026 23:55:25 UTC] === GENERANDO FUNCIÓN USUARIO (ARM64): calcularVolumenPiramide ===
+[05-May-2026 23:55:25 UTC]   Tipo único desde ->tipo(): float32
+[05-May-2026 23:55:25 UTC]   Tipos de retorno de 'calcularVolumenPiramide': float32
+[05-May-2026 23:55:25 UTC]   Temporal reservado en offset -24
+[05-May-2026 23:55:25 UTC]   Temporal liberado en offset -24
+[05-May-2026 23:55:25 UTC]   Temporal reservado en offset -24
+[05-May-2026 23:55:25 UTC]   Temporal liberado en offset -24
+[05-May-2026 23:55:25 UTC] === GENERANDO FUNCIÓN USUARIO (ARM64): intercambioValores ===
+[05-May-2026 23:55:25 UTC]   No se encontraron tipos de retorno para la función
+[05-May-2026 23:55:25 UTC]   Tipos de retorno de 'intercambioValores': 
+[05-May-2026 23:55:25 UTC] === DECLARACIÓN CORTA con 1 IDs y 1 expresiones ===
+[05-May-2026 23:55:25 UTC] === DESREFERENCIA (*) ===
+[05-May-2026 23:55:25 UTC]   Desreferenciando: cargando valor desde la dirección en x0
+[05-May-2026 23:55:25 UTC] === DESREFERENCIA (*) ===
+[05-May-2026 23:55:25 UTC]   Desreferenciando: cargando valor desde la dirección en x0
+[05-May-2026 23:55:25 UTC] === GENERANDO FUNCIÓN USUARIO (ARM64): potencia ===
+[05-May-2026 23:55:25 UTC]   Tipo único desde ->tipo(): int32
+[05-May-2026 23:55:25 UTC]   Tipos de retorno de 'potencia': int32
+[05-May-2026 23:55:25 UTC] === IF STATEMENT (ARM64) ===
+[05-May-2026 23:55:25 UTC]   Temporal reservado en offset -20
+[05-May-2026 23:55:25 UTC]   Temporal liberado en offset -20
+[05-May-2026 23:55:25 UTC] >>> ENTRANDO a ámbito: if_then
+[05-May-2026 23:55:25 UTC] >>> SALIENDO del ámbito: if_then
+[05-May-2026 23:55:25 UTC]   Temporal reservado en offset -20
+[05-May-2026 23:55:25 UTC]   → Buscando función de usuario: 'potencia'
+[05-May-2026 23:55:25 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): potencia ===
+[05-May-2026 23:55:25 UTC]   La función retorna 1 valor(es): int32
+[05-May-2026 23:55:25 UTC]   Temporal reservado en offset -28
+[05-May-2026 23:55:25 UTC]   Temporal reservado en offset -36
+[05-May-2026 23:55:25 UTC]   Temporal liberado en offset -36
+[05-May-2026 23:55:25 UTC]   Temporal reservado en offset -36
+[05-May-2026 23:55:25 UTC]   Temporal liberado en offset -36
+[05-May-2026 23:55:25 UTC]   Temporal liberado en offset -28
+[05-May-2026 23:55:25 UTC]   Temporal liberado en offset -20
+[05-May-2026 23:55:25 UTC] === GENERANDO FUNCIÓN USUARIO (ARM64): euclides ===
+[05-May-2026 23:55:25 UTC]   Tipos desde ->tipos(): int32,int32
+[05-May-2026 23:55:25 UTC]   Tipos de retorno de 'euclides': int32,int32
+[05-May-2026 23:55:25 UTC] === IF STATEMENT (ARM64) ===
+[05-May-2026 23:55:25 UTC]   Temporal reservado en offset -20
+[05-May-2026 23:55:25 UTC]   Temporal liberado en offset -20
+[05-May-2026 23:55:25 UTC] >>> ENTRANDO a ámbito: if_then
+[05-May-2026 23:55:25 UTC]   Múltiples retornos: 2 valores
+[05-May-2026 23:55:25 UTC]   Temporal reservado en offset -20
+[05-May-2026 23:55:25 UTC]   Temporal reservado en offset -28
+[05-May-2026 23:55:25 UTC]   Temporal liberado en offset -28
+[05-May-2026 23:55:25 UTC]   Temporal liberado en offset -20
+[05-May-2026 23:55:25 UTC] >>> SALIENDO del ámbito: if_then
+[05-May-2026 23:55:25 UTC] === DECLARACIÓN CORTA con 2 IDs y 1 expresiones ===
+[05-May-2026 23:55:25 UTC]   → Buscando función de usuario: 'euclides'
+[05-May-2026 23:55:25 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): euclides ===
+[05-May-2026 23:55:25 UTC]   La función retorna 2 valor(es): int32, int32
+[05-May-2026 23:55:25 UTC]   Temporal reservado en offset -20
+[05-May-2026 23:55:25 UTC]   Temporal reservado en offset -28
+[05-May-2026 23:55:25 UTC]   Temporal liberado en offset -28
+[05-May-2026 23:55:25 UTC]   Temporal reservado en offset -28
+[05-May-2026 23:55:25 UTC]   Temporal liberado en offset -28
+[05-May-2026 23:55:25 UTC]   Temporal liberado en offset -20
+[05-May-2026 23:55:25 UTC]   Temporal reservado en offset -20
+[05-May-2026 23:55:25 UTC]   Temporal reservado en offset -28
+[05-May-2026 23:55:25 UTC]   Múltiples retornos: 2 valores
+[05-May-2026 23:55:25 UTC]   Temporal reservado en offset -52
+[05-May-2026 23:55:25 UTC]   Temporal reservado en offset -60
+[05-May-2026 23:55:25 UTC]   Temporal liberado en offset -60
+[05-May-2026 23:55:25 UTC]   Temporal reservado en offset -60
+[05-May-2026 23:55:25 UTC]   Temporal liberado en offset -60
+[05-May-2026 23:55:25 UTC]   Temporal liberado en offset -52
+[05-May-2026 23:55:25 UTC] === GENERANDO FUNCIÓN USUARIO (ARM64): intercambioValoresValidado ===
+[05-May-2026 23:55:25 UTC]   No se encontraron tipos de retorno para la función
+[05-May-2026 23:55:25 UTC]   Tipos de retorno de 'intercambioValoresValidado': 
+[05-May-2026 23:55:25 UTC] === IF STATEMENT (ARM64) ===
+[05-May-2026 23:55:25 UTC]   Temporal reservado en offset -24
+[05-May-2026 23:55:25 UTC]   Temporal liberado en offset -24
+[05-May-2026 23:55:25 UTC]   Temporal reservado en offset -24
+[05-May-2026 23:55:25 UTC]   Temporal liberado en offset -24
+[05-May-2026 23:55:25 UTC] >>> ENTRANDO a ámbito: if_then
+[05-May-2026 23:55:25 UTC] === DECLARACIÓN CORTA con 1 IDs y 1 expresiones ===
+[05-May-2026 23:55:25 UTC] === DESREFERENCIA (*) ===
+[05-May-2026 23:55:25 UTC]   Desreferenciando: cargando valor desde la dirección en x0
+[05-May-2026 23:55:25 UTC] === DESREFERENCIA (*) ===
+[05-May-2026 23:55:25 UTC]   Desreferenciando: cargando valor desde la dirección en x0
+[05-May-2026 23:55:25 UTC] >>> SALIENDO del ámbito: if_then
+[05-May-2026 23:55:25 UTC] Generando fmt.Println con 1 argumentos
+[05-May-2026 23:55:25 UTC] Generando fmt.Println con 1 argumentos
+[05-May-2026 23:55:25 UTC]   → Buscando función de usuario: 'imprimirArbol'
+[05-May-2026 23:55:25 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): imprimirArbol ===
+[05-May-2026 23:55:25 UTC]   La función retorna 0 valor(es): 
+[05-May-2026 23:55:25 UTC] Generando fmt.Println con 1 argumentos
+[05-May-2026 23:55:25 UTC] Generando fmt.Println con 2 argumentos
+[05-May-2026 23:55:25 UTC]   → Buscando función de usuario: 'calcularVolumenPiramide'
+[05-May-2026 23:55:25 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): calcularVolumenPiramide ===
+[05-May-2026 23:55:25 UTC]   La función retorna 1 valor(es): float32
+[05-May-2026 23:55:25 UTC]   Temporal reservado en offset -8
+[05-May-2026 23:55:25 UTC]   Temporal reservado en offset -16
+[05-May-2026 23:55:25 UTC]   Temporal liberado en offset -16
+[05-May-2026 23:55:25 UTC]   Temporal liberado en offset -8
+[05-May-2026 23:55:25 UTC] Generando fmt.Println con 1 argumentos
+[05-May-2026 23:55:25 UTC]   → Buscando función de usuario: 'intercambioValores'
+[05-May-2026 23:55:25 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): intercambioValores ===
+[05-May-2026 23:55:25 UTC]   La función retorna 0 valor(es): 
+[05-May-2026 23:55:25 UTC] === REFERENCIA (&) ===
+[05-May-2026 23:55:25 UTC]   Tipo de contexto: Context\ExpresionPrimariaContext
+[05-May-2026 23:55:25 UTC]   Variable: a
+[05-May-2026 23:55:25 UTC]   Dirección de a: x29 + -4
+[05-May-2026 23:55:25 UTC]   Temporal reservado en offset -20
+[05-May-2026 23:55:25 UTC] === REFERENCIA (&) ===
+[05-May-2026 23:55:25 UTC]   Tipo de contexto: Context\ExpresionPrimariaContext
+[05-May-2026 23:55:25 UTC]   Variable: b
+[05-May-2026 23:55:25 UTC]   Dirección de b: x29 + -12
+[05-May-2026 23:55:25 UTC]   Temporal reservado en offset -28
+[05-May-2026 23:55:25 UTC]   Temporal liberado en offset -28
+[05-May-2026 23:55:25 UTC]   Temporal liberado en offset -20
+[05-May-2026 23:55:25 UTC] Generando fmt.Println con 3 argumentos
+[05-May-2026 23:55:25 UTC] Generando fmt.Println con 1 argumentos
+[05-May-2026 23:55:25 UTC] Generando fmt.Println con 2 argumentos
+[05-May-2026 23:55:25 UTC]   → Buscando función de usuario: 'potencia'
+[05-May-2026 23:55:25 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): potencia ===
+[05-May-2026 23:55:25 UTC]   La función retorna 1 valor(es): int32
+[05-May-2026 23:55:25 UTC]   Temporal reservado en offset -20
+[05-May-2026 23:55:25 UTC]   Temporal reservado en offset -28
+[05-May-2026 23:55:25 UTC]   Temporal liberado en offset -28
+[05-May-2026 23:55:25 UTC]   Temporal liberado en offset -20
+[05-May-2026 23:55:25 UTC] Generando fmt.Println con 1 argumentos
+[05-May-2026 23:55:25 UTC]   → Buscando función de usuario: 'intercambioValoresValidado'
+[05-May-2026 23:55:25 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): intercambioValoresValidado ===
+[05-May-2026 23:55:25 UTC]   La función retorna 0 valor(es): 
+[05-May-2026 23:55:25 UTC] === REFERENCIA (&) ===
+[05-May-2026 23:55:25 UTC]   Tipo de contexto: Context\ExpresionPrimariaContext
+[05-May-2026 23:55:25 UTC]   Variable: x
+[05-May-2026 23:55:25 UTC]   Dirección de x: x29 + -20
+[05-May-2026 23:55:25 UTC]   Temporal reservado en offset -36
+[05-May-2026 23:55:25 UTC] === REFERENCIA (&) ===
+[05-May-2026 23:55:25 UTC]   Tipo de contexto: Context\ExpresionPrimariaContext
+[05-May-2026 23:55:25 UTC]   Variable: y
+[05-May-2026 23:55:25 UTC]   Dirección de y: x29 + -28
+[05-May-2026 23:55:25 UTC]   Temporal reservado en offset -44
+[05-May-2026 23:55:25 UTC]   Temporal liberado en offset -44
+[05-May-2026 23:55:25 UTC]   Temporal liberado en offset -36
+[05-May-2026 23:55:25 UTC] Generando fmt.Println con 3 argumentos
+[05-May-2026 23:55:25 UTC] Generando fmt.Println con 1 argumentos
+[05-May-2026 23:55:25 UTC] === DECLARACIÓN CORTA con 2 IDs y 1 expresiones ===
+[05-May-2026 23:55:25 UTC]   → Buscando función de usuario: 'euclides'
+[05-May-2026 23:55:25 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): euclides ===
+[05-May-2026 23:55:25 UTC]   La función retorna 2 valor(es): int32, int32
+[05-May-2026 23:55:25 UTC]   Temporal reservado en offset -36
+[05-May-2026 23:55:25 UTC]   Temporal reservado en offset -44
+[05-May-2026 23:55:25 UTC]   Temporal liberado en offset -44
+[05-May-2026 23:55:25 UTC]   Temporal liberado en offset -36
+[05-May-2026 23:55:25 UTC]   Temporal reservado en offset -36
+[05-May-2026 23:55:25 UTC]   Temporal reservado en offset -44
+[05-May-2026 23:55:25 UTC] Generando fmt.Println con 4 argumentos
+[05-May-2026 23:55:25 UTC] Generando fmt.Println con 1 argumentos
+[05-May-2026 23:55:25 UTC] Generando fmt.Println con 1 argumentos
+[05-May-2026 23:55:25 UTC] Generando fmt.Println con 1 argumentos
+[05-May-2026 23:55:25 UTC] === DECLARACIÓN CORTA con 1 IDs y 1 expresiones ===
+[05-May-2026 23:55:25 UTC] Generando fmt.Println con 2 argumentos
+[05-May-2026 23:55:25 UTC] Generando fmt.Println con 1 argumentos
+[05-May-2026 23:55:25 UTC] Generando fmt.Println con 2 argumentos
+[05-May-2026 23:55:25 UTC] Generando fmt.Println con 1 argumentos
+[05-May-2026 23:55:25 UTC] Generando fmt.Println con 2 argumentos
+[05-May-2026 23:55:25 UTC] Generando fmt.Println con 1 argumentos
+[05-May-2026 23:55:25 UTC] Generando fmt.Println con 2 argumentos
+[05-May-2026 23:55:25 UTC] Generando fmt.Println con 2 argumentos
+[05-May-2026 23:55:25 UTC] Generando fmt.Println con 2 argumentos
+[05-May-2026 23:55:25 UTC] Generando fmt.Println con 2 argumentos
+[05-May-2026 23:55:25 UTC] Generando fmt.Println con 1 argumentos
+[05-May-2026 23:55:25 UTC] Generación ARM64 completada. 0 errores.
