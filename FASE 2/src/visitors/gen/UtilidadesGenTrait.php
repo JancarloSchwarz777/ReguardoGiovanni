@@ -208,8 +208,8 @@ trait UtilidadesGenTrait
                 $labelZero = $this->newStringLabel();
                 $this->emitData("$labelZero: .double 0.0");
                 $this->emitText("adrp x0, $labelZero");
-                $this->emitText("ldr d0, [x0, :lo12:$labelZero]");
-                $this->emitText("str d0, [x29, #$offset]");
+                $this->emitText("ldr s0, [x0, :lo12:$labelZero]");
+                $this->emitText("str s0, [x29, #$offset]");
                 break;
             case 'string':
                 $emptyLabel = $this->newStringLabel();
@@ -234,7 +234,7 @@ trait UtilidadesGenTrait
                     $this->emitText("str w0, [x29, #$offset]");
                     break;
                 case 'float32':
-                    $this->emitText("str d0, [x29, #$offset]");
+                    $this->emitText("str s0, [x29, #$offset]");
                     break;
                 default:
                     $this->emitText("str x0, [x29, #$offset]");
@@ -251,7 +251,7 @@ trait UtilidadesGenTrait
                     $this->emitText("str w0, [x16]");
                     break;
                 case 'float32':
-                    $this->emitText("str d0, [x16]");
+                    $this->emitText("str s0, [x16]");
                     break;
                 default:
                     $this->emitText("str x0, [x16]");
@@ -273,7 +273,7 @@ trait UtilidadesGenTrait
                     $this->emitText("ldr w0, [x29, #$offset]");
                     break;
                 case 'float32':
-                    $this->emitText("ldr d0, [x29, #$offset]");
+                    $this->emitText("ldr s0, [x29, #$offset]");
                     break;
                 case 'puntero':
                 case 'string':
@@ -291,7 +291,7 @@ trait UtilidadesGenTrait
                     $this->emitText("ldr w0, [x16]");
                     break;
                 case 'float32':
-                    $this->emitText("ldr d0, [x16]");
+                    $this->emitText("ldr s0, [x16]");
                     break;
                 case 'puntero':
                 case 'string':
@@ -325,11 +325,11 @@ trait UtilidadesGenTrait
                 $this->emitText("add x0, x0, :lo12:$label");
                 break;
             case 'float32':
-                $this->emitData(".balign 8");
+                $this->emitData(".balign 4");
                 $label = $this->newStringLabel();
-                $this->emitData("$label: .double $valor");
+                $this->emitData("$label: .float $valor");
                 $this->emitText("adrp x0, $label");
-                $this->emitText("ldr d0, [x0, :lo12:$label]");
+                $this->emitText("ldr s0, [x0, :lo12:$label]");
                 break;
         }
     }
@@ -344,9 +344,9 @@ trait UtilidadesGenTrait
         }
         
         if ($tipoDestino === 'float32' && $tipoOrigen === 'int32') {
-            $this->emitText("scvtf d0, w0");  // int a float
+            $this->emitText("scvtf s0, w0");  // int a float
         } elseif ($tipoDestino === 'int32' && $tipoOrigen === 'float32') {
-            $this->emitText("fcvtzs w0, d0");  // float a int
+            $this->emitText("fcvtzs w0, s0");  // float a int
         } elseif ($tipoDestino === 'rune' && $tipoOrigen === 'int32') {
             // int32 a rune (carácter) - no necesita conversión, solo almacenar
             $this->emitText("// int32 a rune, sin conversión");

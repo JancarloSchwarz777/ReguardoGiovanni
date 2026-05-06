@@ -85,7 +85,7 @@ trait FuncionEmbGenTrait
                     break;
                 case 'float32':
                     $format = "%f";
-                    $this->emitText("fmov d1, d0");
+                    $this->emitText("fcvt d0, s0");
                     break;
                 case 'string':
                     $format = "%s";

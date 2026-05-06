@@ -32,12 +32,12 @@ trait ExpresionesGenTrait
             return 'int32';
         }
         if ($ctx->NUMERO_DECIMAL()) {
-            $valor = $ctx->NUMERO_DECIMAL()->getText();
-            $this->emitData(".balign 8");
+            $valor = $ctx->NUMERO_DECIMAL()->getText();   // ✅ Agregar esta línea
+            $this->emitData(".balign 4");
             $label = $this->newStringLabel();
-            $this->emitData("$label: .double $valor");
+            $this->emitData("$label: .float $valor");
             $this->emitText("adrp x0, $label");
-            $this->emitText("ldr d0, [x0, :lo12:$label]");
+            $this->emitText("ldr s0, [x0, :lo12:$label]");
             return 'float32';
         }
         if ($ctx->TRUE()) {
@@ -139,7 +139,7 @@ trait ExpresionesGenTrait
                     $this->agregarErrorSemantico("Operador '-' solo numéricos", $linea, $columna);
                 }
                 if ($tipo === 'float32') {
-                    $this->emitText("fneg d0, d0");
+                    $this->emitText("fneg s0, s0");
                 } else {
                     $this->emitText("neg w0, w0");
                 }
@@ -262,10 +262,10 @@ trait ExpresionesGenTrait
             
             // 5. Operar w0 = w0 op w1
             if ($op === '*') {
-                if ($tipoEsperado === 'float32') $this->emitText("fmul d0, d0, d1");
+                if ($tipoEsperado === 'float32') $this->emitText("fmul s0, s0, s1");
                 else $this->emitText("mul w0, w0, w1");
             } elseif ($op === '/') {
-                if ($tipoEsperado === 'float32') $this->emitText("fdiv d0, d0, d1");
+                if ($tipoEsperado === 'float32') $this->emitText("fdiv s0, s0, s1");
                 else $this->emitText("sdiv w0, w0, w1");
             } elseif ($op === '%') {
                 $this->emitText("sdiv w2, w0, w1");
@@ -307,10 +307,10 @@ trait ExpresionesGenTrait
             $tipoEsperado = $this->tiposCompatiblesAditiva($tipoResultado, $tipoOperando, $op);
             
             if ($op === '+') {
-                if ($tipoEsperado === 'float32') $this->emitText("fadd d0, d0, d1");
+                if ($tipoEsperado === 'float32') $this->emitText("fadd s0, s0, s1");
                 else $this->emitText("add w0, w0, w1");
             } elseif ($op === '-') {
-                if ($tipoEsperado === 'float32') $this->emitText("fsub d0, d0, d1");
+                if ($tipoEsperado === 'float32') $this->emitText("fsub s0, s0, s1");
                 else $this->emitText("sub w0, w0, w1");
             }
             
@@ -349,11 +349,11 @@ trait ExpresionesGenTrait
         for ($i = 1; $i < $numOperandos; $i++) {
             $op = $ctx->getChild(2 * $i - 1)->getText();
             $tipoOperando = $this->visit($ctx->expresionAditiva($i));
-            if ($tipoOperando === 'float32') $this->emitText("fmov d1, d0");
+            if ($tipoOperando === 'float32') $this->emitText("fmov s1, s0");
             else $this->emitText("mov w1, w0");
             $this->cargarDeStack($tempOffset, $tipoResultado);
             
-            if ($tipoResultado === 'float32') $this->emitText("fcmp d0, d1");
+            if ($tipoResultado === 'float32') $this->emitText("fcmp s0, s1");
             else $this->emitText("cmp w0, w1");
             
             $labelTrue = $this->newLabel("cmp_true");
