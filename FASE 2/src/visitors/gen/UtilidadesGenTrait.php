@@ -428,6 +428,7 @@ trait UtilidadesGenTrait
     protected function reservarTemporal()
     {
         $this->stackSize += 8;
+        $this->actualizarMaxStackSize();
         $offset = -$this->stackSize;
         error_log("  Temporal reservado en offset $offset");
         return $offset;

@@ -15,28 +15,30 @@ trait FuncUsuarioGenTrait
     {
         $nombre = $ctx->IDENTIFICADOR() ? $ctx->IDENTIFICADOR()->getText() : 'main';
         if ($nombre === 'main') return null;
-        
+
         error_log("=== GENERANDO FUNCIÓN USUARIO (ARM64): $nombre ===");
-        
+
         // Guardar los tipos de retorno de esta función (hoisting)
         $tiposRetorno = $this->obtenerTiposRetornoFuncion($ctx);
         $this->funcionesTipos[$nombre] = $tiposRetorno;
         error_log("  Tipos de retorno de '$nombre': " . implode(',', $tiposRetorno));
-        
+
         // Guardar el estado previo de las secciones
         $oldTextSection = $this->textSection;
         $this->textSection = [];
-        
+
         $oldStackSize = $this->stackSize;
+        $oldMaxStackSize = $this->maxStackSize;          // ← guardar máximo anterior
         $this->stackSize = 0;
-        
+        $this->maxStackSize = 0;                         // ← reiniciar para esta función
+
         $oldAmbito = $this->ambitoActual;
         $this->ambitoActual = $nombre;
         array_push($this->pilaAmbitos, $nombre);
-        
-        // Generar la etiqueta una sola vez
+
+        // Generar la etiqueta del epílogo
         $this->currentEpilogueLabel = $this->newLabel($nombre . "_epilogue");
-        
+
         // 1. Procesar parámetros
         $parametros = $ctx->parametros();
         if ($parametros) {
@@ -45,10 +47,9 @@ trait FuncUsuarioGenTrait
                 $tipo = $param->tipo()->getText();
                 $esPuntero = (strpos($tipo, '*') === 0);
                 $tipoBase = $esPuntero ? substr($tipo, 1) : $tipo;
-                
+
                 $offset = $this->reservarVariable($id, $tipo, $param->getStart()->getLine(), $param->getStart()->getCharPositionInLine());
-                
-                // Guardar el parámetro según su tipo
+
                 if ($esPuntero) {
                     $this->emitText("str x$idx, [x29, #$offset]");
                     $this->tablaSimbolos[$id]['es_puntero'] = true;
@@ -62,13 +63,13 @@ trait FuncUsuarioGenTrait
                 }
             }
         }
-        
-        // 2. Visitar el cuerpo de la función
+
+        // 2. Visitar el cuerpo de la función (esto modificará stackSize y maxStackSize)
         $this->visit($ctx->bloque());
-        
-        // 3. Generar prólogo y epílogo
-        $alignedStackSize = ($this->stackSize + 15) & ~15;
-        
+
+        // 3. Generar prólogo y epílogo usando maxStackSize (máximo alcanzado por la función)
+        $alignedStackSize = ($this->maxStackSize + 15) & ~15;   // ← usar maxStackSize, no stackSize
+
         $funcCode = ".globl $nombre\n";
         $funcCode .= ".type $nombre, @function\n";
         $funcCode .= "$nombre:\n";
@@ -77,24 +78,25 @@ trait FuncUsuarioGenTrait
         if ($alignedStackSize > 0) {
             $funcCode .= "    sub sp, sp, #$alignedStackSize\n";
         }
-        
+
         $funcCode .= implode("\n", $this->textSection) . "\n";
-        
+
         $funcCode .= "\n" . $this->currentEpilogueLabel . ":\n";
         if ($alignedStackSize > 0) {
             $funcCode .= "    add sp, sp, #$alignedStackSize\n";
         }
         $funcCode .= "    ldp x29, x30, [sp], #16\n";
         $funcCode .= "    ret\n";
-        
+
         // Restaurar estado global
         array_pop($this->pilaAmbitos);
         $this->ambitoActual = $oldAmbito;
         $this->textSection = $oldTextSection;
         $this->stackSize = $oldStackSize;
-        
+        $this->maxStackSize = $oldMaxStackSize;           
+
         $this->funcionesText[$nombre] = $funcCode;
-        
+
         return null;
     }
     

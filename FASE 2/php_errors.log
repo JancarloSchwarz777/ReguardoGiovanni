@@ -3335,3 +3335,920 @@ string: string
 [06-May-2026 00:45:55 UTC] Generando fmt.Println con 2 argumentos
 [06-May-2026 00:45:55 UTC] Generando fmt.Println con 1 argumentos
 [06-May-2026 00:45:55 UTC] Generación ARM64 completada. 0 errores.
+[06-May-2026 01:00:00 UTC] === NUEVA EJECUCIÓN ===
+[06-May-2026 01:00:09 UTC] === NUEVA EJECUCIÓN ===
+[06-May-2026 01:00:09 UTC] Modo seleccionado: generar
+[06-May-2026 01:00:09 UTC] Código recibido:
+// ====================================================
+// ARCHIVO 5 - FUNCIONES
+// Grading: Punto 3 (3.1 - 3.7) y Punto 4 (4.1 - 4.5)
+// Cobertura: Funciones requeridas y funciones embebidas
+// ====================================================
+
+func main() {
+	fmt.Println("=== INICIO DE CALIFICACION: FUNCIONES ===")
+
+	// ==========================================
+	// 3.1 Funcion no recursiva sin parametros
+	// ==========================================
+	fmt.Println("\n--- 3.1 IMPRIMIR ARBOL ---")
+	imprimirArbol()
+
+	// ==========================================
+	// 3.2 Funcion con parametros no recursiva
+	// ==========================================
+	fmt.Println("\n--- 3.2 CALCULAR VOLUMEN PIRAMIDE ---")
+	fmt.Println("Volumen:", calcularVolumenPiramide(10.0, 15.0))
+
+	// ==========================================
+	// 3.3 Funciones por referencia
+	// ==========================================
+	fmt.Println("\n--- 3.3 REFERENCIA: ORDENAMIENTO E INTERCAMBIO ---")
+	var a int32 = 100
+	var b int32 = 200
+	intercambioValores(&a, &b)
+	fmt.Println("Intercambio:", a, b)
+
+	// ==========================================
+	// 3.4 Funcion recursiva con un retorno
+	// ==========================================
+	fmt.Println("\n--- 3.4 POTENCIA RECURSIVA ---")
+	fmt.Println("2^8:", potencia(2, 8))
+
+	// ==========================================
+	// 3.5 Funciones por referencia (nivel intermedio)
+	// ==========================================
+	fmt.Println("\n--- 3.5 REFERENCIA AVANZADA: INTERCAMBIO VALIDADO E INTERCALACION ---")
+	var x int32 = 50
+	var y int32 = 30
+	intercambioValoresValidado(&x, &y)
+	fmt.Println("Intercambio validado:", x, y)
+
+	// ==========================================
+	// 3.6 Funcion recursiva con multiple retorno (Euclides)
+	// ==========================================
+	fmt.Println("\n--- 3.6 EUCLIDES RECURSIVO ---")
+	mcd, pasos := euclides(48, 18)
+	fmt.Println("MCD:", mcd, "Pasos:", pasos)
+
+	// ==========================================
+	// 4.1 fmt.Println()
+	// ==========================================
+	fmt.Println("\n--- 4.1 FMT.PRINTLN ---")
+	fmt.Println("Impresion directa de texto")
+
+	// ==========================================
+	// 4.2 len()
+	// ==========================================
+	fmt.Println("\n--- 4.2 LEN ---")
+	texto := "Golampi"
+	fmt.Println("len(texto):", len(texto))
+
+
+	// ==========================================
+	// 4.3 now()
+	// ==========================================
+	fmt.Println("\n--- 4.3 NOW ---")
+	fmt.Println("Fecha actual:", now())
+
+	// ==========================================
+	// 4.4 substr()
+	// ==========================================
+	fmt.Println("\n--- 4.4 SUBSTR ---")
+	fmt.Println("substr:", substr("Organizacion de Lenguajes", 0, 12))
+
+	// ==========================================
+	// 4.5 typeOf()
+	// ==========================================
+	fmt.Println("\n--- 4.5 TYPEOF ---")
+	fmt.Println("int32:", typeOf(42))
+	fmt.Println("float32:", typeOf(3.14))
+	fmt.Println("bool:", typeOf(true))
+	fmt.Println("string:", typeOf("texto"))
+
+	fmt.Println("\n=== FIN DE CALIFICACION: FUNCIONES ===")
+}
+
+func imprimirArbol() {
+	fmt.Println("  *")
+	fmt.Println(" ***")
+	fmt.Println("*****")
+}
+
+func calcularVolumenPiramide(base float32, altura float32) float32 {
+	return (base * base * altura) / 3.0
+}
+
+
+func intercambioValores(x *int32, y *int32) {
+    temp := *x
+    *x = *y
+    *y = temp
+}
+
+
+func potencia(base int32, exponente int32) int32 {
+    resultado := int32(1)
+    for i := int32(0); i < exponente; i++ {
+        resultado = resultado * base
+    }
+    return resultado
+}
+
+//func potencia(base int32, exponente int32) int32 {
+//	if exponente == 0 {
+//		return 1
+//	}
+//	return base * potencia(base, exponente-1)
+//}
+
+func euclides(a int32, b int32) (int32, int32) {
+	if b == 0 {
+		return a, 1
+	}
+	resultado, pasos := euclides(b, a%b)
+	return resultado, pasos + 1
+}
+
+func intercambioValoresValidado(x *int32, y *int32) {
+    if x != nil && y != nil {
+        temp := *x
+        *x = *y
+        *y = temp
+    }
+}
+
+
+/*
+=== INICIO DE CALIFICACION: FUNCIONES ===
+
+--- 3.1 IMPRIMIR ARBOL ---
+  *
+ ***
+*****
+
+--- 3.2 CALCULAR VOLUMEN PIRAMIDE ---
+Volumen: 500
+
+--- 3.3 REFERENCIA: ORDENAMIENTO E INTERCAMBIO ---
+Intercambio: 200 100
+Ordenado: 11 12 22 25 64
+
+--- 3.4 POTENCIA RECURSIVA ---
+2^8: 256
+
+--- 3.6 EUCLIDES RECURSIVO ---
+MCD: 6 Pasos: 4
+
+--- 3.5 REFERENCIA AVANZADA: INTERCAMBIO VALIDADO E INTERCALACION ---
+Intercambio validado: 30 50
+Intercalación: 11 12 22 25 34 64
+
+--- 4.1 FMT.PRINTLN ---
+Impresion directa de texto
+
+--- 4.2 LEN ---
+len(texto): 7
+len(arrLen): 4
+
+--- 4.3 NOW ---
+Fecha actual: <NOW>
+
+--- 4.4 SUBSTR ---
+substr: Organizacion
+
+--- 4.5 TYPEOF ---
+int32: int32
+float32: float32
+bool: bool
+string: string
+
+=== FIN DE CALIFICACION: FUNCIONES ===
+*/
+[06-May-2026 01:00:09 UTC] Árbol generado correctamente
+[06-May-2026 01:00:09 UTC] Tipo de árbol: Context\ProgramaContext
+[06-May-2026 01:00:09 UTC] === GENERANDO CÓDIGO ARM64 ===
+[06-May-2026 01:00:09 UTC] === CodeGenerator ARM64 Inicializado ===
+[06-May-2026 01:00:09 UTC] Registrada función: imprimirArbol
+[06-May-2026 01:00:09 UTC] Registrada función: calcularVolumenPiramide
+[06-May-2026 01:00:09 UTC] Registrada función: intercambioValores
+[06-May-2026 01:00:09 UTC] Registrada función: potencia
+[06-May-2026 01:00:09 UTC] Registrada función: euclides
+[06-May-2026 01:00:09 UTC] Registrada función: intercambioValoresValidado
+[06-May-2026 01:00:09 UTC] === GENERANDO FUNCIÓN USUARIO (ARM64): imprimirArbol ===
+[06-May-2026 01:00:09 UTC]   No se encontraron tipos de retorno para la función
+[06-May-2026 01:00:09 UTC]   Tipos de retorno de 'imprimirArbol': 
+[06-May-2026 01:00:09 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:00:09 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:00:09 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:00:09 UTC] === GENERANDO FUNCIÓN USUARIO (ARM64): calcularVolumenPiramide ===
+[06-May-2026 01:00:09 UTC]   Tipo único desde ->tipo(): float32
+[06-May-2026 01:00:09 UTC]   Tipos de retorno de 'calcularVolumenPiramide': float32
+[06-May-2026 01:00:09 UTC]   Temporal reservado en offset -24
+[06-May-2026 01:00:09 UTC]   Temporal liberado en offset -24
+[06-May-2026 01:00:09 UTC]   Temporal reservado en offset -24
+[06-May-2026 01:00:09 UTC]   Temporal liberado en offset -24
+[06-May-2026 01:00:09 UTC] === GENERANDO FUNCIÓN USUARIO (ARM64): intercambioValores ===
+[06-May-2026 01:00:09 UTC]   No se encontraron tipos de retorno para la función
+[06-May-2026 01:00:09 UTC]   Tipos de retorno de 'intercambioValores': 
+[06-May-2026 01:00:09 UTC] === DECLARACIÓN CORTA con 1 IDs y 1 expresiones ===
+[06-May-2026 01:00:09 UTC] === DESREFERENCIA (*) ===
+[06-May-2026 01:00:09 UTC]   Desreferenciando: cargando valor desde la dirección en x0
+[06-May-2026 01:00:09 UTC] === DESREFERENCIA (*) ===
+[06-May-2026 01:00:09 UTC]   Desreferenciando: cargando valor desde la dirección en x0
+[06-May-2026 01:00:09 UTC] === GENERANDO FUNCIÓN USUARIO (ARM64): potencia ===
+[06-May-2026 01:00:09 UTC]   Tipo único desde ->tipo(): int32
+[06-May-2026 01:00:09 UTC]   Tipos de retorno de 'potencia': int32
+[06-May-2026 01:00:09 UTC] === DECLARACIÓN CORTA con 1 IDs y 1 expresiones ===
+[06-May-2026 01:00:09 UTC] === FOR STATEMENT (ARM64) ===
+[06-May-2026 01:00:09 UTC] >>> ENTRANDO a ámbito: for_loop
+[06-May-2026 01:00:09 UTC] === DECLARACIÓN CORTA con 1 IDs y 1 expresiones ===
+[06-May-2026 01:00:09 UTC]   Temporal reservado en offset -36
+[06-May-2026 01:00:09 UTC]   Temporal liberado en offset -36
+[06-May-2026 01:00:09 UTC]   Temporal reservado en offset -36
+[06-May-2026 01:00:09 UTC]   Temporal liberado en offset -36
+[06-May-2026 01:00:09 UTC] >>> SALIENDO del ámbito: for_loop
+[06-May-2026 01:00:09 UTC] === GENERANDO FUNCIÓN USUARIO (ARM64): euclides ===
+[06-May-2026 01:00:09 UTC]   Tipos desde ->tipos(): int32,int32
+[06-May-2026 01:00:09 UTC]   Tipos de retorno de 'euclides': int32,int32
+[06-May-2026 01:00:09 UTC] === IF STATEMENT (ARM64) ===
+[06-May-2026 01:00:09 UTC]   Temporal reservado en offset -20
+[06-May-2026 01:00:09 UTC]   Temporal liberado en offset -20
+[06-May-2026 01:00:09 UTC] >>> ENTRANDO a ámbito: if_then
+[06-May-2026 01:00:09 UTC]   Múltiples retornos: 2 valores
+[06-May-2026 01:00:09 UTC]   Temporal reservado en offset -20
+[06-May-2026 01:00:09 UTC]   Temporal reservado en offset -28
+[06-May-2026 01:00:09 UTC]   Temporal liberado en offset -28
+[06-May-2026 01:00:09 UTC]   Temporal liberado en offset -20
+[06-May-2026 01:00:09 UTC] >>> SALIENDO del ámbito: if_then
+[06-May-2026 01:00:09 UTC] === DECLARACIÓN CORTA con 2 IDs y 1 expresiones ===
+[06-May-2026 01:00:09 UTC]   → Buscando función de usuario: 'euclides'
+[06-May-2026 01:00:09 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): euclides ===
+[06-May-2026 01:00:09 UTC]   La función retorna 2 valor(es): int32, int32
+[06-May-2026 01:00:09 UTC]   Temporal reservado en offset -20
+[06-May-2026 01:00:09 UTC]   Temporal reservado en offset -28
+[06-May-2026 01:00:09 UTC]   Temporal liberado en offset -28
+[06-May-2026 01:00:09 UTC]   Temporal reservado en offset -28
+[06-May-2026 01:00:09 UTC]   Temporal liberado en offset -28
+[06-May-2026 01:00:09 UTC]   Temporal liberado en offset -20
+[06-May-2026 01:00:09 UTC]   Temporal reservado en offset -20
+[06-May-2026 01:00:09 UTC]   Temporal reservado en offset -28
+[06-May-2026 01:00:09 UTC]   Múltiples retornos: 2 valores
+[06-May-2026 01:00:09 UTC]   Temporal reservado en offset -52
+[06-May-2026 01:00:09 UTC]   Temporal reservado en offset -60
+[06-May-2026 01:00:09 UTC]   Temporal liberado en offset -60
+[06-May-2026 01:00:09 UTC]   Temporal reservado en offset -60
+[06-May-2026 01:00:09 UTC]   Temporal liberado en offset -60
+[06-May-2026 01:00:09 UTC]   Temporal liberado en offset -52
+[06-May-2026 01:00:09 UTC] === GENERANDO FUNCIÓN USUARIO (ARM64): intercambioValoresValidado ===
+[06-May-2026 01:00:09 UTC]   No se encontraron tipos de retorno para la función
+[06-May-2026 01:00:09 UTC]   Tipos de retorno de 'intercambioValoresValidado': 
+[06-May-2026 01:00:09 UTC] === IF STATEMENT (ARM64) ===
+[06-May-2026 01:00:09 UTC]   Temporal reservado en offset -24
+[06-May-2026 01:00:09 UTC]   Temporal liberado en offset -24
+[06-May-2026 01:00:09 UTC]   Temporal reservado en offset -24
+[06-May-2026 01:00:09 UTC]   Temporal liberado en offset -24
+[06-May-2026 01:00:09 UTC] >>> ENTRANDO a ámbito: if_then
+[06-May-2026 01:00:09 UTC] === DECLARACIÓN CORTA con 1 IDs y 1 expresiones ===
+[06-May-2026 01:00:09 UTC] === DESREFERENCIA (*) ===
+[06-May-2026 01:00:09 UTC]   Desreferenciando: cargando valor desde la dirección en x0
+[06-May-2026 01:00:09 UTC] === DESREFERENCIA (*) ===
+[06-May-2026 01:00:09 UTC]   Desreferenciando: cargando valor desde la dirección en x0
+[06-May-2026 01:00:09 UTC] >>> SALIENDO del ámbito: if_then
+[06-May-2026 01:00:09 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:00:09 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:00:09 UTC]   → Buscando función de usuario: 'imprimirArbol'
+[06-May-2026 01:00:09 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): imprimirArbol ===
+[06-May-2026 01:00:09 UTC]   La función retorna 0 valor(es): 
+[06-May-2026 01:00:09 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:00:09 UTC] Generando fmt.Println con 2 argumentos
+[06-May-2026 01:00:09 UTC]   → Buscando función de usuario: 'calcularVolumenPiramide'
+[06-May-2026 01:00:09 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): calcularVolumenPiramide ===
+[06-May-2026 01:00:09 UTC]   La función retorna 1 valor(es): float32
+[06-May-2026 01:00:09 UTC]   Temporal reservado en offset -8
+[06-May-2026 01:00:09 UTC]   Temporal reservado en offset -16
+[06-May-2026 01:00:09 UTC]   Temporal liberado en offset -16
+[06-May-2026 01:00:09 UTC]   Temporal liberado en offset -8
+[06-May-2026 01:00:09 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:00:09 UTC]   → Buscando función de usuario: 'intercambioValores'
+[06-May-2026 01:00:09 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): intercambioValores ===
+[06-May-2026 01:00:09 UTC]   La función retorna 0 valor(es): 
+[06-May-2026 01:00:09 UTC] === REFERENCIA (&) ===
+[06-May-2026 01:00:09 UTC]   Tipo de contexto: Context\ExpresionPrimariaContext
+[06-May-2026 01:00:09 UTC]   Variable: a
+[06-May-2026 01:00:09 UTC]   Dirección de a: x29 + -4
+[06-May-2026 01:00:09 UTC]   Temporal reservado en offset -20
+[06-May-2026 01:00:09 UTC] === REFERENCIA (&) ===
+[06-May-2026 01:00:09 UTC]   Tipo de contexto: Context\ExpresionPrimariaContext
+[06-May-2026 01:00:09 UTC]   Variable: b
+[06-May-2026 01:00:09 UTC]   Dirección de b: x29 + -12
+[06-May-2026 01:00:09 UTC]   Temporal reservado en offset -28
+[06-May-2026 01:00:09 UTC]   Temporal liberado en offset -28
+[06-May-2026 01:00:09 UTC]   Temporal liberado en offset -20
+[06-May-2026 01:00:09 UTC] Generando fmt.Println con 3 argumentos
+[06-May-2026 01:00:09 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:00:09 UTC] Generando fmt.Println con 2 argumentos
+[06-May-2026 01:00:09 UTC]   → Buscando función de usuario: 'potencia'
+[06-May-2026 01:00:09 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): potencia ===
+[06-May-2026 01:00:09 UTC]   La función retorna 1 valor(es): int32
+[06-May-2026 01:00:09 UTC]   Temporal reservado en offset -20
+[06-May-2026 01:00:09 UTC]   Temporal reservado en offset -28
+[06-May-2026 01:00:09 UTC]   Temporal liberado en offset -28
+[06-May-2026 01:00:09 UTC]   Temporal liberado en offset -20
+[06-May-2026 01:00:09 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:00:09 UTC]   → Buscando función de usuario: 'intercambioValoresValidado'
+[06-May-2026 01:00:09 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): intercambioValoresValidado ===
+[06-May-2026 01:00:09 UTC]   La función retorna 0 valor(es): 
+[06-May-2026 01:00:09 UTC] === REFERENCIA (&) ===
+[06-May-2026 01:00:09 UTC]   Tipo de contexto: Context\ExpresionPrimariaContext
+[06-May-2026 01:00:09 UTC]   Variable: x
+[06-May-2026 01:00:09 UTC]   Dirección de x: x29 + -20
+[06-May-2026 01:00:09 UTC]   Temporal reservado en offset -36
+[06-May-2026 01:00:09 UTC] === REFERENCIA (&) ===
+[06-May-2026 01:00:09 UTC]   Tipo de contexto: Context\ExpresionPrimariaContext
+[06-May-2026 01:00:09 UTC]   Variable: y
+[06-May-2026 01:00:09 UTC]   Dirección de y: x29 + -28
+[06-May-2026 01:00:09 UTC]   Temporal reservado en offset -44
+[06-May-2026 01:00:09 UTC]   Temporal liberado en offset -44
+[06-May-2026 01:00:09 UTC]   Temporal liberado en offset -36
+[06-May-2026 01:00:09 UTC] Generando fmt.Println con 3 argumentos
+[06-May-2026 01:00:09 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:00:09 UTC] === DECLARACIÓN CORTA con 2 IDs y 1 expresiones ===
+[06-May-2026 01:00:09 UTC]   → Buscando función de usuario: 'euclides'
+[06-May-2026 01:00:09 UTC] === LLAMADA A FUNCIÓN USUARIO (ARM64): euclides ===
+[06-May-2026 01:00:09 UTC]   La función retorna 2 valor(es): int32, int32
+[06-May-2026 01:00:09 UTC]   Temporal reservado en offset -36
+[06-May-2026 01:00:09 UTC]   Temporal reservado en offset -44
+[06-May-2026 01:00:09 UTC]   Temporal liberado en offset -44
+[06-May-2026 01:00:09 UTC]   Temporal liberado en offset -36
+[06-May-2026 01:00:09 UTC]   Temporal reservado en offset -36
+[06-May-2026 01:00:09 UTC]   Temporal reservado en offset -44
+[06-May-2026 01:00:09 UTC] Generando fmt.Println con 4 argumentos
+[06-May-2026 01:00:09 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:00:09 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:00:09 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:00:09 UTC] === DECLARACIÓN CORTA con 1 IDs y 1 expresiones ===
+[06-May-2026 01:00:09 UTC] Generando fmt.Println con 2 argumentos
+[06-May-2026 01:00:09 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:00:09 UTC] Generando fmt.Println con 2 argumentos
+[06-May-2026 01:00:09 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:00:09 UTC] Generando fmt.Println con 2 argumentos
+[06-May-2026 01:00:09 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:00:09 UTC] Generando fmt.Println con 2 argumentos
+[06-May-2026 01:00:09 UTC] Generando fmt.Println con 2 argumentos
+[06-May-2026 01:00:09 UTC] Generando fmt.Println con 2 argumentos
+[06-May-2026 01:00:09 UTC] Generando fmt.Println con 2 argumentos
+[06-May-2026 01:00:09 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:00:09 UTC] Generación ARM64 completada. 0 errores.
+[06-May-2026 01:05:02 UTC] === NUEVA EJECUCIÓN ===
+[06-May-2026 01:05:02 UTC] Modo seleccionado: generar
+[06-May-2026 01:05:02 UTC] Código recibido:
+// ====================================================
+// ARCHIVO 1 - FUNCIONALIDADES BASICAS
+// Grading: Punto 1 (1.1 - 1.15)
+// Cobertura: Variables, constantes, tipos, operadores y comentarios
+// ====================================================
+
+// 1.9 Comentario de una linea
+/*
+1.10 Comentario multilinea:
+Archivo de prueba con secciones alineadas a la hoja de calificacion.
+*/
+
+func main() {
+	fmt.Println("=== INICIO DE CALIFICACION: FUNCIONALIDADES BASICAS ===")
+
+	// ==========================================
+	// 1.1 Declaracion larga de variables
+	// ==========================================
+	fmt.Println("\n--- 1.1 DECLARACION LARGA ---")
+	var varInt int32 = 42
+	var varFloat float32 = 3.14
+	var varBool bool = true
+	var varRune rune = 'G'
+	var varString string = "Golampi"
+	fmt.Println(varInt, varFloat, varBool, varRune, varString)
+
+	// ==========================================
+	// 1.2 Asignacion de variables
+	// ==========================================
+	fmt.Println("\n--- 1.2 ASIGNACION DE VARIABLES ---")
+	varInt = 120
+	varFloat = 9.75
+	varBool = false
+	varRune = 'Z'
+	varString = "Actualizado"
+	fmt.Println(varInt, varFloat, varBool, varRune, varString)
+
+	// ==========================================
+	// 1.3 Formato de identificadores
+	// ==========================================
+	fmt.Println("\n--- 1.3 FORMATO DE IDENTIFICADORES ---")
+	var identificador int32 = 1
+	var Identificador int32 = 2
+	fmt.Println("Case sensitive:", identificador, Identificador)
+
+	// ==========================================
+	// 1.4 Declaracion corta de variables
+	// ==========================================
+	fmt.Println("\n--- 1.4 DECLARACION CORTA ---")
+	cInt := 7
+	cFloat := 2.5
+	cBool := true
+	cRune := 'X'
+	cString := "Inferencia"
+	fmt.Println(cInt, cFloat, cBool, cRune, cString)
+
+	// ==========================================
+	// 1.5 Declaracion larga sin inicializar
+	// ==========================================
+	fmt.Println("\n--- 1.5 DECLARACION LARGA SIN INICIALIZAR ---")
+	var defInt int32
+	var defFloat float32
+	var defBool bool
+	var defRune rune
+	var defString string
+	fmt.Println(defInt, defFloat, defBool, defRune, defString)
+
+	// ==========================================
+	// 1.6 Declaracion multiple (larga y corta)
+	// ==========================================
+	fmt.Println("\n--- 1.6 DECLARACION MULTIPLE ---")
+	var m1, m2 int32 = 10, 20
+	m3, m4 := "Hola", "Mundo"
+	fmt.Println(m1, m2, m3, m4)
+
+	// ==========================================
+	// 1.7 Declaracion de constantes
+	// ==========================================
+	fmt.Println("\n--- 1.7 CONSTANTES ---")
+	const PI float32 = 3.14159
+	const MAX int32 = 1000
+	fmt.Println(PI, MAX)
+
+	// ==========================================
+	// 1.8 Manejo de nil
+	// ==========================================
+	fmt.Println("\n--- 1.8 MANEJO DE NIL ---")
+	fmt.Println("Impresion de nil:", nil)
+	fmt.Println("Comparacion nil == nil:", nil == nil)
+
+	// ==========================================
+	// 1.11 Operaciones aritmeticas
+	// ==========================================
+	fmt.Println("\n--- 1.11 OPERACIONES ARITMETICAS ---")
+	fmt.Println("+:", 15+25)
+	fmt.Println("-:", 50-18)
+	fmt.Println("*:", 7*8)
+	fmt.Println("/:", 100/3)
+	fmt.Println("%:", 17%5)
+
+	// ==========================================
+	// 1.12 Operaciones relacionales
+	// ==========================================
+	fmt.Println("\n--- 1.12 OPERACIONES RELACIONALES ---")
+	var r1 int32 = 10
+	var r2 int32 = 20
+	fmt.Println("==:", r1 == r2)
+	fmt.Println("!=:", r1 != r2)
+	fmt.Println("<:", r1 < r2)
+	fmt.Println(">:", r1 > r2)
+
+	// ==========================================
+	// 1.13 Operaciones logicas
+	// ==========================================
+	fmt.Println("\n--- 1.13 OPERACIONES LOGICAS ---")
+	var t bool = true
+	var f bool = false
+	fmt.Println("true && false:", t && f)
+	fmt.Println("true || false:", t || f)
+	fmt.Println("!true:", !t)
+
+	// ==========================================
+	// 1.14 Restriccion de corto circuito
+	// ==========================================
+	fmt.Println("\n--- 1.14 CORTO CIRCUITO ---")
+	var divisor int32 = 0
+	ccAnd := false && (100/divisor == 1)
+	ccOr := true || (100/divisor == 1)
+	fmt.Println("AND:", ccAnd)
+	fmt.Println("OR:", ccOr)
+
+	// ==========================================
+	// 1.15 Operadores de asignacion
+	// ==========================================
+	fmt.Println("\n--- 1.15 OPERADORES DE ASIGNACION ---")
+	var asig int32 = 50
+	asig += 10
+	asig -= 5
+	asig *= 2
+	asig /= 5
+	fmt.Println("Resultado final:", asig)
+
+	fmt.Println("\n=== FIN DE CALIFICACION: FUNCIONALIDADES BASICAS ===")
+}
+
+/*
+=== INICIO DE CALIFICACION: FUNCIONALIDADES BASICAS ===
+
+--- 1.1 DECLARACION LARGA ---
+42 3.14 true G Golampi
+
+--- 1.2 ASIGNACION DE VARIABLES ---
+120 9.75 false Z Actualizado
+
+--- 1.3 FORMATO DE IDENTIFICADORES ---
+Case sensitive: 1 2
+
+--- 1.4 DECLARACION CORTA ---
+7 2.5 true 88 Inferencia
+
+--- 1.5 DECLARACION LARGA SIN INICIALIZAR ---
+0 0 false 0 
+
+--- 1.6 DECLARACION MULTIPLE ---
+10 20 Hola Mundo
+
+--- 1.7 CONSTANTES ---
+3.14159 1000
+
+--- 1.8 MANEJO DE NIL ---
+Impresion de nil: <nil>
+Comparacion nil == nil: <nil>
+
+--- 1.11 OPERACIONES ARITMETICAS ---
++: 40
+-: 32
+*: 56
+/: 33
+%: 2
+
+--- 1.12 OPERACIONES RELACIONALES ---
+==: false
+!=: true
+<: true
+>: false
+
+--- 1.13 OPERACIONES LOGICAS ---
+true && false: false
+true || false: true
+!true: false
+
+--- 1.14 CORTO CIRCUITO ---
+AND: false
+OR: true
+
+--- 1.15 OPERADORES DE ASIGNACION ---
+Resultado final: 22
+
+=== FIN DE CALIFICACION: FUNCIONALIDADES BASICAS ===
+*/
+[06-May-2026 01:05:02 UTC] Árbol generado correctamente
+[06-May-2026 01:05:02 UTC] Tipo de árbol: Context\ProgramaContext
+[06-May-2026 01:05:02 UTC] === GENERANDO CÓDIGO ARM64 ===
+[06-May-2026 01:05:02 UTC] === CodeGenerator ARM64 Inicializado ===
+[06-May-2026 01:05:02 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:05:02 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:05:02 UTC] Generando fmt.Println con 5 argumentos
+[06-May-2026 01:05:02 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:05:02 UTC] Generando fmt.Println con 5 argumentos
+[06-May-2026 01:05:02 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:05:02 UTC] Generando fmt.Println con 3 argumentos
+[06-May-2026 01:05:02 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:05:02 UTC] === DECLARACIÓN CORTA con 1 IDs y 1 expresiones ===
+[06-May-2026 01:05:02 UTC] === DECLARACIÓN CORTA con 1 IDs y 1 expresiones ===
+[06-May-2026 01:05:02 UTC] === DECLARACIÓN CORTA con 1 IDs y 1 expresiones ===
+[06-May-2026 01:05:02 UTC] === DECLARACIÓN CORTA con 1 IDs y 1 expresiones ===
+[06-May-2026 01:05:02 UTC] === DECLARACIÓN CORTA con 1 IDs y 1 expresiones ===
+[06-May-2026 01:05:02 UTC] Generando fmt.Println con 5 argumentos
+[06-May-2026 01:05:02 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:05:02 UTC] Generando fmt.Println con 5 argumentos
+[06-May-2026 01:05:02 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:05:02 UTC] === DECLARACIÓN CORTA con 2 IDs y 2 expresiones ===
+[06-May-2026 01:05:02 UTC] Generando fmt.Println con 4 argumentos
+[06-May-2026 01:05:02 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:05:02 UTC] Generando fmt.Println con 2 argumentos
+[06-May-2026 01:05:02 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:05:02 UTC] Generando fmt.Println con 2 argumentos
+[06-May-2026 01:05:02 UTC] Generando fmt.Println con 2 argumentos
+[06-May-2026 01:05:02 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:05:02 UTC] Generando fmt.Println con 2 argumentos
+[06-May-2026 01:05:02 UTC]   Temporal reservado en offset -188
+[06-May-2026 01:05:02 UTC]   Temporal liberado en offset -188
+[06-May-2026 01:05:02 UTC] Generando fmt.Println con 2 argumentos
+[06-May-2026 01:05:02 UTC]   Temporal reservado en offset -188
+[06-May-2026 01:05:02 UTC]   Temporal liberado en offset -188
+[06-May-2026 01:05:02 UTC] Generando fmt.Println con 2 argumentos
+[06-May-2026 01:05:02 UTC]   Temporal reservado en offset -188
+[06-May-2026 01:05:02 UTC]   Temporal liberado en offset -188
+[06-May-2026 01:05:02 UTC] Generando fmt.Println con 2 argumentos
+[06-May-2026 01:05:02 UTC]   Temporal reservado en offset -188
+[06-May-2026 01:05:02 UTC]   Temporal liberado en offset -188
+[06-May-2026 01:05:02 UTC] Generando fmt.Println con 2 argumentos
+[06-May-2026 01:05:02 UTC]   Temporal reservado en offset -188
+[06-May-2026 01:05:02 UTC]   Temporal liberado en offset -188
+[06-May-2026 01:05:02 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:05:02 UTC] Generando fmt.Println con 2 argumentos
+[06-May-2026 01:05:02 UTC]   Temporal reservado en offset -204
+[06-May-2026 01:05:02 UTC]   Temporal liberado en offset -204
+[06-May-2026 01:05:02 UTC] Generando fmt.Println con 2 argumentos
+[06-May-2026 01:05:02 UTC]   Temporal reservado en offset -204
+[06-May-2026 01:05:02 UTC]   Temporal liberado en offset -204
+[06-May-2026 01:05:02 UTC] Generando fmt.Println con 2 argumentos
+[06-May-2026 01:05:02 UTC]   Temporal reservado en offset -204
+[06-May-2026 01:05:02 UTC]   Temporal liberado en offset -204
+[06-May-2026 01:05:02 UTC] Generando fmt.Println con 2 argumentos
+[06-May-2026 01:05:02 UTC]   Temporal reservado en offset -204
+[06-May-2026 01:05:02 UTC]   Temporal liberado en offset -204
+[06-May-2026 01:05:02 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:05:02 UTC] Generando fmt.Println con 2 argumentos
+[06-May-2026 01:05:02 UTC] Generando fmt.Println con 2 argumentos
+[06-May-2026 01:05:02 UTC] Generando fmt.Println con 2 argumentos
+[06-May-2026 01:05:02 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:05:02 UTC] === DECLARACIÓN CORTA con 1 IDs y 1 expresiones ===
+[06-May-2026 01:05:02 UTC]   Temporal reservado en offset -228
+[06-May-2026 01:05:02 UTC]   Temporal liberado en offset -228
+[06-May-2026 01:05:02 UTC]   Temporal reservado en offset -228
+[06-May-2026 01:05:02 UTC]   Temporal liberado en offset -228
+[06-May-2026 01:05:02 UTC]   Temporal reservado en offset -228
+[06-May-2026 01:05:02 UTC]   Temporal liberado en offset -228
+[06-May-2026 01:05:02 UTC] === DECLARACIÓN CORTA con 1 IDs y 1 expresiones ===
+[06-May-2026 01:05:02 UTC]   Temporal reservado en offset -236
+[06-May-2026 01:05:02 UTC]   Temporal liberado en offset -236
+[06-May-2026 01:05:02 UTC]   Temporal reservado en offset -236
+[06-May-2026 01:05:02 UTC]   Temporal liberado en offset -236
+[06-May-2026 01:05:02 UTC]   Temporal reservado en offset -236
+[06-May-2026 01:05:02 UTC]   Temporal liberado en offset -236
+[06-May-2026 01:05:02 UTC] Generando fmt.Println con 2 argumentos
+[06-May-2026 01:05:02 UTC] Generando fmt.Println con 2 argumentos
+[06-May-2026 01:05:02 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:05:02 UTC]   Temporal reservado en offset -252
+[06-May-2026 01:05:02 UTC]   Temporal liberado en offset -252
+[06-May-2026 01:05:02 UTC]   Temporal reservado en offset -252
+[06-May-2026 01:05:02 UTC]   Temporal liberado en offset -252
+[06-May-2026 01:05:02 UTC]   Temporal reservado en offset -252
+[06-May-2026 01:05:02 UTC]   Temporal liberado en offset -252
+[06-May-2026 01:05:02 UTC]   Temporal reservado en offset -252
+[06-May-2026 01:05:02 UTC]   Temporal liberado en offset -252
+[06-May-2026 01:05:02 UTC] Generando fmt.Println con 2 argumentos
+[06-May-2026 01:05:02 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:05:02 UTC] Generación ARM64 completada. 0 errores.
+[06-May-2026 01:05:26 UTC] === NUEVA EJECUCIÓN ===
+[06-May-2026 01:05:26 UTC] Modo seleccionado: generar
+[06-May-2026 01:05:26 UTC] Código recibido:
+// ====================================================
+// ARCHIVO 2 - FUNCIONALIDADES INTERMEDIAS
+// Grading: Punto 2 (2.2 - 2.9)
+// Cobertura: if, if-else, switch, for, break, continue
+// ====================================================
+
+func main() {
+	fmt.Println("=== INICIO DE CALIFICACION: ESTRUCTURAS DE CONTROL ===")
+
+	nota1 := 85
+	nota2 := 92
+	estudiante := "Ana"
+
+	// ==========================================
+	// 2.2 if
+	// ==========================================
+	fmt.Println("\n--- 2.2 IF ---")
+	if nota1 > 80 {
+		fmt.Println("El estudiante", estudiante, "tiene una nota mayor a 80")
+	}
+
+	// ==========================================
+	// 2.3 if else
+	// ==========================================
+	fmt.Println("\n--- 2.3 IF ELSE ---")
+	if nota2 >= 95 {
+		fmt.Println("Clasificacion: SOBRESALIENTE")
+	} else {
+		if nota2 >= 90 {
+			fmt.Println("Clasificacion: EXCELENTE")
+		} else {
+			fmt.Println("Clasificacion: REGULAR")
+		}
+	}
+
+	// ==========================================
+	// 2.4 switch/case/default
+	// ==========================================
+	fmt.Println("\n--- 2.4 SWITCH CASE DEFAULT ---")
+	codigoCategoria := 2
+	switch codigoCategoria {
+	case 1:
+		fmt.Println("Categoria 1: Principiante")
+	case 2:
+		fmt.Println("Categoria 2: Intermedio")
+	case 3:
+		fmt.Println("Categoria 3: Avanzado")
+	default:
+		fmt.Println("Categoria Desconocida")
+	}
+
+	// ==========================================
+	// 2.5 for clasico
+	// ==========================================
+	fmt.Println("\n--- 2.5 FOR CLASICO ---")
+	for i := 1; i <= 5; i++ {
+		fmt.Println("Iteracion:", i)
+	}
+
+	// ==========================================
+	// 2.6 for condicional
+	// ==========================================
+	fmt.Println("\n--- 2.6 FOR CONDICIONAL ---")
+	contador := 10
+	for contador > 0 {
+		fmt.Println("Cuenta regresiva:", contador)
+		contador -= 3
+	}
+
+	// ==========================================
+	// 2.7 for infinito
+	// ==========================================
+	fmt.Println("\n--- 2.7 FOR INFINITO ---")
+	intentos := 0
+	for {
+		intentos++
+		fmt.Println("Intento:", intentos)
+		if intentos == 3 {
+			break
+		}
+	}
+
+	// ==========================================
+	// 2.8 break
+	// ==========================================
+	fmt.Println("\n--- 2.8 BREAK ---")
+	for i := 1; i <= 20; i++ {
+		if i == 7 {
+			fmt.Println("Se encontro 7, se aplica break")
+			break
+		}
+		fmt.Println(i)
+	}
+
+	// ==========================================
+	// 2.9 continue
+	// ==========================================
+	fmt.Println("\n--- 2.9 CONTINUE ---")
+	for j := 1; j <= 6; j++ {
+		if j%2 == 0 {
+			continue
+		}
+		fmt.Println("Impar:", j)
+	}
+
+	fmt.Println("\n=== FIN DE CALIFICACION: ESTRUCTURAS DE CONTROL ===")
+}
+
+/*
+=== INICIO DE CALIFICACION: ESTRUCTURAS DE CONTROL ===
+
+--- 2.2 IF ---
+El estudiante Ana tiene una nota mayor a 80
+
+--- 2.3 IF ELSE ---
+Clasificacion: EXCELENTE
+
+--- 2.4 SWITCH CASE DEFAULT ---
+Categoria 2: Intermedio
+
+--- 2.5 FOR CLASICO ---
+Iteracion: 1
+Iteracion: 2
+Iteracion: 3
+Iteracion: 4
+Iteracion: 5
+
+--- 2.6 FOR CONDICIONAL ---
+Cuenta regresiva: 10
+Cuenta regresiva: 7
+Cuenta regresiva: 4
+Cuenta regresiva: 1
+
+--- 2.7 FOR INFINITO ---
+Intento: 1
+Intento: 2
+Intento: 3
+
+--- 2.8 BREAK ---
+1
+2
+3
+4
+5
+6
+Se encontro 7, se aplica break
+
+--- 2.9 CONTINUE ---
+Impar: 1
+Impar: 3
+Impar: 5
+
+=== FIN DE CALIFICACION: ESTRUCTURAS DE CONTROL ===
+*/
+[06-May-2026 01:05:26 UTC] Árbol generado correctamente
+[06-May-2026 01:05:26 UTC] Tipo de árbol: Context\ProgramaContext
+[06-May-2026 01:05:26 UTC] === GENERANDO CÓDIGO ARM64 ===
+[06-May-2026 01:05:26 UTC] === CodeGenerator ARM64 Inicializado ===
+[06-May-2026 01:05:26 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:05:26 UTC] === DECLARACIÓN CORTA con 1 IDs y 1 expresiones ===
+[06-May-2026 01:05:26 UTC] === DECLARACIÓN CORTA con 1 IDs y 1 expresiones ===
+[06-May-2026 01:05:26 UTC] === DECLARACIÓN CORTA con 1 IDs y 1 expresiones ===
+[06-May-2026 01:05:26 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:05:26 UTC] === IF STATEMENT (ARM64) ===
+[06-May-2026 01:05:26 UTC]   Temporal reservado en offset -32
+[06-May-2026 01:05:26 UTC]   Temporal liberado en offset -32
+[06-May-2026 01:05:26 UTC] >>> ENTRANDO a ámbito: if_then
+[06-May-2026 01:05:26 UTC] Generando fmt.Println con 3 argumentos
+[06-May-2026 01:05:26 UTC] >>> SALIENDO del ámbito: if_then
+[06-May-2026 01:05:26 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:05:26 UTC] === IF STATEMENT (ARM64) ===
+[06-May-2026 01:05:26 UTC]   Temporal reservado en offset -32
+[06-May-2026 01:05:26 UTC]   Temporal liberado en offset -32
+[06-May-2026 01:05:26 UTC] >>> ENTRANDO a ámbito: if_then
+[06-May-2026 01:05:26 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:05:26 UTC] >>> SALIENDO del ámbito: if_then
+[06-May-2026 01:05:26 UTC] >>> ENTRANDO a ámbito: if_else
+[06-May-2026 01:05:26 UTC] === IF STATEMENT (ARM64) ===
+[06-May-2026 01:05:26 UTC]   Temporal reservado en offset -32
+[06-May-2026 01:05:26 UTC]   Temporal liberado en offset -32
+[06-May-2026 01:05:26 UTC] >>> ENTRANDO a ámbito: if_then
+[06-May-2026 01:05:26 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:05:26 UTC] >>> SALIENDO del ámbito: if_then
+[06-May-2026 01:05:26 UTC] >>> ENTRANDO a ámbito: if_else_1
+[06-May-2026 01:05:26 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:05:26 UTC] >>> SALIENDO del ámbito: if_else_1
+[06-May-2026 01:05:26 UTC] >>> SALIENDO del ámbito: if_else
+[06-May-2026 01:05:26 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:05:26 UTC] === DECLARACIÓN CORTA con 1 IDs y 1 expresiones ===
+[06-May-2026 01:05:26 UTC] === SWITCH STATEMENT (ARM64) ===
+[06-May-2026 01:05:26 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:05:26 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:05:26 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:05:26 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:05:26 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:05:26 UTC] === FOR STATEMENT (ARM64) ===
+[06-May-2026 01:05:26 UTC] >>> ENTRANDO a ámbito: for_loop
+[06-May-2026 01:05:26 UTC] === DECLARACIÓN CORTA con 1 IDs y 1 expresiones ===
+[06-May-2026 01:05:26 UTC] Generando fmt.Println con 2 argumentos
+[06-May-2026 01:05:26 UTC]   Temporal reservado en offset -44
+[06-May-2026 01:05:26 UTC]   Temporal liberado en offset -44
+[06-May-2026 01:05:26 UTC] >>> SALIENDO del ámbito: for_loop
+[06-May-2026 01:05:26 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:05:26 UTC] === DECLARACIÓN CORTA con 1 IDs y 1 expresiones ===
+[06-May-2026 01:05:26 UTC] === FOR STATEMENT (ARM64) ===
+[06-May-2026 01:05:26 UTC] >>> ENTRANDO a ámbito: for_loop
+[06-May-2026 01:05:26 UTC] Generando fmt.Println con 2 argumentos
+[06-May-2026 01:05:26 UTC]   Temporal reservado en offset -52
+[06-May-2026 01:05:26 UTC]   Temporal liberado en offset -52
+[06-May-2026 01:05:26 UTC]   Temporal reservado en offset -52
+[06-May-2026 01:05:26 UTC]   Temporal liberado en offset -52
+[06-May-2026 01:05:26 UTC] >>> SALIENDO del ámbito: for_loop
+[06-May-2026 01:05:26 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:05:26 UTC] === DECLARACIÓN CORTA con 1 IDs y 1 expresiones ===
+[06-May-2026 01:05:26 UTC] === FOR STATEMENT (ARM64) ===
+[06-May-2026 01:05:26 UTC] >>> ENTRANDO a ámbito: for_loop
+[06-May-2026 01:05:26 UTC] Generando fmt.Println con 2 argumentos
+[06-May-2026 01:05:26 UTC] === IF STATEMENT (ARM64) ===
+[06-May-2026 01:05:26 UTC]   Temporal reservado en offset -60
+[06-May-2026 01:05:26 UTC]   Temporal liberado en offset -60
+[06-May-2026 01:05:26 UTC] >>> ENTRANDO a ámbito: if_then
+[06-May-2026 01:05:26 UTC] >>> SALIENDO del ámbito: if_then
+[06-May-2026 01:05:26 UTC] >>> SALIENDO del ámbito: for_loop
+[06-May-2026 01:05:26 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:05:26 UTC] === FOR STATEMENT (ARM64) ===
+[06-May-2026 01:05:26 UTC] >>> ENTRANDO a ámbito: for_loop
+[06-May-2026 01:05:26 UTC] === DECLARACIÓN CORTA con 1 IDs y 1 expresiones ===
+[06-May-2026 01:05:26 UTC] === IF STATEMENT (ARM64) ===
+[06-May-2026 01:05:26 UTC]   Temporal reservado en offset -68
+[06-May-2026 01:05:26 UTC]   Temporal liberado en offset -68
+[06-May-2026 01:05:26 UTC] >>> ENTRANDO a ámbito: if_then
+[06-May-2026 01:05:26 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:05:26 UTC] >>> SALIENDO del ámbito: if_then
+[06-May-2026 01:05:26 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:05:26 UTC]   Temporal reservado en offset -68
+[06-May-2026 01:05:26 UTC]   Temporal liberado en offset -68
+[06-May-2026 01:05:26 UTC] >>> SALIENDO del ámbito: for_loop
+[06-May-2026 01:05:26 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:05:26 UTC] === FOR STATEMENT (ARM64) ===
+[06-May-2026 01:05:26 UTC] >>> ENTRANDO a ámbito: for_loop
+[06-May-2026 01:05:26 UTC] === DECLARACIÓN CORTA con 1 IDs y 1 expresiones ===
+[06-May-2026 01:05:26 UTC] === IF STATEMENT (ARM64) ===
+[06-May-2026 01:05:26 UTC]   Temporal reservado en offset -76
+[06-May-2026 01:05:26 UTC]   Temporal liberado en offset -76
+[06-May-2026 01:05:26 UTC]   Temporal reservado en offset -76
+[06-May-2026 01:05:26 UTC]   Temporal liberado en offset -76
+[06-May-2026 01:05:26 UTC]   Temporal reservado en offset -76
+[06-May-2026 01:05:26 UTC]   Temporal liberado en offset -76
+[06-May-2026 01:05:26 UTC] >>> ENTRANDO a ámbito: if_then
+[06-May-2026 01:05:26 UTC] >>> SALIENDO del ámbito: if_then
+[06-May-2026 01:05:26 UTC] Generando fmt.Println con 2 argumentos
+[06-May-2026 01:05:26 UTC]   Temporal reservado en offset -76
+[06-May-2026 01:05:26 UTC]   Temporal liberado en offset -76
+[06-May-2026 01:05:26 UTC] >>> SALIENDO del ámbito: for_loop
+[06-May-2026 01:05:26 UTC] Generando fmt.Println con 1 argumentos
+[06-May-2026 01:05:26 UTC] Generación ARM64 completada. 0 errores.

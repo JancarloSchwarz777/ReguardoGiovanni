@@ -30,6 +30,8 @@ class CodeGenerator extends GolampiBaseVisitor
     private $dataWritableSection = [];
     private $funcionesTipos = []; 
     private $evaluandoTipo = false;
+    private $maxStackSize = 0;
+
     
     public function __construct() {
         error_log("=== CodeGenerator ARM64 Inicializado ===");
@@ -75,7 +77,7 @@ class CodeGenerator extends GolampiBaseVisitor
     }
     
     public function getFullCode() {
-        $alignedStackSize = ($this->stackSize + 15) & ~15;
+        $alignedStackSize = ($this->maxStackSize + 15) & ~15;
         $output = ".arch armv8-a\n";
         $output .= ".section .rodata\n";
         $output .= ".balign 8\n";  
@@ -137,6 +139,7 @@ class CodeGenerator extends GolampiBaseVisitor
         $this->stackSize = ($this->stackSize + 7) & ~7; 
         $offset = -($this->stackSize + $tamaño);
         $this->stackSize += $tamaño;
+        $this->actualizarMaxStackSize();
         
         $this->offsets[$id] = $offset;
         $this->tablaSimbolos[$id] = [
@@ -180,4 +183,10 @@ class CodeGenerator extends GolampiBaseVisitor
         }
         return (string)$valor;
     }
+
+    protected function actualizarMaxStackSize() {
+    if ($this->stackSize > $this->maxStackSize) {
+        $this->maxStackSize = $this->stackSize;
+    }
+}
 }
